@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.FashionCarMarkeUserWriteMapper" >
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from fashion_car_marke_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tuanche.directselling.model.FashionCarMarkeUser" >
+    insert into fashion_car_marke_user (id,periods_id, car_fashion_id, user_id,
+      user_wx_union_id, user_wx_open_id, nick_name, 
+      user_wx_head, user_phone, city_id, delete_flag,
+      create_dt, update_dt)
+    values (#{id,jdbcType=INTEGER},#{periodsId}, #{carFashionId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},
+      #{userWxUnionId,jdbcType=CHAR}, #{userWxOpenId,jdbcType=CHAR}, #{nickName,jdbcType=VARCHAR}, 
+      #{userWxHead,jdbcType=VARCHAR} , #{userPhone,jdbcType=VARCHAR}, #{cityId,jdbcType=INTEGER}, #{deleteFlag,jdbcType=BIT},
+      #{createDt,jdbcType=TIMESTAMP}, #{updateDt,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.tuanche.directselling.model.FashionCarMarkeUser" >
+    insert into fashion_car_marke_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="periodsId != null" >
+        periods_id,
+      </if>
+      <if test="carFashionId != null" >
+        car_fashion_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="userWxUnionId != null" >
+        user_wx_union_id,
+      </if>
+      <if test="userWxOpenId != null" >
+        user_wx_open_id,
+      </if>
+      <if test="nickName != null" >
+        nick_name,
+      </if>
+      <if test="userWxHead != null" >
+        user_wx_head,
+      </if>
+      <if test="userPhone != null">
+        user_phone,
+      </if>
+      <if test="cityId != null" >
+        city_id,
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag,
+      </if>
+      <if test="createDt != null" >
+        create_dt,
+      </if>
+      <if test="updateDt != null" >
+        update_dt,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="periodsId != null" >
+        #{periodsId},
+      </if>
+      <if test="carFashionId != null" >
+        #{carFashionId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userWxUnionId != null" >
+        #{userWxUnionId,jdbcType=CHAR},
+      </if>
+      <if test="userWxOpenId != null" >
+        #{userWxOpenId,jdbcType=CHAR},
+      </if>
+      <if test="nickName != null" >
+        #{nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="userWxHead != null" >
+        #{userWxHead,jdbcType=VARCHAR},
+      </if>
+      <if test="userPhone != null">
+        #{userPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="cityId != null" >
+        #{cityId,jdbcType=INTEGER},
+      </if>
+      <if test="deleteFlag != null" >
+        #{deleteFlag,jdbcType=BIT},
+      </if>
+      <if test="createDt != null" >
+        #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDt != null" >
+        #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.FashionCarMarkeUser" >
+    update fashion_car_marke_user
+    <set >
+      <if test="periodsId != null" >
+        periods_id = #{periodsId},
+      </if>
+      <if test="carFashionId != null" >
+        car_fashion_id = #{carFashionId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userWxUnionId != null" >
+        user_wx_union_id = #{userWxUnionId,jdbcType=CHAR},
+      </if>
+      <if test="userWxOpenId != null" >
+        user_wx_open_id = #{userWxOpenId,jdbcType=CHAR},
+      </if>
+      <if test="nickName != null" >
+        nick_name = #{nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="userWxHead != null" >
+        user_wx_head = #{userWxHead,jdbcType=VARCHAR},
+      </if>
+      <if test="userPhone != null">
+        user_phone = #{userPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="cityId != null" >
+        city_id = #{cityId,jdbcType=INTEGER},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=BIT},
+      </if>
+      <if test="createDt != null" >
+        create_dt = #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDt != null" >
+        update_dt = #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tuanche.directselling.model.FashionCarMarkeUser" >
+    update fashion_car_marke_user
+    set
+      periods_id = #{periodsId},
+      car_fashion_id = #{carFashionId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      user_wx_union_id = #{userWxUnionId,jdbcType=CHAR},
+      user_wx_open_id = #{userWxOpenId,jdbcType=CHAR},
+      nick_name = #{nickName,jdbcType=VARCHAR},
+      user_wx_head = #{userWxHead,jdbcType=VARCHAR},
+      user_phone = #{userPhone,jdbcType=VARCHAR},
+      city_id = #{cityId,jdbcType=INTEGER},
+      delete_flag = #{deleteFlag,jdbcType=BIT},
+      create_dt = #{createDt,jdbcType=TIMESTAMP},
+      update_dt = #{updateDt,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

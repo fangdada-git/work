@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.FissionSaleTaskStatisticsWriteMapper" >
+
+    <!-- 统计表里存在的销售(key=fissionId_saleWxUnionId)-主从同步有延时，所以从从库查-->
+    <select id="existingSales" resultType="map">
+        SELECT
+        CONCAT(fission_id,'_',sale_wx_union_id) AS mapKey
+        FROM
+        fission_sale_task_statistics
+        <where>
+            <if test="fissionIds != null">
+                AND fission_id IN
+                <foreach collection="fissionIds" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        GROUP BY
+        sale_wx_union_id,fission_id
+    </select>
+    <!-- 批量新增销售统计 -->
+  <insert id="batchInsert" parameterType="java.util.List" >
+    insert into fission_sale_task_statistics (fission_id, dealer_id,sale_id,
+      sale_wx_union_id, task_id, finish_task_total,
+      task_integral, whether_complete_task)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+        (
+        #{item.fissionId,jdbcType=INTEGER}, #{item.dealerId,jdbcType=INTEGER}, #{item.saleId,jdbcType=INTEGER},
+        #{item.saleWxUnionId,jdbcType=CHAR}, #{item.taskId,jdbcType=INTEGER}, #{item.finishTaskTotal,jdbcType=INTEGER},
+        #{item.taskIntegral,jdbcType=INTEGER}, #{item.whetherCompleteTask,jdbcType=BIT}
+        )
+    </foreach>
+  </insert>
+  <!-- 批量更新裂变活动销售的积分 -->
+  <update id="updateBatchTaskIntegral" parameterType="java.util.List" >
+    <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+        UPDATE fission_sale_task_statistics
+        <set >
+            finish_task_total = #{item.finishTaskTotal,jdbcType=INTEGER},
+            task_integral = #{item.taskIntegral,jdbcType=INTEGER},
+            whether_complete_task = #{item.whetherCompleteTask,jdbcType=BIT}
+        </set>
+        WHERE sale_wx_union_id = #{item.saleWxUnionId,jdbcType=CHAR}
+          AND fission_id = #{item.fissionId}
+          AND task_id = #{item.taskId,jdbcType=INTEGER}
+    </foreach>
+  </update>
+</mapper>

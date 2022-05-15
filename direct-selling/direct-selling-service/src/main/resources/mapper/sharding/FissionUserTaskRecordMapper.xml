@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.sharding.FissionUserTaskRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FissionUserTaskRecord" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="fission_id" property="fissionId" jdbcType="INTEGER" />
+    <result column="sale_wx_union_id" property="saleWxUnionId" jdbcType="CHAR" />
+    <result column="share_wx_union_id" property="shareWxUnionId" jdbcType="CHAR" />
+    <result column="user_wx_union_id" property="userWxUnionId" jdbcType="CHAR" />
+    <result column="task_id" property="taskId" jdbcType="INTEGER" />
+    <result column="source" property="source" jdbcType="TINYINT" />
+    <result column="ongoing_data" property="ongoingData" jdbcType="INTEGER" />
+    <result column="channel" property="channel" jdbcType="INTEGER" />
+    <result column="ip" property="ip" jdbcType="VARCHAR" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="BIT" />
+    <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+    <result column="update_dt" property="updateDt" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <resultMap id="BaseResultCountMap" type="com.tuanche.directselling.dto.FissionUserTaskRecordCountDto" >
+    <result column="task_id" property="taskId" jdbcType="INTEGER" />
+    <result column="count" property="count" jdbcType="INTEGER" />
+    <result column="sale_wx_union_id" property="saleWxUnionId" jdbcType="CHAR" />
+    <result column="dealer_id" property="dealerId" jdbcType="INTEGER" />
+  </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, fission_id, sale_wx_union_id, share_wx_union_id, user_wx_union_id, task_id, source,
+        ongoing_data, channel, ip, delete_flag, create_dt, update_dt
+    </sql>
+
+  <select id="selectUserTaskRecordByFissionIdAndSaleWxUnionIds" resultMap="BaseResultCountMap">
+    select task_id,sale_wx_union_id,count(*) as count from fission_user_task_record where fission_id=#{fissionId} and ongoing_data=2 and sale_wx_union_id in
+    <foreach collection="saleWxOpenIds" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+    group by sale_wx_union_id,task_id
+  </select>
+
+  <select id="selectUserTaskRecordByFissionIdAndDealerIdIds" resultMap="BaseResultCountMap">
+    SELECT
+        futr.task_id,
+        fs.dealer_id,
+        count( * ) AS count
+    FROM
+        fission_user_task_record  futr left join fission_sale fs on futr.sale_wx_union_id=fs.sale_wx_union_id and futr.fission_id=fs.fission_id
+    where futr.fission_id=#{fissionId} and futr.ongoing_data = 2 and fs.dealer_id in
+    <foreach collection="dealerIdIds" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+    GROUP BY
+        fs.dealer_id,
+        futr.task_id
+  </select>
+
+  <select id="selectFissionUserTaskRecordDetailDto"
+          resultType="com.tuanche.directselling.dto.FissionUserTaskRecordDetailDto">
+    SELECT
+        futr.id,
+        fu.user_wx_head,
+        futr.user_wx_union_id,
+        fu.nick_name,
+        futr.ongoing_data,
+        futr.channel,
+        futr.create_dt
+    FROM
+        fission_user_task_record futr
+                left join fission_user fu on futr.user_wx_union_id=fu.user_wx_union_id and fu.fission_id =#{fissionId}
+    WHERE
+        futr.fission_id =#{fissionId} and futr.task_id=#{taskId} AND futr.sale_wx_union_id=#{saleWxUnionId} AND futr.ongoing_data = 2 AND futr.delete_flag = 0
+    order by futr.create_dt desc
+  </select>
+
+  <select id="selectSubscribeOrLiveUserCount" resultType="java.lang.Integer">
+      select count(distinct user_wx_union_id) FROM fission_user_task_record
+      WHERE
+      fission_id =#{fissionId} and task_id=#{taskId} AND ongoing_data = 2 AND (channel=1 or (channel=2 and sale_wx_union_id is not null) or channel=3) AND delete_flag = 0
+  </select>
+
+  <select id="selectSubscribeLiveUserCount" resultType="java.lang.Integer">
+      SELECT
+      count( DISTINCT a.user_wx_union_id )
+      FROM
+      fission_user_task_record a
+      INNER JOIN fission_user_task_record b ON a.user_wx_union_id = b.user_wx_union_id
+      AND a.fission_id = b.fission_id
+      WHERE
+      a.task_id = 2
+      AND b.task_id = 4
+      AND a.ongoing_data = 2
+      AND b.ongoing_data = 2
+      AND a.delete_flag = 0
+      AND b.delete_flag = 0
+      and a.fission_id =#{fissionId}
+      AND (a.channel=1 or (a.channel=2 and a.sale_wx_union_id is not null) or a.channel=3)
+      AND (b.channel=1 or (b.channel=2 and b.sale_wx_union_id is not null) or b.channel=3)
+    </select>
+
+  <select id="selectSubscribeOrLiveUserWxUnionIds" resultType="java.lang.String">
+      select user_wx_union_id from fission_user_task_record
+      where
+      fission_id =#{fissionId} and ongoing_data = 2 and task_id=#{taskId} and user_wx_union_id in <foreach collection="userWxUnionIds" item="id" open="(" separator="," close=")">
+      #{id}
+  </foreach>
+    </select>
+
+  <select id="selectFissionUserTaskRecordDetailDtoWithSaleName"
+            resultType="com.tuanche.directselling.dto.FissionUserTaskRecordDetailDto">
+      SELECT
+      futr.id,
+      fu.user_wx_union_id,
+      fu.nick_name,
+      fs.dealer_id,
+      fs.sale_name,
+      futr.channel,
+      futr.ongoing_data,
+      futr.create_dt
+      FROM
+      fission_user_task_record futr
+      left join fission_user fu on futr.user_wx_union_id=fu.user_wx_union_id and fu.fission_id=#{fissionId}
+      left join fission_sale fs on futr.sale_wx_union_id=fs.sale_wx_union_id and fs.fission_id=#{fissionId}
+      WHERE
+      futr.fission_id =#{fissionId} and futr.task_id=#{taskId}
+      AND (
+        futr.channel=1 or (futr.channel=2 and futr.sale_wx_union_id is not null) or futr.channel=3
+      )
+      AND futr.delete_flag = 0
+      <if test="saleName != null and saleName != ''">
+          and fs.sale_name like CONCAT(#{saleName},'%')
+      </if>
+      <if test="dealerIds != null and dealerIds.size() != 0">
+          and fs.dealer_id in <foreach collection="dealerIds" item="id" open="(" separator="," close=")">
+              #{id}
+          </foreach>
+      </if>
+      <if test="isEffective != null">
+          <choose>
+          <when test="isEffective == 1">
+              AND futr.ongoing_data=2 and futr.channel=2
+          </when>
+          <otherwise>
+              AND (futr.ongoing_data in (0,1)  or futr.channel=1 or futr.channel=3)
+          </otherwise>
+      </choose>
+      </if>
+      order by futr.create_dt desc
+    </select>
+
+  <select id="selectWatchLiveCount" resultType="java.lang.Integer">
+      select count(*) from fission_user_task_record where fission_id=#{fissionId} and task_id=4 and user_wx_union_id=#{userWxUnionId} and ongoing_data = 2
+    </select>
+
+
+    <select id="hasActivityBeginTask" resultType="integer" parameterType="com.tuanche.directselling.model.FissionUserTaskRecord">
+        SELECT
+        1
+        FROM
+        fission_user_task_record
+        WHERE
+        fission_id = #{fissionId}
+        AND user_wx_union_id = #{userWxUnionId}
+        AND task_id = #{taskId}
+        AND ongoing_data IN (1,2)
+        LIMIT 1
+    </select>
+
+    <select id="selectUserTaskRecordStat" resultType="com.tuanche.directselling.dto.FissionUserTaskRecordStatDto">
+        SELECT
+        share_wx_union_id,
+        task_id,
+        count(*) value
+        FROM
+        fission_user_task_record
+        where fission_id=#{fissionId}
+        <if test="channelId != null">
+            and channel=#{channelId}
+        </if>
+        and ongoing_data= 2
+        and delete_flag=0
+        and task_id in (2,3,4,5)
+        and share_wx_union_id in
+        <foreach collection="shareWxUnionIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        GROUP BY
+        share_wx_union_id,
+        task_id
+    </select>
+
+
+    <select id="selectFissionUserRewardRank" resultType="com.tuanche.directselling.dto.FissionUserRewardRankDto">
+        SELECT
+        fur.user_wx_union_id,
+        fu.nick_name,
+        sum( fur.reward_amount ) reward_amount
+        FROM
+        fission_user_reward fur
+        LEFT JOIN fission_user fu ON fur.user_wx_union_id = fu.user_wx_union_id and fu.fission_id=fur.fission_id
+        <if test="channelId != null">
+            LEFT JOIN fission_user_task_record futr ON futr.id = fur.task_record_id and futr.fission_id=fur.fission_id
+        </if>
+        WHERE
+        fur.fission_id = #{fissionId} and fur.payment_or_not=1
+        <if test="channelId != null">
+            and futr.channel=#{channelId} and futr.ongoing_data = 2
+        </if>
+        GROUP BY
+        fur.user_wx_union_id
+        ORDER BY
+        reward_amount DESC
+        LIMIT 10
+    </select>
+
+
+    <insert id="insertFissionUserTaskRecord" parameterType="com.tuanche.directselling.model.FissionUserTaskRecord" keyProperty="id" useGeneratedKeys="true">
+        insert into fission_user_task_record
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="fissionId != null" >
+                fission_id,
+            </if>
+            <if test="saleWxUnionId != null" >
+                sale_wx_union_id,
+            </if>
+            <if test="shareWxUnionId != null" >
+                share_wx_union_id,
+            </if>
+            <if test="userWxUnionId != null" >
+                user_wx_union_id,
+            </if>
+            <if test="taskId != null" >
+                task_id,
+            </if>
+            <if test="source != null" >
+                source,
+            </if>
+            <if test="ongoingData != null" >
+                ongoing_data,
+            </if>
+            <if test="channel != null" >
+                channel,
+            </if>
+            <if test="ip != null" >
+                ip,
+            </if>
+            <if test="deleteFlag != null" >
+                delete_flag,
+            </if>
+            <if test="createDt != null" >
+                create_dt,
+            </if>
+            <if test="updateDt != null" >
+                update_dt,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="fissionId != null" >
+                #{fissionId,jdbcType=INTEGER},
+            </if>
+            <if test="saleWxUnionId != null" >
+                #{saleWxUnionId,jdbcType=CHAR},
+            </if>
+            <if test="shareWxUnionId != null" >
+                #{shareWxUnionId,jdbcType=CHAR},
+            </if>
+            <if test="userWxUnionId != null" >
+                #{userWxUnionId,jdbcType=CHAR},
+            </if>
+            <if test="taskId != null" >
+                #{taskId,jdbcType=INTEGER},
+            </if>
+            <if test="source != null" >
+                #{source,jdbcType=TINYINT},
+            </if>
+            <if test="ongoingData != null" >
+                #{ongoingData,jdbcType=INTEGER},
+            </if>
+            <if test="channel != null" >
+                #{channel,jdbcType=INTEGER},
+            </if>
+            <if test="ip != null" >
+                #{ip,jdbcType=VARCHAR},
+            </if>
+            <if test="deleteFlag != null" >
+                #{deleteFlag,jdbcType=BIT},
+            </if>
+            <if test="createDt != null" >
+                #{createDt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateDt != null" >
+                #{updateDt,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+
+    <select id="selectSubscribeLiveUserCountStatistic" resultType="com.tuanche.directselling.dto.FissionStatisticIntDto">
+        SELECT
+        a.fission_id,
+        count( DISTINCT a.user_wx_union_id ) as value
+        FROM
+        fission_user_task_record a
+        INNER JOIN fission_user_task_record b ON a.user_wx_union_id = b.user_wx_union_id
+        AND a.fission_id = b.fission_id
+        WHERE
+        a.task_id = 2
+        AND b.task_id = 4
+        AND a.ongoing_data = 2
+        AND b.ongoing_data = 2
+        AND a.delete_flag = 0
+        AND b.delete_flag = 0
+        <if test="channel != null">
+            AND a.channel = #{channel}
+            AND b.channel = #{channel}
+        </if>
+        <if test="saleWxOpenId != null and saleWxOpenId != ''">
+            <choose>
+                <when test="saleWxOpenId == 'isNull'">
+                    and a.sale_wx_union_id is null
+                </when>
+                <when test="saleWxOpenId == 'isEqualsShare'">
+                    and a.sale_wx_union_id=a.share_wx_union_id
+                </when>
+                <when test="saleWxOpenId == 'isNotEqualsShare'">
+                    and a.sale_wx_union_id!=a.share_wx_union_id
+                </when>
+                <otherwise>
+                    and a.sale_wx_union_id is not null
+                </otherwise>
+            </choose>
+        </if>
+        <if test="shareWxOpenId != null and shareWxOpenId != ''">
+            <choose>
+                <when test="shareWxOpenId == 'isNull'">
+                    and a.share_wx_union_id is null
+                </when>
+                <otherwise>
+                    and a.share_wx_union_id is not null
+                </otherwise>
+            </choose>
+        </if>
+        <if test="userWxOpenId != null and userWxOpenId != ''">
+            <choose>
+                <when test="userWxOpenId == 'isNull'">
+                    and a.user_wx_union_id is null
+                </when>
+                <otherwise>
+                    and a.user_wx_union_id is not null
+                </otherwise>
+            </choose>
+        </if>
+        <if test="saleWxOpenId != null and saleWxOpenId != ''">
+            <choose>
+                <when test="saleWxOpenId == 'isNull'">
+                    and b.sale_wx_union_id is null
+                </when>
+                <when test="saleWxOpenId == 'isEqualsShare'">
+                    and b.sale_wx_union_id=b.share_wx_union_id
+                </when>
+                <when test="saleWxOpenId == 'isNotEqualsShare'">
+                    and b.sale_wx_union_id!=b.share_wx_union_id
+                </when>
+                <otherwise>
+                    and b.sale_wx_union_id is not null
+                </otherwise>
+            </choose>
+        </if>
+        <if test="shareWxOpenId != null and shareWxOpenId != ''">
+            <choose>
+                <when test="shareWxOpenId == 'isNull'">
+                    and b.share_wx_union_id is null
+                </when>
+                <otherwise>
+                    and b.share_wx_union_id is not null
+                </otherwise>
+            </choose>
+        </if>
+        <if test="userWxOpenId != null and userWxOpenId != ''">
+            <choose>
+                <when test="userWxOpenId == 'isNull'">
+                    and b.user_wx_union_id is null
+                </when>
+                <otherwise>
+                    and b.user_wx_union_id is not null
+                </otherwise>
+            </choose>
+        </if>
+        and a.fission_id = #{fissionId}
+    </select>
+
+
+    <select id="selectDistinctUserTaskRecordStat" resultType="com.tuanche.directselling.dto.FissionUserTaskRecordStatDto">
+        SELECT
+        share_wx_union_id,
+        task_id,
+        count(distinct user_wx_union_id) value
+        FROM
+        fission_user_task_record
+        where fission_id=#{fissionId}
+        <if test="channelId != null">
+            and channel=#{channelId}
+        </if>
+        and ongoing_data = 2
+        and delete_flag=0
+        and task_id=1
+        and share_wx_union_id in
+        <foreach collection="shareWxUnionIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        GROUP BY
+        share_wx_union_id
+    </select>
+
+    <select id="selectStatisticData" resultType="com.tuanche.directselling.dto.FissionStatisticIntDto">
+        SELECT fission_id,
+        <choose>
+            <when test="distinctType != null and distinctType == 'sale'">
+                count(DISTINCT sale_wx_union_id) AS value
+            </when>
+            <when test="distinctType != null and distinctType == 'share'">
+                count(DISTINCT share_wx_union_id) AS value
+            </when>
+            <when test="distinctType != null and distinctType == 'user'">
+                count(DISTINCT user_wx_union_id) AS value
+            </when>
+            <otherwise>
+                count(*) AS value
+            </otherwise>
+        </choose>
+        FROM fission_user_task_record WHERE delete_flag=0 and task_id=#{taskId} and ongoing_data = 2
+        <if test="source != null">
+            and source=#{source}
+        </if>
+        <if test="channel != null">
+            and channel=#{channel}
+        </if>
+        <if test="saleWxOpenId != null and saleWxOpenId != ''">
+            <choose>
+                <when test="saleWxOpenId == 'isNull'">
+                    and sale_wx_union_id is null
+                </when>
+                <when test="saleWxOpenId == 'isEqualsShare'">
+                    and sale_wx_union_id=share_wx_union_id
+                </when>
+                <when test="saleWxOpenId == 'isNotEqualsShare'">
+                    and sale_wx_union_id!=share_wx_union_id
+                </when>
+                <otherwise>
+                    and sale_wx_union_id is not null
+                </otherwise>
+            </choose>
+        </if>
+        <if test="shareWxOpenId != null and shareWxOpenId != ''">
+            <choose>
+                <when test="shareWxOpenId == 'isNull'">
+                    and share_wx_union_id is null
+                </when>
+                <otherwise>
+                    and share_wx_union_id is not null
+                </otherwise>
+            </choose>
+        </if>
+        <if test="userWxOpenId != null and userWxOpenId != ''">
+            <choose>
+                <when test="userWxOpenId == 'isNull'">
+                    and user_wx_union_id is null
+                </when>
+                <otherwise>
+                    and user_wx_union_id is not null
+                </otherwise>
+            </choose>
+        </if>
+        and fission_id = #{fissionId}
+    </select>
+    <!-- 获取第一个非自然渠道记录 -->
+    <select id="getFirstUnnaturalChannel" resultMap="BaseResultMap" parameterType="com.tuanche.directselling.model.FissionUserTaskRecord">
+        SELECT
+            sale_wx_union_id,share_wx_union_id,channel
+        FROM
+            fission_user_task_record
+        WHERE
+            fission_id = #{fissionId}
+          AND user_wx_union_id = #{userWxUnionId}
+          AND channel > 1
+        ORDER BY id ASC
+            LIMIT 1
+    </select>
+</mapper>

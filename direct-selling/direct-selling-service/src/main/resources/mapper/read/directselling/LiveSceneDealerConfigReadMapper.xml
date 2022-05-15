@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.LiveSceneDealerConfigReadMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.LiveSceneDealerConfig">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="periods_id" jdbcType="INTEGER" property="periodsId" />
+    <result column="scene_id" jdbcType="INTEGER" property="sceneId" />
+    <result column="dealer_id" jdbcType="INTEGER" property="dealerId" />
+    <result column="dealer_name" jdbcType="VARCHAR" property="dealerName" />
+    <result column="contract_dealer_name" jdbcType="VARCHAR" property="contractDealerName" />
+    <result column="ensure_size" jdbcType="INTEGER" property="ensureSize" />
+    <result column="create_user_id" jdbcType="INTEGER" property="createUserId" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="create_dt" jdbcType="TIMESTAMP" property="createDt" />
+    <result column="update_user_id" jdbcType="INTEGER" property="updateUserId" />
+    <result column="update_user_name" jdbcType="VARCHAR" property="updateUserName" />
+    <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
+    <result column="delete_state" jdbcType="BIT" property="deleteState" />
+    <result column="extension_code" jdbcType="VARCHAR" property="extensionCode" />
+    <result column="dealer_name" jdbcType="VARCHAR" property="dealerName" />
+    <result column="refueling_card_num" jdbcType="INTEGER" property="refuelingCardNum" />
+  </resultMap>
+  <resultMap id="BaseResultMapDto" type="com.tuanche.directselling.dto.LiveSceneDealerConfigDto" extends="BaseResultMap">
+      <collection property="dealerBrandList" javaType="ArrayList"
+                  column="{sceneId=scene_id,dealerId=dealer_id}" ofType="com.tuanche.directselling.model.LiveSceneDealerBrand"
+                  select="com.tuanche.directselling.mapper.read.directselling.LiveSceneDealerBrandReadMapper.selectBrandByDealerAndScene"></collection>
+  </resultMap>
+  <resultMap id="LiveSceneDealerConfigDto" type="com.tuanche.directselling.dto.LiveSceneDealerConfigDto" extends="BaseResultMap">
+      <result column="presentedCardNum" property="presentedCardNum"  jdbcType="INTEGER"></result>
+      <result column="city_id" property="cityId"  jdbcType="INTEGER"></result>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, periods_id, scene_id, dealer_id, dealer_name, ensure_size, create_user_id, create_user_name,extension_code,
+    create_dt, update_user_id, update_user_name, update_dt, delete_state,dealer_name,refueling_card_num, contract_dealer_name
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from live_scene_dealer_config
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectByLiveSceneDealerConfig" parameterType="com.tuanche.directselling.model.LiveSceneDealerConfig" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from live_scene_dealer_config
+    where delete_state = 0
+    <if test="sceneId != null">
+      and scene_id = #{sceneId,jdbcType=INTEGER}
+    </if>
+    <if test="dealerId != null">
+      and dealer_id = #{dealerId,jdbcType=INTEGER}
+    </if>
+  </select>
+  <select id="selectByLiveSceneDealerConfigCount" parameterType="com.tuanche.directselling.model.LiveSceneDealerConfig" resultType="int">
+    select count(id) from live_scene_dealer_config
+    where delete_state = 0
+    <if test="periodsId != null">
+      and periods_id = #{periodsId,jdbcType=INTEGER}
+    </if>
+    <if test="sceneId != null">
+      and scene_id = #{sceneId,jdbcType=INTEGER}
+    </if>
+    <if test="dealerId != null">
+      and dealer_id = #{dealerId,jdbcType=INTEGER}
+    </if>
+  </select>
+    <!-- 获取场次活动经销商配置列表 -->
+  <select id="getLiveSceneDealerConfigList" resultMap="LiveSceneDealerConfigDto" parameterType="com.tuanche.directselling.vo.LiveSceneDealerConfigVo">
+      SELECT
+          t1.id, t1.periods_id, t1.scene_id, t1.dealer_id, t1.dealer_name, t1.ensure_size, t1.create_user_id, t1.create_user_name,
+          t1.create_dt, t1.update_user_id, t1.update_user_name, t1.update_dt, t1.delete_state,t1.dealer_name,t1.refueling_card_num,
+          t3.city_id
+        FROM live_scene_dealer_config t1
+        LEFT JOIN live_scene t3 ON t3.id = t1.scene_id
+      <where>
+          <if test="periodsId != null">
+              AND t1.periods_id = #{periodsId}
+          </if>
+          <if test="dealerName != null and dealerName != ''">
+              AND t1.dealer_name LIKE CONCAT('%',#{dealerName},'%')
+          </if>
+          <if test="cityId != null">
+              AND t3.city_id = #{cityId}
+          </if>
+          <if test="sceneId != null">
+              AND t1.scene_id = #{sceneId}
+          </if>
+          AND t1.delete_state = 0
+      </where>
+  </select>
+    <!-- 经销商油卡统计 -->
+  <select id="getDealerRefuelCardStatistics" resultMap="LiveSceneDealerConfigDto" parameterType="com.tuanche.directselling.vo.LiveSceneDealerConfigVo">
+      SELECT
+      <include refid="Base_Column_List" />,
+      (SELECT COUNT(*)
+               FROM gift_refuelingcard_giftrecord_cards t4
+              WHERE t4.giftrecord_id IN
+             (SELECT t3.id FROM gift_refuelingcard_giftrecord t3 WHERE t3.dealer_id = t1.dealer_id)) AS presentedCardNum
+        FROM live_scene_dealer_config t1
+      <where>
+          <if test="periodsId != null">
+              AND t1.periods_id = #{periodsId}
+          </if>
+          <if test="dealerName != null and dealerName != ''">
+              AND t1.dealer_name LIKE CONCAT('%',#{dealerName},'%')
+          </if>
+          AND t1.delete_state = 0
+      </where>
+  </select>
+    <!-- 获取经销商参加过直播活动的大场次 -->
+  <select id="getDealerPeriods" resultMap="LiveSceneDealerConfigDto" parameterType="integer">
+      SELECT
+          DISTINCT periods_id
+      FROM
+          live_scene_dealer_config
+      WHERE
+          dealer_id = #{dealerId}
+  </select>
+    <!-- 获取经销商的赠送油卡活动信息 -->
+  <select id="getDealerRefuelCarActivityInfo" resultType="com.tuanche.directselling.dto.DealerRefuelCarActivityInfoDto" parameterType="com.tuanche.directselling.model.LiveSceneDealerConfig">
+      SELECT
+          t2.periods_id AS periodsId,
+          t2.periods_name AS periodsName,
+          t2.begin_time AS beginTime,
+          t2.end_time AS endTime,
+          t1.dealer_id,
+          t1.refueling_card_num AS refuelingCardNum,
+          (SELECT COUNT(*)
+           FROM gift_refuelingcard_giftrecord_cards t4
+           WHERE t4.giftrecord_id IN
+                 (SELECT t3.id FROM gift_refuelingcard_giftrecord t3 WHERE t3.dealer_id = t1.dealer_id AND t3.periods_id = #{periodsId})) AS presentedCardNum
+      FROM live_scene_dealer_config t1
+               LEFT JOIN gift_refuelingcard_periods t2 ON t2.periods_id = t1.periods_id AND t2.delete_flag=0
+      WHERE t1.dealer_id = #{dealerId}
+        AND t1.periods_id = #{periodsId}
+      ORDER BY t1.refueling_card_num DESC LIMIT 1
+  </select>
+
+  <select id="selectSceneDealerConfigList" parameterType="java.lang.Integer" resultMap="BaseResultMapDto">
+    select
+    <include refid="Base_Column_List" />
+    from live_scene_dealer_config
+    where delete_state = 0 and scene_id = #{sceneId,jdbcType=INTEGER}
+  </select>
+</mapper>

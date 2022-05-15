@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.AfterSaleBrandReadMapper">
+    <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.AfterSaleBrand">
+        <!--@mbg.generated-->
+        <!--@Table after_sale_brand-->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="original_brand_name" jdbcType="VARCHAR" property="originalBrandName"/>
+        <result column="brand_id" jdbcType="INTEGER" property="brandId"/>
+        <result column="brand_name" jdbcType="VARCHAR" property="brandName"/>
+        <result column="delete_flag" jdbcType="BOOLEAN" property="deleteFlag"/>
+        <result column="create_dt" jdbcType="TIMESTAMP" property="createDt"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, original_brand_name, brand_id, brand_name, delete_flag, create_dt
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from after_sale_brand
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        <!--@mbg.generated-->
+        delete from after_sale_brand
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.tuanche.directselling.model.AfterSaleBrand"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into after_sale_brand (original_brand_name, brand_id, brand_name,
+        delete_flag, create_dt)
+        values (#{originalBrandName,jdbcType=VARCHAR}, #{brandId,jdbcType=INTEGER}, #{brandName,jdbcType=VARCHAR},
+        #{deleteFlag,jdbcType=BOOLEAN}, #{createDt,jdbcType=TIMESTAMP})
+    </insert>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id"
+            parameterType="com.tuanche.directselling.model.AfterSaleBrand" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into after_sale_brand
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="originalBrandName != null">
+                original_brand_name,
+            </if>
+            <if test="brandId != null">
+                brand_id,
+            </if>
+            <if test="brandName != null">
+                brand_name,
+            </if>
+            <if test="deleteFlag != null">
+                delete_flag,
+            </if>
+            <if test="createDt != null">
+                create_dt,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="originalBrandName != null">
+                #{originalBrandName,jdbcType=VARCHAR},
+            </if>
+            <if test="brandId != null">
+                #{brandId,jdbcType=INTEGER},
+            </if>
+            <if test="brandName != null">
+                #{brandName,jdbcType=VARCHAR},
+            </if>
+            <if test="deleteFlag != null">
+                #{deleteFlag,jdbcType=BOOLEAN},
+            </if>
+            <if test="createDt != null">
+                #{createDt,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.AfterSaleBrand">
+        <!--@mbg.generated-->
+        update after_sale_brand
+        <set>
+            <if test="originalBrandName != null">
+                original_brand_name = #{originalBrandName,jdbcType=VARCHAR},
+            </if>
+            <if test="brandId != null">
+                brand_id = #{brandId,jdbcType=INTEGER},
+            </if>
+            <if test="brandName != null">
+                brand_name = #{brandName,jdbcType=VARCHAR},
+            </if>
+            <if test="deleteFlag != null">
+                delete_flag = #{deleteFlag,jdbcType=BOOLEAN},
+            </if>
+            <if test="createDt != null">
+                create_dt = #{createDt,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.tuanche.directselling.model.AfterSaleBrand">
+        <!--@mbg.generated-->
+        update after_sale_brand
+        set original_brand_name = #{originalBrandName,jdbcType=VARCHAR},
+        brand_id = #{brandId,jdbcType=INTEGER},
+        brand_name = #{brandName,jdbcType=VARCHAR},
+        delete_flag = #{deleteFlag,jdbcType=BOOLEAN},
+        create_dt = #{createDt,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="selectByOriginalBrandName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from after_sale_brand where original_brand_name=#{originalBrandName}
+    </select>
+
+    <select id="selectByOriginalName" resultType="com.tuanche.directselling.dto.AfterSaleBrandCarSeriesDto">
+        SELECT
+        b.brand_id,
+        b.brand_name,
+        s.car_series_id,
+        s.car_series_name
+        FROM
+        after_sale_brand b
+        LEFT JOIN after_sale_car_series s ON b.brand_id = s.brand_id
+        where original_brand_name=#{originalBrandName} and original_car_series_name=#{originalCarSeriesName} limit 1
+    </select>
+</mapper>

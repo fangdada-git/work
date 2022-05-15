@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.FissionUserWriteMapper" >
+    <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FissionUser" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="fission_id" property="fissionId" jdbcType="INTEGER" />
+        <result column="user_wx_open_id" property="userWxOpenId" jdbcType="CHAR" />
+        <result column="user_wx_union_id" property="userWxUnionId" jdbcType="CHAR" />
+        <result column="nick_name" property="nickName" jdbcType="VARCHAR" />
+        <result column="user_wx_head" property="userWxHead" jdbcType="VARCHAR" />
+        <result column="city_id" property="cityId" jdbcType="INTEGER" />
+        <result column="delete_flag" property="deleteFlag" jdbcType="BIT" />
+        <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+        <result column="update_dt" property="updateDt" jdbcType="TIMESTAMP" />
+    </resultMap>
+    <!-- 用户是否存在于裂变活动中 主从同步可能没有这么及时，因此从写库查 -->
+    <select id="userExistInFissionId" resultType="integer" parameterType="com.tuanche.directselling.model.FissionUser" >
+        SELECT 1 FROM fission_user WHERE fission_id = #{fissionId} AND user_wx_union_id = #{userWxUnionId} LIMIT 1;
+    </select>
+    <!-- 获取裂变活动用户信息 -->
+    <select id="getFissionUser" resultMap="BaseResultMap" parameterType="com.tuanche.directselling.model.FissionUser">
+        SELECT
+            *
+        FROM
+            fission_user
+        WHERE
+            user_wx_union_id = #{userWxUnionId}
+          AND fission_id = #{fissionId}
+            LIMIT 1
+    </select>
+  <insert id="insertFissionUser" parameterType="com.tuanche.directselling.model.FissionUser" useGeneratedKeys="true" keyProperty="id">
+      insert into fission_user
+      <trim prefix="(" suffix=")" suffixOverrides="," >
+          <if test="id != null" >
+              id,
+          </if>
+          <if test="fissionId != null" >
+              fission_id,
+          </if>
+          <if test="userWxOpenId != null" >
+              user_wx_open_id,
+          </if>
+          <if test="userWxUnionId != null" >
+              user_wx_union_id,
+          </if>
+          <if test="nickName != null" >
+              nick_name,
+          </if>
+          <if test="userWxHead != null" >
+              user_wx_head,
+          </if>
+          <if test="cityId != null" >
+              city_id,
+          </if>
+          <if test="deleteFlag != null" >
+              delete_flag,
+          </if>
+          <if test="createDt != null" >
+              create_dt,
+          </if>
+          <if test="updateDt != null" >
+              update_dt,
+          </if>
+      </trim>
+      <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+          #{id,jdbcType=INTEGER},
+      </if>
+      <if test="fissionId != null" >
+          #{fissionId,jdbcType=INTEGER},
+      </if>
+      <if test="userWxOpenId != null" >
+          #{userWxOpenId,jdbcType=CHAR},
+      </if>
+      <if test="userWxUnionId != null" >
+          #{userWxUnionId,jdbcType=CHAR},
+      </if>
+      <if test="nickName != null" >
+          #{nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="userWxHead != null" >
+          #{userWxHead,jdbcType=VARCHAR},
+      </if>
+      <if test="cityId != null" >
+          #{cityId,jdbcType=INTEGER},
+      </if>
+      <if test="deleteFlag != null" >
+          #{deleteFlag,jdbcType=BIT},
+      </if>
+      <if test="createDt != null" >
+          #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDt != null" >
+          #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+      </trim>
+  </insert>
+  <update id="updateFissionUser" parameterType="com.tuanche.directselling.model.FissionUser" >
+      update fission_user
+      <set >
+          <if test="fissionId != null" >
+              fission_id = #{fissionId,jdbcType=INTEGER},
+          </if>
+          <if test="userWxOpenId != null" >
+              user_wx_open_id = #{userWxOpenId,jdbcType=CHAR},
+          </if>
+          <if test="userWxUnionId != null" >
+              user_wx_union_id = #{userWxUnionId,jdbcType=CHAR},
+          </if>
+          <if test="nickName != null" >
+              nick_name = #{nickName,jdbcType=VARCHAR},
+          </if>
+          <if test="userWxHead != null" >
+              user_wx_head = #{userWxHead,jdbcType=VARCHAR},
+          </if>
+          <if test="cityId != null" >
+              city_id = #{cityId,jdbcType=INTEGER},
+          </if>
+          <if test="deleteFlag != null" >
+              delete_flag = #{deleteFlag,jdbcType=BIT},
+          </if>
+          <if test="createDt != null" >
+              create_dt = #{createDt,jdbcType=TIMESTAMP},
+          </if>
+          <if test="updateDt != null" >
+              update_dt = #{updateDt,jdbcType=TIMESTAMP},
+          </if>
+      </set>
+      where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

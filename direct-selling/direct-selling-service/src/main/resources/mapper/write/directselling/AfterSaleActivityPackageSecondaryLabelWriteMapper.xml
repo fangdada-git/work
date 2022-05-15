@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.AfterSaleActivityPackageSecondaryLabelWriteMapper" >
+    <update id="delByIds" >
+        update after_sale_activity_package_secondary_label
+        set delete_flag = 1
+        where id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+    <!-- 批量新增 -->
+    <insert id="batchInsert"  >
+        insert into after_sale_activity_package_secondary_label (primary_label_id, label_name,create_name)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            ( #{item.primaryLabelId,jdbcType=INTEGER}, #{item.labelName,jdbcType=VARCHAR}, #{item.createName,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+
+    <update id="batchUpdate" >
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+        update after_sale_activity_package_secondary_label
+        set
+            label_name = #{item.labelName,jdbcType=VARCHAR},
+            update_name = #{item.updateName,jdbcType=VARCHAR}
+        where id = #{item.id,jdbcType=INTEGER} and primary_label_id=#{item.primaryLabelId}
+        </foreach>
+    </update>
+
+</mapper>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.FissionUserEffectiveTaskReadMapper" >
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FissionUserEffectiveTask" >
+      <id column="id" property="id" jdbcType="BIGINT" />
+      <result column="fission_id" property="fissionId" jdbcType="INTEGER" />
+      <result column="sale_wx_union_id" property="saleWxUnionId" jdbcType="CHAR" />
+      <result column="share_wx_union_id" property="shareWxUnionId" jdbcType="CHAR" />
+      <result column="user_wx_union_id" property="userWxUnionId" jdbcType="CHAR" />
+      <result column="task_id" property="taskId" jdbcType="INTEGER" />
+      <result column="sharer_is_sale" property="sharerIsSale" jdbcType="BIT" />
+      <result column="task_record_id" property="taskRecordId" jdbcType="BIGINT" />
+      <result column="delete_flag" property="deleteFlag" jdbcType="BIT" />
+      <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+      <result column="update_dt" property="updateDt" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+    <!-- 用户是否完成了某一些任务 -->
+    <select id="taskIsCompletedInFission" resultType="integer" >
+        SELECT
+            1
+         FROM fission_user_effective_task
+        WHERE user_wx_union_id = #{userWxUnionId}
+          AND fission_id = #{fissionId}
+        <if test="taskIds != null">
+            AND task_id IN
+            <foreach collection="taskIds" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+          AND delete_flag = 0
+          LIMIT 1
+    </select>
+    <!-- 统计销售的每一项任务的总积分 -->
+    <select id="statisticsSaleTaskIntegrals" parameterType="list" resultType="com.tuanche.directselling.model.FissionSaleTaskStatistics">
+        SELECT
+            t1.fission_id AS fissionId,
+            t1.sale_wx_union_id AS saleWxUnionId,
+            t1.task_id AS taskId,
+            t1.finish_task_total AS finishTaskTotal,
+            t1.finish_task_total*t2.award AS taskIntegral,
+            t1.finish_task_total >=t2.award_rule  AS whetherCompleteTask
+        FROM (
+                 SELECT
+                     t.fission_id,
+                     t.sale_wx_union_id,
+                     COUNT(t.task_id) AS finish_task_total,
+                     t.task_id
+                 FROM
+                     `fission_user_effective_task` t
+                 WHERE  t.delete_flag = 0
+                <if test="fissionIds != null">
+                    AND t.fission_id IN
+                    <foreach collection="fissionIds" index="index" item="item" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                </if>
+                 GROUP BY
+                     t.fission_id,
+                     t.sale_wx_union_id,
+                     t.task_id
+             ) t1
+        LEFT JOIN fission_award_rule t2 ON t2.fission_id = t1.fission_id AND t2.task_code = t1.task_id AND t2.rule_type = 1
+        WHERE t1.sale_wx_union_id IS NOT NULL
+</select>
+
+    <select id="selectShareTaskCount" parameterType="com.tuanche.directselling.model.FissionUserEffectiveTask" resultType="java.lang.Integer">
+        SELECT
+            count(id)
+        FROM
+            fission_user_effective_task
+        WHERE
+            delete_flag = 0
+            AND fission_id = #{fissionId}
+            AND share_wx_union_id = #{shareWxUnionId}
+            AND task_id =1;
+    </select>
+</mapper>

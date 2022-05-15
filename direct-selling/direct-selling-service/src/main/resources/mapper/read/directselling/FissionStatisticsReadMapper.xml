@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.FissionStatisticsReadMapper">
+
+    <select id="selectPrizePool" resultType="com.tuanche.directselling.dto.FissionStatisticBigDecimalDto">
+        select fission_id,prize_pool as value from fission_award_rule where rule_type=#{ruleType} and fission_id = #{fissionId} limit 1
+    </select>
+
+    <select id="selectTotalIntegral" resultType="com.tuanche.directselling.dto.FissionStatisticIntDto">
+        select fission_id,sum(task_integral) as value from fission_sale where delete_flag=0 and fission_id = #{fissionId}
+    </select>
+
+    <select id="selectSaleCount" resultType="com.tuanche.directselling.dto.FissionStatisticIntDto">
+        select fission_id,count(*) as value from fission_sale where delete_flag=0
+        <if test="whetherCompleteTask != null">
+            and whether_complete_task=#{whetherCompleteTask}
+        </if>
+        and fission_id =#{fissionId}
+    </select>
+
+    <select id="selectMinMaxIncome" resultType="com.tuanche.directselling.dto.FissionActivityIncomeDto">
+        SELECT
+            fission_id,
+            max( estimated_income ) AS max_estimated_income,
+            max( real_income ) AS max_real_income,
+            min( estimated_income ) AS min_estimated_income,
+            min( real_income ) AS min_real_income,
+            max(calculation_real_income) AS is_finished
+        FROM
+            fission_sale
+        WHERE
+            delete_flag=0 and fission_id =#{fissionId}
+    </select>
+
+    <select id="selectStatNotGenerate" resultType="com.tuanche.directselling.model.FissionActivity">
+        select id,start_time,end_time from fission_activity where delete_flag=0 and stat_generate&amp;#{statGenerate}=0
+        <if test="fissionId != null">
+            and id&gt;#{fissionId}
+        </if>
+        limit #{limit}
+    </select>
+
+    <select id="selectIssued" resultType="com.tuanche.directselling.dto.FissionStatisticBigDecimalDto">
+        select fission_id,sum(reward_amount) as value from fission_user_reward where payment_or_not=1 and fission_id = #{fissionId}
+    </select>
+
+    <select id="selectCustomerCount" resultType="com.tuanche.directselling.dto.FissionStatisticIntDto">
+        select fission_id,count(distinct user_wx_union_id) as value from fission_user_reward where payment_or_not=1 and fission_id = #{fissionId}
+    </select>
+
+    <select id="selectPrizeActualByFissionId" resultType="com.tuanche.directselling.dto.FissionStatisticBigDecimalDto">
+        select fission_id,sum(real_income) as value from fission_sale where delete_flag=0 and whether_complete_task=1 and financial_audit_status in (1,2)
+        <if test="fissionId != null">
+            and fission_id=#{fissionId}
+        </if>
+        <if test="withdrawalBeginTime != null">
+            and withdrawal_time &gt; #{withdrawalBeginTime}
+        </if>
+        <if test="withdrawalEndTime != null">
+            and withdrawal_time &lt; #{withdrawalEndTime}
+        </if>
+    </select>
+</mapper>

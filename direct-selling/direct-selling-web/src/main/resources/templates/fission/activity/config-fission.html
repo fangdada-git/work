@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>团车直卖-裂变活动表单</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.js"></script>
+    <script src="/layui/js/formSelects-v4.js"></script>
+    <script src="/common/js/tools.js"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/layui/css/formSelects-v4.css" media="all">
+    <style>
+        .label-close-icon {
+            vertical-align: bottom;
+            margin-left: -8px;
+            font-size: 18px;
+            position: absolute;
+            top: -8px;
+            cursor: pointer;
+            z-index: 100;
+        }
+        .layui-input {
+            width: 300px;
+        }
+        .layui-form-select {
+            width: 300px;
+        }
+        .xm-form-select {
+            min-width: 300px;
+        }
+        .layui-form-label {
+            width: 100px;
+        }
+        .layui-input-block {
+            margin-left: 138px;
+        }
+        .layui-upload-img{
+            width: 200px;
+            height: 200px;
+        }
+        .layui-form-label{
+            width: 105px;
+        }
+    </style>
+</head>
+<body class="childrenBody">
+<form class="layui-form" style="background-color:#ffffff" lay-filter="fissionActivityForm">
+    <div class="layui-form-item">
+        <input name="headPicUrl" id="headPicUrl" th:value="${fissionActivity.headPicUrl}"   lay-verify="required" style="display: none">
+        <label class="layui-form-label">上传头图<span style="color: red;top: 14px;position: absolute">&nbsp;*</span></label>
+        <div class="layui-upload-drag" id="uploadHeadImg">
+            <div th:if="${fissionActivity.headPicUrl != null}">
+                <div id="uploadHeadImgView">
+                    <hr>
+                    <img th:src="${fissionActivity.headPicUrl}" alt="上传成功后渲染"  style="max-width: 196px">
+                    <p id="tipText"></p>
+                </div>
+            </div>
+            <div th:if="${fissionActivity.headPicUrl == null}">
+                <i class="layui-icon"></i>
+                <p>点击上传，或将文件拖拽到此处</p>
+                <div  class="layui-hide" id="uploadHeadImgView">
+                    <hr>
+                    <img  alt="上传成功后渲染"  style="max-width: 196px">
+                    <p id="tipText"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <input name="sharePicUrl" id="sharePicUrl" th:value="${fissionActivity.sharePicUrl}"  style="display: none">
+        <label class="layui-form-label">上传分享图</label>
+        <div class="layui-upload-drag" id="uploadSharePic">
+            <div th:if="${fissionActivity.sharePicUrl != null && fissionActivity.sharePicUrl != ''}">
+                <div id="uploadSharePicView">
+                    <hr>
+                    <img th:src="${fissionActivity.sharePicUrl}" alt="上传成功后渲染"  style="max-width: 196px">
+                    <p id="tipText"></p>
+                </div>
+            </div>
+            <div th:if="${fissionActivity.sharePicUrl == null || fissionActivity.sharePicUrl == ''}">
+                <i class="layui-icon"></i>
+                <p>点击上传，或将文件拖拽到此处</p>
+                <div  class="layui-hide" id="uploadSharePicView">
+                    <hr>
+                    <img  alt="上传成功后渲染"  style="max-width: 196px">
+                    <p id="tipText"></p>
+                </div>
+            </div>
+        </div>
+        <i th:if="${fissionActivity.sharePicUrl != null && fissionActivity.sharePicUrl != ''}"
+           onclick='removeShareUrl()' id="remsharePicUrl" class="layui-icon layui-icon-delete" style="font-size: 30px"
+           data-idx=""></i>
+    </div>
+    <div class="layui-form-item" style="width: 100%;">
+        <label class="layui-form-label">详情图<span style="color: red;top: 14px;position: absolute">&nbsp;*</span></label>
+        <input name="detailPicUrl1" id="detailPicUrl1" th:value="${fissionActivity.detailPicUrl1}" style="display: none">
+        <input name="detailPicUrl2" id="detailPicUrl2" th:value="${fissionActivity.detailPicUrl2}"  style="display: none">
+        <input name="detailPicUrl3" id="detailPicUrl3" th:value="${fissionActivity.detailPicUrl3}" style="display: none">
+        <div class="layui-upload-drag" id="detailPic1">
+            <div th:if="${fissionActivity.detailPicUrl1 != null && fissionActivity.detailPicUrl1 != ''}">
+                <div id="detailPic1View">
+                    <hr>
+                    <img th:src="${fissionActivity.detailPicUrl1}" alt="上传成功后渲染"  style="max-width: 141px">
+                    <p id="tipText"></p>
+                </div>
+            </div>
+            <div th:if="${fissionActivity.detailPicUrl1 == null}">
+                <i class="layui-icon"></i>
+                <p>点击上传，或将文件拖拽到此处</p>
+                <div  class="layui-hide" id="detailPic1View">
+                    <hr>
+                    <img  alt="上传成功后渲染"  style="max-width: 141px">
+                    <p id="tipText"></p>
+                </div>
+            </div>
+        </div>
+        <div class="layui-upload-drag"  id="detailPic2">
+            <div th:if="${fissionActivity.detailPicUrl2 != null && fissionActivity.detailPicUrl2 != ''}">
+                <div id="detailPic2View">
+                    <hr>
+                    <img th:src="${fissionActivity.detailPicUrl2}" alt="上传成功后渲染"  style="max-width: 141px">
+                    <p id="tipText"></p>
+                </div>
+            </div>
+            <div th:if="${fissionActivity.detailPicUrl2 == null || fissionActivity.detailPicUrl2 == '' }">
+                <i class="layui-icon"></i>
+                <p>点击上传，或将文件拖拽到此处</p>
+                <div  class="layui-hide" id="detailPic2View">
+                    <hr>
+                    <img  alt="上传成功后渲染"  style="max-width: 141px">
+                    <p id="tipText"></p>
+                </div>
+            </div>
+        </div>
+        <i th:if="${fissionActivity.detailPicUrl2 != null && fissionActivity.detailPicUrl2 != ''}"
+           onclick='removePic2()' id="remPic2" class="layui-icon layui-icon-delete" style="font-size: 30px"
+           data-idx=""></i>
+        <div class="layui-upload-drag" id="detailPic3">
+            <div th:if="${fissionActivity.detailPicUrl3 != null && fissionActivity.detailPicUrl3 != ''}">
+                <div id="detailPic3View">
+                    <hr>
+                    <img th:src="${fissionActivity.detailPicUrl3}" alt="上传成功后渲染"  style="max-width: 141px">
+                    <p id="tipText"></p>
+                </div>
+            </div>
+            <div th:if="${fissionActivity.detailPicUrl3 == null || fissionActivity.detailPicUrl3 == ''}">
+                <i class="layui-icon"></i>
+                <p>点击上传，或将文件拖拽到此处</p>
+                <div  class="layui-hide" id="detailPic3View">
+                    <hr>
+                    <img  alt="上传成功后渲染"  style="max-width: 141px">
+                    <p id="tipText"></p>
+                </div>
+            </div>
+        </div>
+        <i th:if="${fissionActivity.detailPicUrl3 != null && fissionActivity.detailPicUrl3 != ''}"
+           onclick='removePic3()' id="remPic3" class="layui-icon layui-icon-delete" style="font-size: 30px"
+           data-idx=""></i>
+    </div>
+    <div class="layui-form-item" style="width: 488px;">
+        <label class="layui-form-label">上传海报图<span style="color: red;top: 14px;position: absolute">&nbsp;*</span></label>
+        <input name="posterUrl" th:value="${fissionActivity.posterUrl}" id="posterUrl"  style="display: none">
+        <div class="layui-upload-drag" id="posterPic">
+            <div th:if="${fissionActivity.posterUrl != null  && fissionActivity.posterUrl != ''}">
+                <div id="posterPicView">
+                    <hr>
+                    <img th:src="${fissionActivity.posterUrl}" alt="上传成功后渲染"  style="max-width: 196px">
+                    <p id="tipText"></p>
+                </div>
+            </div>
+            <div th:if="${fissionActivity.posterUrl == null || fissionActivity.posterUrl == ''}">
+                <i class="layui-icon"></i>
+                <p>点击上传，或将文件拖拽到此处</p>
+                <div  class="layui-hide" id="posterPicView">
+                    <hr>
+                    <img  alt="上传成功后渲染"  style="max-width: 196px">
+                    <p id="tipText"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item" style="width: 488px;">
+        <label class="layui-form-label">商品标题图<span style="color: red;top: 14px;position: absolute">&nbsp;*</span></label>
+        <input name="productTitleUrl" th:value="${fissionActivity.productTitleUrl}" id="productTitleUrl"  style="display: none">
+        <div class="layui-upload-drag" id="productTitlePic">
+            <div th:if="${fissionActivity.productTitleUrl != null}">
+                <div id="productTitleUrlView">
+                    <hr>
+                    <img th:src="${fissionActivity.productTitleUrl}" alt="上传成功后渲染"  style="max-width: 196px">
+                    <p id="tipText"></p>
+                </div>
+            </div>
+            <div th:if="${fissionActivity.productTitleUrl == null}">
+                <i class="layui-icon"></i>
+                <p>点击上传，或将文件拖拽到此处</p>
+                <div  class="layui-hide" id="productTitleUrlView">
+                    <hr>
+                    <img  alt="上传成功后渲染"  style="max-width: 196px">
+                    <p id="tipText"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item" style="width: 437px;">
+        <label class="layui-form-label">城市<span style="color: red;top: 14px;position: absolute">&nbsp;*</span></label>
+        <div class="layui-input-block">
+            <select name="citySelect" xm-select="citySelect" xm-select-search="" xm-select-search-type="dl">
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">预约直播是否需要留手机号<span style="color: red;top: 14px;position: absolute">&nbsp;*</span></label>
+        <div class="layui-input-block">
+            <input type="radio" name="reservePhone" value="1" title="是" th:field="${fissionActivity.reservePhone}" >
+            <input type="radio" name="reservePhone" value="0" title="否" th:field="${fissionActivity.reservePhone}">
+        </div>
+    </div>
+    <div class="layui-form-item" style="width: 437px;">
+        <label class="layui-form-label">页面商品</label>
+        <div class="layui-input-block" style="width: 350px;">
+            <select name="productSelect"  xm-select="productSelect" xm-select-search="" xm-select-search-type="dl" >
+                <!--<option value="">请选择商品</option>-->
+            </select>
+        </div>
+    </div>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
+        <legend>页面基数配置</legend>
+    </fieldset>
+    <div class="layui-form-item" >
+        <div class="layui-inline" style="width: 300px;">
+            <label class="layui-form-label">浏览人数：</label>
+            <div class="layui-input-block">
+                <input type="number" name="browseBase" id="browseBase" th:value="${fissionActivityData.browseBase}" lay-verify="required" style="width: 100px;" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline" style="width: 300px;">
+            <label class="layui-form-label" style="width: 130px;" >浏览人数系数：</label>
+            <div class="layui-input-block" >
+                <input type="number" name="browseCoefficient" id="browseCoefficient" th:value="${fissionActivityData.browseCoefficient != null?fissionActivityData.browseCoefficient:'1'}" lay-verify="required" style="width: 60px;" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-inline" style="width: 300px;">
+            <label class="layui-form-label">预约直播人数：</label>
+            <div class="layui-input-block">
+                <input type="number" name="subscribeBase" id="subscribeBase" th:value="${fissionActivityData.subscribeBase}" lay-verify="required" style="width: 100px;" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline" style="width: 300px;">
+            <label class="layui-form-label" style="width: 150px;">预约直播人数系数:</label>
+            <div class="layui-input-block">
+                <input type="number" name="subscribeCoefficient" id="subscribeCoefficient" th:value="${fissionActivityData.subscribeCoefficient!= null?fissionActivityData.subscribeCoefficient:'1'}" lay-verify="required" style="width: 60px;" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline" style="width: 300px;">
+            <label class="layui-form-label">已分享人数:</label>
+            <div class="layui-input-block">
+                <input type="number" name="shareBase" id="shareBase" lay-verify="required" th:value="${fissionActivityData.shareBase}" style="width: 100px;" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline" style="width: 300px;">
+            <label class="layui-form-label" style="width: 150px;">已分享人数系数:</label>
+            <div class="layui-input-block">
+                <input type="number" name="shareCoefficient" id="shareCoefficient" th:value="${fissionActivityData.shareCoefficient!= null?fissionActivityData.shareCoefficient:'1'}"  lay-verify="required" style="width: 60px;" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
+        <legend>微信分享</legend>
+    </fieldset>
+    <div class="layui-form-item">
+        <label class="layui-form-label">微信标题<span style="color: red;top: 14px;position: absolute">&nbsp;*</span></label>
+        <div class="layui-input-block">
+            <input type="text" id="wechatTitle" name="wechatTitle" lay-verify="required" autocomplete="off"
+                   th:value="${fissionActivity.wechatTitle != null ?fissionActivity.wechatTitle : fissionActivity.activityName + '正在火热进行中'}" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">微信描述<span style="color: red;top: 14px;position: absolute">&nbsp;*</span></label>
+        <div class="layui-input-block">
+            <input type="text" id="wechatDescription" name="wechatDescription" lay-verify="required" autocomplete="off"
+                   th:value="${fissionActivity.wechatDescription != null ?fissionActivity.wechatDescription : '快来一起参与 '+fissionActivity.activityName+'，现金奖励一起拿！'}"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <input name="wechatPic" id="wechatPic" th:value="${fissionActivity.wechatPic}"   lay-verify="required" style="display: none">
+        <label class="layui-form-label">微信图片<span style="color: red;top: 14px;position: absolute">&nbsp;*</span></label>
+        <div class="layui-upload-drag" id="uploadWechatPic">
+            <div th:if="${fissionActivity.wechatPic != null}">
+                <div id="uploadWechatPicView">
+                    <hr>
+                    <img th:src="${fissionActivity.wechatPic}" alt="上传成功后渲染"  style="max-width: 196px">
+                    <p id="tipText"></p>
+                </div>
+            </div>
+            <div th:if="${fissionActivity.wechatPic == null }">
+                <i class="layui-icon"></i>
+                <p>点击上传，或将文件拖拽到此处</p>
+                <div  class="layui-hide" id="uploadWechatPicView">
+                    <hr>
+                    <img  alt="上传成功后渲染"  style="max-width: 196px">
+                    <p id="tipText"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item" style="margin-bottom: 235px;">
+        <div class="layui-input-block">
+            <button type="submit" class="layui-btn layui-btn-normal" id="submitBtn" lay-submit lay-filter="submitBtn">
+                <i class="layui-icon layui-icon-ok-circle"></i>立即提交
+            </button>
+            <button type="button" class="layui-btn layui-btn-normal" id="backPre" >
+                <i class="layui-icon layui-icon-close-fill"></i>返回
+            </button>
+        </div>
+    </div>
+</form>
+<!-- layui 初始化 -->
+<script type="text/javascript" th:inline="javascript">
+    layui.use(['form', 'layer', 'table', 'upload', 'laydate', 'element'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            laydate = layui.laydate,
+            util = layui.util,
+            formSelects = layui.formSelects,
+            upload = layui.upload,
+            element = layui.element;
+        element.init();
+        form.render();
+        var fissionId = [[${fissionActivity.id}]];
+        var periodsId = [[${fissionActivity.periodsId}]];
+        var configCityList = [[${configCityList}]];
+        var configProductList = [[${configProductList}]];
+        var onState = [[${fissionActivity.onState}]];
+        formSelects.btns('citySelect', ['remove']);
+        formSelects.btns('productSelect', ['remove']);
+        //头图上传
+        upload.render({
+            elem: '#uploadHeadImg'
+            ,url: '/upload/image?type=zhuanti'
+            ,size: 10240
+            ,exts: 'img|jpg|png|jpeg' //只允许上传图片
+            ,done: function(res){
+                layer.msg('上传成功');
+                // $("#headPicUrl").val(res.location);
+                $("#headPicUrl").val(res.location);
+                layui.$('#uploadHeadImgView').removeClass('layui-hide').find('img').attr('src', res.location);
+                layui.$('#uploadHeadImgView').removeClass('layui-icon');
+                layui.$('#uploadHeadImg').find('i').remove();
+                layui.$('#uploadHeadImg').find('p').remove();
+            }
+            ,error: function(res){
+                layer.alert('上传失败', {icon: 5});
+            }
+        });
+        //分享图上传
+        upload.render({
+            elem: '#uploadSharePic'
+            ,url: '/upload/image?type=zhuanti'
+            ,size: 10240
+            ,exts: 'img|jpg|png|jpeg' //只允许上传图片
+            ,done: function(res){
+                layer.msg('上传成功');
+                if($("#sharePicUrl").val() == ''){
+                    layui.$('#uploadSharePic').after("<i id=\"remsharePicUrl\" onclick='removeShareUrl()' class=\"layui-icon layui-icon-delete\" style=\"font-size: 30px\" data-idx=\"\"></i>")
+                }
+                $("#sharePicUrl").val(res.location);
+                layui.$('#uploadSharePicView').removeClass('layui-hide').find('img').attr('src', res.location);
+                layui.$('#uploadSharePicView').removeClass('layui-icon');
+                layui.$('#uploadSharePic').find('i').remove();
+                layui.$('#uploadSharePic').find('p').remove();
+            }
+            ,error: function(res){
+                layer.alert('上传失败', {icon: 5});
+            }
+        });
+        //详情图上传
+        upload.render({
+            elem: '#detailPic1'
+            ,url: '/upload/image?type=zhuanti'
+            ,size: 10240
+            ,exts: 'img|jpg|png|jpeg' //只允许上传图片
+            ,done: function(res){
+                layer.msg('上传成功');
+                $("#detailPicUrl1").val(res.location);
+                layui.$('#detailPic1View').removeClass('layui-hide').find('img').attr('src', res.location);
+                layui.$('#detailPic1').find('i').remove();
+                layui.$('#detailPic1').find('p').remove();
+            }
+            ,error: function(res){
+                layer.alert('上传失败', {icon: 5});
+            }
+        });
+        upload.render({
+            elem: '#detailPic2'
+            ,url: '/upload/image?type=zhuanti'
+            ,size: 10240
+            ,exts: 'img|jpg|png|jpeg' //只允许上传图片
+            ,done: function(res){
+                layer.msg('上传成功');
+                if($("#detailPicUrl2").val() == ''){
+                    layui.$('#detailPic2').after("<i id=\"remPic2\" onclick='removePic2()' class=\"layui-icon layui-icon-delete\" style=\"font-size: 30px\" data-idx=\"\"></i>")
+                }
+                $("#detailPicUrl2").val(res.location);
+                layui.$('#detailPic2View').removeClass('layui-hide').find('img').attr('src', res.location);
+                layui.$('#detailPic2').find('i').remove();
+                layui.$('#detailPic2').find('p').remove();
+            }
+            ,error: function(res){
+                layer.alert('上传失败', {icon: 5});
+            }
+        });
+        upload.render({
+            elem: '#detailPic3'
+            ,url: '/upload/image?type=zhuanti'
+            ,size: 10240
+            ,exts: 'img|jpg|png|jpeg' //只允许上传图片
+            ,done: function(res){
+                layer.msg('上传成功');
+                if($("#detailPicUrl3").val() == ''){
+                    layui.$('#detailPic3').after("<i id=\"remPic3\" onclick='removePic3()' class=\"layui-icon layui-icon-delete\" style=\"font-size: 30px\" data-idx=\"\"></i>")
+                }
+                $("#detailPicUrl3").val(res.location);
+                layui.$('#detailPic3View').removeClass('layui-hide').find('img').attr('src', res.location);
+                layui.$('#detailPic3').find('i').remove();
+                layui.$('#detailPic3').find('p').remove();
+            }
+            ,error: function(res){
+                layer.alert('上传失败', {icon: 5});
+            }
+        });
+        //海报图上传
+        upload.render({
+            elem: '#posterPic'
+            ,url: '/upload/image?type=zhuanti'
+            ,size: 10240
+            ,exts: 'img|jpg|png|jpeg' //只允许上传图片
+            ,done: function(res){
+                layer.msg('上传成功');
+                $("#posterUrl").val(res.location);
+                layui.$('#posterPicView').removeClass('layui-hide').find('img').attr('src', res.location);
+                layui.$('#posterPic').find('i').remove();
+                layui.$('#posterPic').find('p').remove();
+            }
+            ,error: function(res){
+                layer.alert('上传失败', {icon: 5});
+            }
+        });
+        //商品标题图上传
+        upload.render({
+            elem: '#productTitlePic'
+            ,url: '/upload/image?type=zhuanti'
+            ,size: 10240
+            ,exts: 'img|jpg|png|jpeg' //只允许上传图片
+            ,done: function(res){
+                layer.msg('上传成功');
+                $("#productTitleUrl").val(res.location);
+                layui.$('#productTitleUrlView').removeClass('layui-hide').find('img').attr('src', res.location);
+                layui.$('#productTitleUrlView').removeClass('layui-icon');
+                layui.$('#productTitlePic').find('i').remove();
+                layui.$('#productTitlePic').find('p').remove();
+            }
+            ,error: function(res){
+                layer.alert('上传失败', {icon: 5});
+            }
+        });
+        //微信分享图上传
+        upload.render({
+            elem: '#uploadWechatPic'
+            ,url: '/upload/image?type=zhuanti'
+            ,size: 10240
+            ,exts: 'img|jpg|png|jpeg' //只允许上传图片
+            ,done: function(res){
+                layer.msg('上传成功');
+                // $("#headPicUrl").val(res.location);
+                $("#wechatPic").val(res.location);
+                layui.$('#uploadWechatPicView').removeClass('layui-hide').find('img').attr('src', res.location);
+                layui.$('#uploadWechatPicView').removeClass('layui-icon');
+                layui.$('#uploadWechatPic').find('i').remove();
+                layui.$('#uploadWechatPic').find('p').remove();
+            }
+            ,error: function(res){
+                layer.alert('上传失败', {icon: 5});
+            }
+        });
+        layui.formSelects.on('citySelect', function(id, vals, val, isAdd, isDisabled){
+            //选全国时去掉其它所有  其它的也不能再选择
+            var nationwideFlag = layui.formSelects.value('citySelect', 'valStr');    //取值val字符串
+            if(isAdd && nationwideFlag == '-1'){
+                return false;
+            }
+            if(isAdd && val.value == '-1'){
+                layui.formSelects.value('citySelect', []);
+            }
+        });
+        layui.formSelects.on('productSelect', function(id, vals, val, isAdd, isDisabled){
+            //id:           点击select的id
+            //vals:         当前select已选中的值
+            //val:          当前select点击的值
+            //isAdd:        当前操作选中or取消
+            //isDisabled:   当前选项是否是disabled
+            if(isAdd && vals.length >= 4){
+                layer.alert('只能选择4个商品', {icon: 5});
+                return false;
+            }
+        });
+        // 加载城市下拉框
+        layui.formSelects.config('citySelect', {
+            beforeSuccess: function(id, url, searchVal, result){
+                var cityList = new Array();
+                $.each(result, function(index, item) {
+                    var cityJson = {"name":item.name,"value":item.value};
+                    cityList.push(cityJson);
+                });
+                return cityList;
+            },
+            success: function(){
+                layui.formSelects.value('citySelect', configCityList);
+                form.render("checkbox");
+            }
+        }).data('citySelect', 'server', {
+            url: '/common/getAllCityThreeFour'
+        });
+
+        // 加载商品下拉框
+        layui.formSelects.config('productSelect', {
+            beforeSuccess: function(id, url, searchVal, result){
+                var productList = new Array();
+                $.each(result, function(index, item) {
+                    var productJson = {"name":item.name,"value":item.value};
+                    productList.push(productJson);
+                });
+                return productList;
+            },
+            success: function(){
+                layui.formSelects.value('productSelect', configProductList);
+                form.render("checkbox");
+            }
+        }).data('productSelect', 'server', {
+            url: '/fission/activity/getProductsByFissionId?fissionId=' + fissionId + "&periodsId=" + periodsId
+        });
+
+        // 监听提交
+        form.on('submit(submitBtn)', function(data){
+            // 获取关联场次
+            var cityIds = layui.formSelects.value("citySelect","valStr");
+            var productIds = layui.formSelects.value("productSelect","valStr");
+            var headPicUrl = $("#headPicUrl").val();
+            var sharePicUrl = $("#sharePicUrl").val();
+            var detailPicUrl1 = $("#detailPicUrl1").val();
+            var detailPicUrl2 = $("#detailPicUrl2").val();
+            var detailPicUrl3 = $("#detailPicUrl3").val();
+            var posterUrl = $("#posterUrl").val();
+            var productTitleUrl = $("#productTitleUrl").val();
+            var browseBase = $("#browseBase").val();
+            var browseCoefficient = $("#browseCoefficient").val();
+            var subscribeBase = $("#subscribeBase").val();
+            var subscribeCoefficient = $("#subscribeCoefficient").val();
+            var shareBase = $("#shareBase").val();
+            var shareCoefficient = $("#shareCoefficient").val();
+            var reservePhone = $('input[name="reservePhone"]:checked').val();
+            var wechatTitle = $("#wechatTitle").val();
+            var wechatDescription = $("#wechatDescription").val();
+            var wechatPic = $("#wechatPic").val();
+
+            if(headPicUrl == ""){
+                layer.msg("请上传头图！", {icon: 5});
+                return false;
+            }
+            if(detailPicUrl1 == "" && detailPicUrl2 == "" && detailPicUrl3 == ""){
+                layer.msg("请上传详情图！", {icon: 5});
+                return false;
+            }
+            if(posterUrl == ""){
+                layer.msg("请上传海报图！", {icon: 5});
+                return false;
+            }
+            if(cityIds == null || cityIds == ""){
+                layer.msg("请选择城市！", {icon: 5});
+                return false;
+            }
+            if(productTitleUrl == null || productTitleUrl == ""){
+                layer.msg("请上传商品标题图！", {icon: 5});
+                return false;
+            }
+            if (browseBase <= 0) {
+                layer.msg("浏览基数必须大于0", {icon: 5});
+                return false;
+            }
+            if (browseCoefficient <= 0) {
+                layer.msg("浏览系数必须大于0", {icon: 5});
+                return false;
+            }
+            if (subscribeBase <= 0) {
+                layer.msg("预约直播基数必须大于0", {icon: 5});
+                return false;
+            }
+            if (subscribeCoefficient <= 0) {
+                layer.msg("预约直播系数必须大于0", {icon: 5});
+                return false;
+            }
+            if (shareBase <= 0) {
+                layer.msg("分享基数必须大于0", {icon: 5});
+                return false;
+            }
+            if (shareCoefficient <= 0) {
+                layer.msg("分享系数必须大于0", {icon: 5});
+                return false;
+            }
+            if (reservePhone == undefined) {
+                layer.msg("请选择是否需要留手机号", {icon: 5});
+                return false;
+            }
+            if (wechatTitle == '') {
+                layer.msg("请输入微信分享标题", {icon: 5});
+                return false;
+            }
+            if (wechatDescription == '') {
+                layer.msg("请输入微信分享描述", {icon: 5});
+                return false;
+            }
+            if (wechatPic == '') {
+                layer.msg("请输入微信分享图", {icon: 5});
+                return false;
+            }
+            $('#submitBtn').attr('disabled','disabled');
+            var loadIndex = layer.load(1,{
+                shade: [0.5,'#000']
+            })
+            $.ajax({
+                type: 'POST',
+                url: '/fission/activity/saveFissionActivityConfig',
+                contentType: "application/json",
+                data: JSON.stringify({
+                    "fissionId":fissionId,
+                    "headPicUrl": headPicUrl,
+                    "sharePicUrl": sharePicUrl,
+                    "detailPicUrl1": detailPicUrl1,
+                    "detailPicUrl2": detailPicUrl2,
+                    "detailPicUrl3": detailPicUrl3,
+                    "posterUrl": posterUrl,
+                    "productTitleUrl": productTitleUrl,
+                    "onState": onState,
+                    "reservePhone": reservePhone,
+                    "cityIds": cityIds,
+                    "productIds": productIds,
+                    "browseBase": browseBase,
+                    "browseCoefficient": browseCoefficient,
+                    "subscribeBase": subscribeBase,
+                    "subscribeCoefficient": subscribeCoefficient,
+                    "shareBase": shareBase,
+                    "shareCoefficient": shareCoefficient,
+                    "wechatTitle": wechatTitle,
+                    "wechatDescription": wechatDescription,
+                    "wechatPic": wechatPic
+                }),
+                success :function(data){
+                    if (data.code == 200) {
+                        layer.msg("保存成功", {
+                            icon: 6, time: 2000, end: function () {
+                                parent.location.href = "/fission/activity/toListPage"
+                            }
+                        });
+                    } else {
+                        layer.alert(data.msg == null ? "有一丝丝问题，请联系管理员" : data.msg, {icon: 5});
+                        $('#submitBtn').removeAttr('disabled');
+                    }
+                    layer.close(loadIndex);
+                },
+                error :function(e){
+                    console.log(e);
+                    layer.close(loadIndex);
+                    layer.msg("有一丝丝问题，请联系管理员", {icon: 5});
+                    $('#submitBtn').removeAttr('disabled');
+                    return false;
+                }
+            });
+            return false;
+        });
+
+        $("#backPre").on("click",function () {
+            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+            parent.layer.close(index);//关闭弹出的子页面窗口
+        });
+
+    });
+    //删除海报图片
+    function removePosterUrl() {
+        layui.$("#posterUrl").val("");
+        layui.$("#remPosterUrl").remove();
+        layui.$('#posterPic').append("<i class=\"layui-icon\"></i><p>点击上传，或将文件拖拽到此处</p>")
+        layui.$('#posterPicView').addClass('layui-hide').find('img').attr('src', "");
+    }
+    //删除海报图片
+    function removeShareUrl() {
+        layui.$("#sharePicUrl").val("");
+        layui.$("#remsharePicUrl").remove();
+        layui.$('#uploadSharePic').append("<i class=\"layui-icon\"></i><p>点击上传，或将文件拖拽到此处</p>")
+        layui.$('#uploadSharePicView').addClass('layui-hide').find('img').attr('src', "");
+    }
+    //删除详情图片
+    function removePic2() {
+        layui.$("#detailPicUrl2").val("");
+        layui.$("#remPic2").remove();
+        layui.$('#detailPic2').append("<i class=\"layui-icon\"></i><p>点击上传，或将文件拖拽到此处</p>")
+        layui.$('#detailPic2View').addClass('layui-hide').find('img').attr('src', "");
+    }
+    function removePic3() {
+        layui.$("#detailPicUrl3").val("");
+        layui.$("#remPic3").remove();
+        layui.$('#detailPic3').append("<i class=\"layui-icon\"></i><p>点击上传，或将文件拖拽到此处</p>")
+        layui.$('#detailPic3View').addClass('layui-hide').find('img').attr('src', "");
+    }
+</script>
+</body>
+</html>

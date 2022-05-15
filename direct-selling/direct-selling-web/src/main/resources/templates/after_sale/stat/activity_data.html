@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>售后特卖-活动数据对账</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.js"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/magnify/css/jquery.magnify.css">
+    <script src="/layui/js/formSelects-v4.js"></script>
+    <link rel="stylesheet" href="/layui/css/formSelects-v4.css" media="all">
+    <style type="text/css">
+        .layui-table-header .layui-table tr {
+            height: auto;
+            line-height: 50px;
+        }
+
+        .layui-table-cell {
+            height: auto;
+        }
+
+        .layui-table-col-special {
+            height: auto;
+        }
+
+        .layui-table tr {
+            height: 65px
+        }
+
+        #paymentContentDetail table {
+            height: 100%;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        #paymentContentDetail table td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #e3e3e3;
+        }
+
+        .titleTd {
+            text-align: right;
+            background-color: #f8f8f8;
+        }
+
+        .contentTd {
+            text-align: left;
+        }
+
+        .xm-select-label {
+            height: 30px;
+        }
+        .layui-table-cell {
+            height:auto;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:normal;
+        }
+    </style>
+</head>
+<body class="childrenBody">
+<form class="layui-form" style="background-color: #ffffff;">
+    <blockquote class="layui-elem-quote quoteBox">
+        <form class="layui-form" id="layui-form">
+            <div class="layui-inline">
+                <div class="layui-input-inline" style="padding: 10px;width: 350px;">
+                    <select name="dealerId" xm-select="dealerSelect" xm-select-search="" xm-select-search-type="dl"
+                            xm-select-radio="" xm-select-height="36px">
+                        <option value="">车商名</option>
+                    </select>
+                </div>
+                <div class="layui-input-inline" style="padding: 10px;width: 350px;">
+                    <select name="activityId" xm-select="activitySelect" xm-select-search="" xm-select-search-type="dl"
+                            xm-select-radio="" sxm-select-height="36px">
+                        <option value="">活动名</option>
+                    </select>
+                </div>
+                <div class="layui-input-inline" style="padding: 10px">
+                    <select id="onState" name="onState" xm-select="onStateSelect" xm-select-radio="">
+                        <option value="">活动状态</option>
+                        <option value="0">已结束</option>
+                        <option value="1">进行中</option>
+                    </select>
+                </div>
+                <br/>
+                <div class="layui-input-inline" style="padding: 10px" id="sumText">
+
+                </div>
+                <br/>
+
+                <div class="layui-input-inline" style="padding: 10px">
+                    <input type="text" class="layui-input activityName" name="activityName" id="activityName"
+                           placeholder="活动名称"/>
+                </div>
+                <div class="layui-input-inline" style="padding: 10px">
+                    结束时间筛选：
+                </div>
+                <div class="layui-input-inline" style="padding: 10px">
+                    <input type="text" readonly class="layui-input" name="startTime" id="startTime"
+                           placeholder="起始时间">
+                </div>
+                <div class="layui-input-inline" style="padding: 10px">
+                    <input type="text" readonly class="layui-input" name="endTime" id="endTime" placeholder="结束时间">
+                </div>
+                <a class="layui-btn search_btn" data-type="reload"><i class="layui-icon layui-icon-search"></i>搜索</a>
+                <a class="layui-btn add_btn" id="export" href="javascript:;"><i
+                        class="layui-icon layui-icon-release"></i>导出</a>
+            </div>
+        </form>
+    </blockquote>
+    <table id="activityDataList" lay-filter="fissionActivityTool"></table>
+    <div id="paymentContentDetail" style="display: none;padding:20px;">
+        <input type="hidden" id="detailActivityId"/>
+        <table>
+            <tr>
+                <td class="titleTd">活动：</td>
+                <td id="val1" class="contentTd"></td>
+                <td class="titleTd">所属经销商：</td>
+                <td id="val2" class="contentTd"></td>
+                <td class="titleTd">活动状态：</td>
+                <td id="val3" class="contentTd" colspan="3"></td>
+            </tr>
+            <tr>
+                <td class="titleTd">活动开始-结束时间：</td>
+                <td id="val4" class="contentTd"></td>
+                <td class="titleTd">线下开始-结束时间：</td>
+                <td colspan="5" id="val5" class="contentTd"></td>
+            </tr>
+            <tr>
+                <td class="titleTd">奖励总金额：</td>
+                <td id="val7" class="contentTd"></td>
+                <td class="titleTd">总退款数：</td>
+                <td id="val8" class="contentTd"></td>
+                <td class="titleTd">退款金额：</td>
+                <td id="val23" class="contentTd"></td>
+                <td class="titleTd">退款率：</td>
+                <td id="val24" class="contentTd"></td>
+            </tr>
+            <tr>
+                <td class="titleTd">推广页访问人数：</td>
+                <td id="val6" class="contentTd"></td>
+                <td class="titleTd">推广卡售出数：</td>
+                <td id="val9" class="contentTd"></td>
+                <td class="titleTd">推广卡售出金额：</td>
+                <td id="val10" class="contentTd"></td>
+                <td class="titleTd">推广转化率：</td>
+                <td id="val11" class="contentTd"></td>
+            </tr>
+            <tr>
+                <td class="titleTd">代理人裂变：</td>
+                <td id="val12" class="contentTd"></td>
+                <td class="titleTd">代理人裂变占比：</td>
+                <td id="val13" class="contentTd"></td>
+                <td class="titleTd">代理人1级裂变：</td>
+                <td id="val14" class="contentTd" colspan="3"></td>
+            </tr>
+            <tr>
+                <td class="titleTd">自主裂变：</td>
+                <td id="val15" class="contentTd"></td>
+                <td class="titleTd">自主占比：</td>
+                <td id="val16" class="contentTd"></td>
+                <td class="titleTd">备案人购买数：</td>
+                <td id="val17" class="contentTd"></td>
+                <td class="titleTd">备案人数占比：</td>
+                <td id="val18" class="contentTd"></td>
+            </tr>
+            <tr>
+                <td class="titleTd">发放礼品券：</td>
+                <td id="val19" class="contentTd"></td>
+                <td class="titleTd">核销礼品券：</td>
+                <td id="val20" class="contentTd"></td>
+                <td class="titleTd">到店人：</td>
+                <td id="val21" class="contentTd"></td>
+                <td class="titleTd">到店率：</td>
+                <td id="val22" class="contentTd"></td>
+            </tr>
+            <tr>
+                <td class="titleTd">自动退款备案用户：</td>
+                <td id="val25" class="contentTd"></td>
+                <td class="titleTd">套餐售出数：</td>
+                <td id="val26" class="contentTd"></td>
+                <td class="titleTd">套餐售出金额：</td>
+                <td id="val27" class="contentTd"></td>
+                <td class="titleTd">套餐转化率：</td>
+                <td id="val28" class="contentTd"></td>
+            </tr>
+            <tr>
+                <td colspan="8"><a class="layui-btn add_btn" id="export2" href="javascript:;"><i
+                        class="layui-icon layui-icon-release"></i>导出</a></td>
+            </tr>
+        </table>
+    </div>
+</form>
+<!-- layui 初始化 -->
+<script type="text/javascript" th:inline="javascript">
+    var tableData;
+    layui.use(['form', 'layer', 'table', 'laydate'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            table = layui.table,
+            formSelects = layui.formSelects,
+            laydate = layui.laydate;
+
+        laydate.render({
+            elem: '#startTime'
+            , type: 'datetime'
+        });
+        laydate.render({
+            elem: '#endTime'
+            , type: 'datetime'
+        });
+        $.ajax({
+            url: "/afterSale/stat/dealer",
+            success: function (res) {
+                var array = [];
+                for (var i = 0; i < res.length; i++) {
+                    array.push({"name": res[i].dealerName, "value": res[i].id})
+                }
+                layui.formSelects.data('dealerSelect', 'local', {
+                    arr: array
+                });
+            }
+        });
+
+        $.ajax({
+            url: "/afterSale/stat/activity",
+            success: function (res) {
+                var array = [];
+                for (var i = 0; i < res.length; i++) {
+                    array.push({"name": res[i].activityName, "value": res[i].id})
+                }
+                layui.formSelects.data('activitySelect', 'local', {
+                    arr: array
+                });
+            }
+        });
+        layui.formSelects.on('dealerSelect', function (id, vals, val, isAdd, isDisabled) {
+            var url;
+            if (isAdd) {
+                url = "/afterSale/stat/activity?dealerId=" + val.value;
+            } else {
+                url = "/afterSale/stat/activity"
+            }
+            $.ajax({
+                url: url,
+                success: function (res) {
+                    var array = [];
+                    for (var i = 0; i < res.length; i++) {
+                        array.push({"name": res[i].activityName, "value": res[i].id})
+                    }
+                    layui.formSelects.data('activitySelect', 'local', {
+                        arr: array
+                    });
+                }
+            });
+
+        });
+        document.onkeydown = function (e) { // 回车提交表单
+            var theEvent = window.event || e;
+            var code = theEvent.keyCode || theEvent.which;
+            if (code == 13) {
+                $(".search_btn").click();
+            }
+        }
+
+
+
+        var tableIns = table.render({
+            elem: '#activityDataList',
+            url: '/afterSale/stat/activityDataList',
+            cellMinWidth: 60,
+            page: true,
+            height: "full",
+            limits: [10, 20, 50, 100],
+            limit: 10,
+            id: "activityDataTable",
+            width: "100%",
+            height: 500,
+            even:true,
+            cols: [
+                [
+                    {field: 'activityName', title: '活动名', minWidth: 180, align: "left"},
+                    {field: 'dealerName', title: '所属车商', minWidth: 250, align: "left"},
+                    {field: 'activityStatus', title: '活动状态', minWidth: 100, align: 'center' },
+                    {field: 'saleStartTime', title: '活动开始时间', minWidth: 120, align: "center"},
+                    {field: 'offlineConvertEndTime', title: '线下结束时间', minWidth: 120, align: "center"},
+                    {field: 'uv', title: '推广页访问人数', minWidth: 130, align: "center"},
+                    {field: 'promotionCardTotal', title: '推广卡售出数', minWidth: 120, align: "center"},
+                    {field: 'promotionCardAmount', title: '推广售出金额', minWidth: 120, align: "center"},
+                    {
+                        field: 'promotionPercent',
+                        title: '推广转化率',
+                        minWidth: 100,
+                        align: "center",
+                        templet: function (d) {
+                            return d.promotionPercent + "%";
+                        }
+                    },
+                    {field: 'promotionCardRefundsTotal', title: '总退款数', minWidth: 100, align: "center"},
+                    {field: 'promotionCardRefundsAmount', title: '退款金额', minWidth: 100, align: "center"},
+                    {
+                        field: 'refundPercent', title: '退款率', minWidth: 100, align: "center", templet: function (d) {
+                            return d.refundPercent + "%";
+                        }
+                    },
+                    {field: 'visitorsTotal', title: '到店人数', minWidth: 100, align: "center"},
+                    {
+                        field: 'visitorsPercent', title: '到店率', minWidth: 110, align: "center", templet: function (d) {
+                            return d.visitorsPercent + "%";
+                        }
+                    },
+                    {field: 'promotionCardNetRevenue', title: '推广期净盈余', minWidth: 120, align: "center"},
+                    {field: 'packageCardTotal', title: '套餐卡售出数', minWidth: 120, align: "center"},
+                    {field: 'packageCardAmount', title: '套餐卡已售金额', minWidth: 130, align: "center"},
+                    {
+                        field: 'packagePercent', title: '套餐转化率', minWidth: 100, align: "center", templet: function (d) {
+                            return d.packagePercent + "%";
+                        }
+                    },
+                    {
+                        field: 'opt', title: '操作', minWidth: 100, align: "center", fixed: 'right', templet: function (d) {
+                            return '<span class="layui-badge layui-bg-blue" onclick="view(' + d.activityId + ')">明细</span>';
+                        }
+                    }
+                ]
+            ],
+            done: function (res, curr, count) {
+                tableData = res.data;
+                //解决因固定操作栏导致和表格错位的问题
+                $(".layui-table-main tr").each(function (index, val) {
+                    $($(".layui-table-fixed-r .layui-table-body tbody tr")[index]).height($(val).height()-1);
+                });
+            }
+        });
+
+
+        // 获取搜索表单
+        function getSearchInput() {
+            var dealerId = formSelects.value("dealerSelect", "val");
+            var activityId = formSelects.value("activitySelect", "val");
+            var onState = formSelects.value("onStateSelect", "val");
+            var activityName = $("#activityName").val();
+            var startTime = $("#startTime").val();
+            var endTime = $("#endTime").val();
+            var params = {
+                "dealerId": dealerId != "" ? parseInt(dealerId) : null,
+                "activityId": activityId != "" ? parseInt(activityId) : null,
+                "onState": onState != "" ? parseInt(onState) : null,
+                "activityName": activityName,
+                "startTime": startTime,
+                "endTime": endTime
+            };
+            return params;
+        }
+
+        //搜索
+        $(".search_btn").on("click", function () {
+            var params = getSearchInput();
+            table.reload("activityDataTable", {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: params
+            })
+            activityDataSum();
+        });
+        function activityDataSum(){
+            $.ajax({
+                url: "/afterSale/stat/activityDataSum",
+                data: getSearchInput(),
+                success: function (res) {
+                    if (res.code == 200) {
+                        var data = res.result;
+                        if (data == 0) {
+                            $("#sumText").html("推广页访问人数：0&nbsp;&nbsp;&nbsp;推广转化率：0&nbsp;&nbsp;&nbsp;到店率：0&nbsp;&nbsp;&nbsp;套餐转化率：0&nbsp;&nbsp;&nbsp;推广期净盈余：0&nbsp;&nbsp;&nbsp;套餐卡售出总金额：0");
+                        } else {
+                            $("#sumText").html("推广页访问人数：" + data.uv + "&nbsp;&nbsp;&nbsp;推广转化率：" + data.promotionPercent
+                                + "%&nbsp;&nbsp;&nbsp;到店率：" + data.visitorsPercent
+                                + "%&nbsp;&nbsp;&nbsp;套餐转化率：" + data.packagePercent
+                                + "%&nbsp;&nbsp;&nbsp;推广期净盈余：" + data.promotionCardNetRevenue
+                                + "&nbsp;&nbsp;&nbsp;套餐卡售出总金额：" + data.packageCardAmount
+                            );
+                        }
+
+                    }
+
+                }
+            });
+        }
+        activityDataSum();
+        $("#export").on("click", function () {
+            var params = getSearchInput();
+            window.open("/afterSale/stat/activityDataExport" + queryParams(params, true));
+        });
+        $("#export2").on("click", function () {
+            var params = getSearchInput();
+            window.open("/afterSale/stat/activityDataDetailExport?activityId=" + $("#detailActivityId").val());
+        });
+
+    })
+
+    function queryParams(data, isPrefix) {
+        isPrefix = isPrefix ? isPrefix : false
+        let prefix = isPrefix ? '?' : ''
+        let _result = []
+        for (let key in data) {
+            let value = data[key]
+            // 去掉为空的参数
+            if (['', undefined, null].includes(value)) {
+                continue
+            }
+            if (value.constructor === Array) {
+                value.forEach(_value => {
+                    _result.push(encodeURIComponent(key) + '[]=' + encodeURIComponent(_value))
+                })
+            } else {
+                _result.push(encodeURIComponent(key) + '=' + encodeURIComponent(value))
+            }
+        }
+
+        return _result.length ? prefix + _result.join('&') : ''
+    }
+
+    function view(id) {
+        /*for (var i = 0; i < tableData.length; i++) {
+            if (tableData[i].activityId == id) {
+                layui.jquery("#detailActivityId").val(id);
+                layui.jquery("#val1").text(tableData[i].activityName);
+                layui.jquery("#val2").text(tableData[i].dealerName);
+                var now = layui.util.toDateString(new Date().valueOf(), "yyyy-MM-dd HH:mm:ss");
+                var beginTimeStr = layui.util.toDateString(tableData[i].saleStartTime, "yyyy-MM-dd HH:mm:ss");
+                var endTimeStr = layui.util.toDateString(tableData[i].saleEndTime, "yyyy-MM-dd HH:mm:ss");
+                if (now < beginTimeStr) {
+                    layui.jquery("#val3").text("未开始");
+                } else if (now > beginTimeStr && now < endTimeStr) {
+                    layui.jquery("#val3").text("进行中");
+                } else if (now > endTimeStr) {
+                    layui.jquery("#val3").text("已结束");
+                }
+                layui.jquery("#val4").text(tableData[i].saleStartTime + " ~ " + tableData[i].saleEndTime);
+                layui.jquery("#val5").text(tableData[i].offlineConvertStartTime + " ~ " + tableData[i].offlineConvertEndTime);
+                layui.jquery("#val6").text(tableData[i].uv);
+                layui.jquery("#val7").text(tableData[i].rewardTotal);
+                layui.jquery("#val8").text(tableData[i].promotionCardRefundsTotal);
+                layui.jquery("#val9").text(tableData[i].promotionCardTotal);
+                layui.jquery("#val10").text(tableData[i].promotionCardAmount);
+                layui.jquery("#val11").text(tableData[i].promotionPercent + "%");
+                layui.jquery("#val12").text(tableData[i].agentFissionTotalOne + tableData[i].agentFissionTotalTwo);
+                layui.jquery("#val13").text(tableData[i].agentFissionTotalPercent + "%");
+                layui.jquery("#val14").text(tableData[i].agentFissionTotalOne);
+                layui.jquery("#val15").text(tableData[i].autonomousFissionTotal);
+                layui.jquery("#val16").text(tableData[i].autonomousFissionTotalPercent + "%");
+                layui.jquery("#val17").text(tableData[i].keepOnRecordUserTotal);
+                layui.jquery("#val18").text(tableData[i].keepOnRecordUserTotalPercent + "%");
+                layui.jquery("#val19").text(tableData[i].giftCertificatesTotal);
+                layui.jquery("#val20").text(tableData[i].writeOffGiftVoucherTotal);
+                layui.jquery("#val21").text(tableData[i].visitorsTotal);
+                layui.jquery("#val22").text(tableData[i].visitorsPercent + "%");
+                layui.jquery("#val23").text(tableData[i].promotionCardRefundsAmount);
+                layui.jquery("#val24").text(tableData[i].refundPercent + "%");
+                layui.jquery("#val25").text(tableData[i].promotionCardRefundsTotalPassive);
+                layui.jquery("#val26").text(tableData[i].packageCardTotal);
+                layui.jquery("#val27").text(tableData[i].packageCardAmount);
+                layui.jquery("#val28").text(tableData[i].packagePercent + "%");
+                break;
+            }
+        }*/
+        layer.open({
+            title: "明细",
+            type: 2,
+            shadeClose: true,
+            content: "/afterSale/stat/activityStatisticsDetail?activityId="+id,
+            area: ["100%", "100%"],
+        });
+        // layui.jquery("#paymentContentDetail").css("display", "show");
+    }
+</script>
+</body>
+</html>

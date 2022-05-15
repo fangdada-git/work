@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.AfterSaleRewardRecordWriteMapper" >
+    <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.AfterSaleRewardRecord" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="activity_id" property="activityId" jdbcType="INTEGER" />
+        <result column="user_type" property="userType" jdbcType="TINYINT" />
+        <result column="user_wx_union_id" property="userWxUnionId" jdbcType="CHAR" />
+        <result column="reward_type" property="rewardType" jdbcType="INTEGER" />
+        <result column="quantity" property="quantity" jdbcType="DECIMAL" />
+        <result column="order_code" property="orderCode" jdbcType="VARCHAR" />
+        <result column="partner_trade_no" property="partnerTradeNo" jdbcType="VARCHAR" />
+        <result column="pay_status" property="payStatus" jdbcType="TINYINT" />
+        <result column="failure_reason" property="failureReason" jdbcType="VARCHAR" />
+        <result column="err_code" property="errCode" jdbcType="VARCHAR" />
+        <result column="wx_trade_no" property="wxTradeNo" jdbcType="VARCHAR" />
+        <result column="wx_trade_time" property="wxTradeTime" jdbcType="TIMESTAMP" />
+        <result column="wx_pay_time" property="wxPayTime" jdbcType="TIMESTAMP" />
+        <result column="wx_nonce_str" property="wxNonceStr" jdbcType="CHAR" />
+        <result column="failure_reason" property="failureReason" jdbcType="VARCHAR" />
+        <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id, activity_id, user_type, user_wx_union_id, reward_type, quantity, order_code,partner_trade_no,
+        pay_status, wx_trade_no, wx_trade_time, wx_pay_time, wx_nonce_str, failure_reason,err_code,
+        create_dt
+    </sql>
+    <!-- 根据ID获取数据 -->
+    <select id="getRewardRecordById" resultMap="BaseResultMap" parameterType="com.tuanche.directselling.model.AfterSaleRewardRecord">
+        SELECT
+            <include refid="Base_Column_List"></include>
+        FROM
+            after_sale_reward_record
+        WHERE
+            id=#{id}
+    </select>
+    <!-- 检测是否发放了某一类型的奖励 -->
+    <select id="getRewardRecord" resultMap="BaseResultMap" parameterType="com.tuanche.directselling.model.AfterSaleRewardRecord">
+        SELECT
+            <include refid="Base_Column_List"></include>
+        FROM
+            after_sale_reward_record
+        WHERE
+            activity_id = #{activityId}
+          AND reward_type = #{rewardType}
+        <if test="userWxUnionId != null">
+          AND user_wx_union_id = #{userWxUnionId}
+        </if>
+        <if test="userType != null">
+          AND user_type=#{userType}
+        </if>
+        <if test="orderCode != null">
+          AND order_code=#{orderCode}
+        </if>
+        ORDER BY id DESC LIMIT 1
+    </select>
+    <!-- 批量新增 -->
+    <insert id="batchInsert"  >
+        insert into after_sale_reward_record (activity_id, user_type,
+                user_wx_union_id, reward_type, quantity,
+                order_code,partner_trade_no,pay_status, wx_trade_no, wx_trade_time,
+                wx_pay_time, wx_nonce_str,failure_reason,err_code)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.activityId,jdbcType=INTEGER}, #{item.userType,jdbcType=TINYINT},
+            #{item.userWxUnionId,jdbcType=CHAR}, #{item.rewardType,jdbcType=INTEGER}, #{item.quantity,jdbcType=DECIMAL},
+            #{item.orderCode,jdbcType=VARCHAR},#{item.partnerTradeNo,jdbcType=VARCHAR}, #{item.payStatus},#{item.wxTradeNo,jdbcType=VARCHAR}, #{item.wxTradeTime,jdbcType=TIMESTAMP},
+            #{item.wxPayTime,jdbcType=TIMESTAMP}, #{item.wxNonceStr,jdbcType=CHAR},#{item.failureReason,jdbcType=VARCHAR},#{item.errCode,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+    <update id="batchUpdate"  >
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update after_sale_reward_record
+            <set>
+                <if test="item.wxTradeTime != null" >
+                    wx_trade_time=#{item.wxTradeTime},
+                </if>
+                <if test="item.payStatus != null" >
+                    pay_status=#{item.payStatus},
+                </if>
+                <if test="item.failureReason != null" >
+                    failure_reason=#{item.failureReason},
+                </if>
+                <if test="item.errCode != null" >
+                    err_code=#{item.errCode},
+                </if>
+                <if test="item.wxTradeNo != null" >
+                    wx_trade_no=#{item.wxTradeNo},
+                </if>
+                <if test="item.partnerTradeNo != null" >
+                    partner_trade_no=#{item.partnerTradeNo},
+                </if>
+                <if test="item.wxPayTime != null" >
+                    wx_pay_time=#{item.wxPayTime},
+                </if>
+                <if test="item.wxNonceStr != null" >
+                    wx_nonce_str=#{item.wxNonceStr}
+                </if>
+            </set>
+            where id = #{item.id}
+        </foreach>
+    </update>
+    <insert id="insert" parameterType="com.tuanche.directselling.model.AfterSaleRewardRecord" >
+        insert into after_sale_reward_record
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="activityId != null" >
+                activity_id,
+            </if>
+            <if test="userType != null" >
+                user_type,
+            </if>
+            <if test="userWxUnionId != null" >
+                user_wx_union_id,
+            </if>
+            <if test="rewardType != null" >
+                reward_type,
+            </if>
+            <if test="quantity != null" >
+                quantity,
+            </if>
+            <if test="orderCode != null" >
+                order_code,
+            </if>
+            <if test="partnerTradeNo != null" >
+                partner_trade_no,
+            </if>
+            <if test="payStatus != null" >
+                pay_status,
+            </if>
+            <if test="wxTradeNo != null" >
+                wx_trade_no,
+            </if>
+            <if test="wxTradeTime != null" >
+                wx_trade_time,
+            </if>
+            <if test="wxPayTime != null" >
+                wx_pay_time,
+            </if>
+            <if test="wxNonceStr != null" >
+                wx_nonce_str,
+            </if>
+            <if test="failureReason != null" >
+                failure_reason,
+            </if>
+            <if test="errCode != null" >
+                err_code,
+            </if>
+            <if test="createDt != null" >
+                create_dt,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="activityId != null" >
+                #{activityId,jdbcType=INTEGER},
+            </if>
+            <if test="userType != null" >
+                #{userType,jdbcType=TINYINT},
+            </if>
+            <if test="userWxUnionId != null" >
+                #{userWxUnionId,jdbcType=CHAR},
+            </if>
+            <if test="rewardType != null" >
+                #{rewardType,jdbcType=INTEGER},
+            </if>
+            <if test="quantity != null" >
+                #{quantity,jdbcType=DECIMAL},
+            </if>
+            <if test="orderCode != null" >
+                #{orderCode,jdbcType=VARCHAR},
+            </if>
+            <if test="partnerTradeNo != null" >
+                #{partnerTradeNo,jdbcType=VARCHAR},
+            </if>
+            <if test="payStatus != null" >
+                #{payStatus,jdbcType=TINYINT},
+            </if>
+            <if test="wxTradeNo != null" >
+                #{wxTradeNo,jdbcType=VARCHAR},
+            </if>
+            <if test="wxTradeTime != null" >
+                #{wxTradeTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="wxPayTime != null" >
+                #{wxPayTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="wxNonceStr != null" >
+                #{wxNonceStr,jdbcType=CHAR},
+            </if>
+            <if test="failureReason != null" >
+                #{failureReason,jdbcType=VARCHAR},
+            </if>
+            <if test="errCode != null" >
+                #{errCode,jdbcType=VARCHAR},
+            </if>
+            <if test="createDt != null" >
+                #{createDt,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateById" parameterType="com.tuanche.directselling.model.AfterSaleRewardRecord" >
+        update after_sale_reward_record
+        <set >
+            <if test="activityId != null" >
+                activity_id = #{activityId,jdbcType=INTEGER},
+            </if>
+            <if test="userType != null" >
+                user_type = #{userType,jdbcType=TINYINT},
+            </if>
+            <if test="userWxUnionId != null" >
+                user_wx_union_id = #{userWxUnionId,jdbcType=CHAR},
+            </if>
+            <if test="rewardType != null" >
+                reward_type = #{rewardType,jdbcType=INTEGER},
+            </if>
+            <if test="quantity != null" >
+                quantity = #{quantity,jdbcType=DECIMAL},
+            </if>
+            <if test="orderCode != null" >
+                order_code = #{orderCode,jdbcType=VARCHAR},
+            </if>
+            <if test="partnerTradeNo != null" >
+                partner_trade_no = #{partnerTradeNo,jdbcType=VARCHAR},
+            </if>
+            <if test="payStatus != null" >
+                pay_status = #{payStatus,jdbcType=TINYINT},
+            </if>
+            <if test="wxTradeNo != null" >
+                wx_trade_no = #{wxTradeNo,jdbcType=VARCHAR},
+            </if>
+            <if test="wxTradeTime != null" >
+                wx_trade_time = #{wxTradeTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="wxPayTime != null" >
+                wx_pay_time = #{wxPayTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="wxNonceStr != null" >
+                wx_nonce_str = #{wxNonceStr,jdbcType=CHAR},
+            </if>
+            <if test="failureReason != null" >
+                failure_reason = #{failureReason,jdbcType=VARCHAR},
+            </if>
+            <if test="errCode != null" >
+                err_code = #{errCode,jdbcType=VARCHAR},
+            </if>
+            <if test="createDt != null" >
+                create_dt = #{createDt,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+</mapper>

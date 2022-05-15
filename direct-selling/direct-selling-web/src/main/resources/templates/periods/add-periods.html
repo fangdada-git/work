@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>团车直卖-场次表单</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.js"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <style>
+        .label-close-icon {
+            vertical-align: bottom;
+            margin-left: -8px;
+            font-size: 18px;
+            position: absolute;
+            top: -8px;
+            cursor: pointer;
+            z-index: 100;
+        }
+        .layui-input {
+            width: 300px;
+        }
+        .layui-form-select {
+            width: 300px;
+        }
+        .xm-form-select {
+            min-width: 300px;
+        }
+        .layui-form-label {
+            width: 100px;
+        }
+        .layui-input-block {
+            margin-left: 138px;
+        }
+    </style>
+</head>
+<body class="childrenBody">
+<form class="layui-form" style="background-color:#ffffff" lay-filter="sceneForm">
+    <div class="layui-form-item" style="width: 437px;">
+        <label class="layui-form-label required">场次标题</label>
+        <div class="layui-input-block">
+            <input type="text" name="periodsName" id="periodsName" lay-verify="required"
+                   placeholder="请输入场次标题" maxlength="15" autocomplete="off" class="layui-input" style="width: 611px;">
+        </div>
+    </div>
+    <div class="layui-form-item" style="width: 437px;">
+        <label class="layui-form-label required">活动类型</label>
+        <div class="layui-input-block">
+            <select id="activityType" name="activityType">
+                <option value="">请选择活动类型</option>
+                <option th:each="activityType : ${activityTypes}" th:value="${activityType.id}"
+                        th:text="${activityType.name}"></option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item" style="width: 437px;">
+        <label class="layui-form-label">日期时间范围</label>
+        <div class="layui-input-block">
+            <input type="hidden" id="beginTime"/>
+            <input type="hidden" id="endTime"/>
+            <input type="text" readonly class="layui-input" id="periodsTime" placeholder="请选择日期时间范围">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" id="submitBtn" lay-submit lay-filter="submitBtn">
+                <i class="layui-icon layui-icon-ok-circle"></i>立即提交
+            </button>
+            <button class="layui-btn layui-btn-normal" id="backBtn"><i class="layui-icon layui-icon-close-fill"></i>返回</button>
+        </div>
+    </div>
+</form>
+
+<!-- layui 初始化 -->
+<script>
+    layui.use(['form','layer','table','upload','laydate','element'],function(){
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            laydate = layui.laydate,
+            formSelects = layui.formSelects,
+            element = layui.element;
+        element.init();
+
+        // 场次时间范围
+        laydate.render({
+            elem: '#periodsTime'
+            , type: 'datetime'
+            , range: true
+            , done: function(value, date, endDate){
+                if(value == null || value == ""){
+                    $("#beginTime").val("");
+                    $("#endTime").val("");
+                }else{
+                    var time = value.split(" - ");
+                    $("#beginTime").val(time[0]);
+                    $("#endTime").val(time[1]);
+                }
+            }
+        });
+
+        // 监听提交
+        form.on('submit(submitBtn)', function(data) {
+            var periodsName = $("#periodsName").val();
+            var beginTime = $("#beginTime").val();
+            var endTime = $("#endTime").val();
+            var activityType = $("#activityType").val();
+            if (beginTime == null || beginTime == "" || endTime == null || endTime == "") {
+                layer.msg("请选择时间范围！", {icon: 5});
+                return false;
+            }
+
+            if (periodsName == null || periodsName == "") {
+                layer.msg("请输入场次标题！", {icon: 5});
+                return false;
+            }
+
+            if (activityType == null || activityType == "") {
+                layer.msg("请选择活动类型！", {icon: 5});
+                return false;
+            }
+
+            layer.confirm('确认提交吗？', function (index) {
+                $('#submitBtn').attr('disabled', 'disabled');
+                var loadIndex = layer.load(1, {
+                    shade: [0.5, '#000']
+                })
+                $.ajax({
+                    type: 'POST',
+                    url: '/periods/addOrUpdatePeriods',
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        "periodsName": periodsName,
+                        "beginTime": beginTime,
+                        "endTime": endTime,
+                        "activityType": activityType
+                    }),
+                    success :function(data){
+                        if (data.code == 200) {
+                            layer.msg("添加成功", {
+                                icon: 6, time: 2000, end: function () {
+                                    parent.location.href = "/periods/toPeriodsListPage"
+                                }
+                            });
+                        } else {
+                            layer.alert(data.msg == null ? "有一丝丝问题，请联系管理员" : data.msg, {icon: 5});
+                            $('#submitBtn').removeAttr('disabled');
+                        }
+                        layer.close(loadIndex);
+                    },
+                    error :function(e){
+                        console.log(e);
+                        layer.close(loadIndex);
+                        layer.msg("有一丝丝问题，请联系管理员", {icon: 5});
+                        $('#submitBtn').removeAttr('disabled');
+                        return false;
+                    }
+                });
+            });
+            return false;
+        });
+
+        $("#backBtn").on("click",function () {
+            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+            parent.layer.close(index);//关闭弹出的子页面窗口
+        })
+    });
+
+</script>
+</body>
+</html>

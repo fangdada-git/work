@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>售后特卖订单列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.js"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/magnify/css/jquery.magnify.css">
+    <script src="/layui/js/formSelects-v4.js"></script>
+    <link rel="stylesheet" href="/layui/css/formSelects-v4.css" media="all">
+    <style type="text/css">
+        .layui-table-header .layui-table tr {
+            height: auto;
+            line-height: 50px;
+        }
+        /*.layui-table tr{height: 65px}*/
+        .layui-input-block{
+            margin-left: 131px;
+            min-height: 36px;
+        }
+        .layui-input{
+            width: 180.44px;
+        }
+        .layui-select{
+            width: 180.44px;
+        }
+        .layui-input-block-p{
+            padding-top: 8px;
+        }
+        .layui-table-cell {
+            height:auto;
+            overflow:visible;
+            text-overflow:inherit;
+            white-space:normal;
+        }
+    </style>
+</head>
+<body class="childrenBody">
+<form class="layui-form" style="background-color: #ffffff;">
+    <blockquote class="layui-elem-quote quoteBox">
+        <form class="layui-form">
+            <div class="layui-form-item" >
+                <div class="layui-inline">
+                    <div class="layui-input-block" style="margin-left: 10px; width: 383px;">
+                        <select id="dealerId" name="dealerId" xm-select="dealerSelect" xm-select-search="" xm-select-search-type="dl" xm-select-radio="">
+                                xm-select-radio="" >
+                            <option value="">请选择经销商</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-input-block" style="margin-left: 10px; width: 383px;">
+                        <select id="activityId" name="activityId"  xm-select="activitySelect" xm-select-search="" xm-select-search-type="dl"
+                                xm-select-radio="">
+                            <option value="">请选择活动</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-input-block" style="margin-left: 10px;">
+                        <select id="saleAgentSel" name="saleAgentSel"  xm-select="saleAgentSel" xm-select-search="" xm-select-search-type="dl"
+                                xm-select-radio="">
+                            <option value="">请选择代理人</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item" >
+                <div class="layui-inline">
+                    <div class="layui-input-block" style="margin-left: 10px;">
+                        <select id="orderStatus" name="orderStatus">
+                            <option value="">请选择订单状态</option>
+                            <option value="3">待核销</option>
+                            <option value="99">未生效</option>
+                            <option value="12">已进店</option>
+                            <option value="11">待发券</option>
+                            <option value="4">已发券</option>
+                            <option value="14">已退款（全部）</option>
+                            <option value="7">已退款（人工）</option>
+                            <option value="13">已退款（备案）</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-input-block" style="margin-left: 10px;">
+                        <select id="userType" name="userType">
+                            <option value="">请选择客户身份</option>
+                            <option value="0">备案用户</option>
+                            <option value="1">流失用户</option>
+                            <option value="2">普通用户</option>
+                            <option value="3">代理人</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-input-block" style="margin-left: 10px;">
+                        <select id="orderType" name="orderType">
+                            <option value="">请选择订单类型</option>
+                            <option value="1">推广卡</option>
+                            <option value="2">套餐卡</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-input-block" style="margin-left: 10px;">
+                        <select id="channel" name="channel">
+                            <option value="">请选择订单渠道</option>
+                            <option value="1">代理人</option>
+                            <option value="2">总部电销</option>
+                            <option value="3">团车运营</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-input-block" style="margin-left: 10px;">
+                        <input type="text" name="licencePlate" id="licencePlate" placeholder="请输入车牌" class="layui-input"/>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item" >
+                <div class="layui-inline">
+                    <div class="layui-input-block" style="margin-left: 10px;">
+                        <input type="text" name="userPhone" id="userPhone" placeholder="请输入手机号" class="layui-input"/>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-input-block" style="margin-left: 10px;">
+                        <input type="text" name="payTimeBegin" id="payTimeBegin" placeholder="请选择购买开始时间" class="layui-input"/>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-input-block" style="margin-left: 10px;">
+                        <input type="text" name="payTimeEnd" id="payTimeEnd" placeholder="请选择购买结束时间" class="layui-input"/>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-input-block" style="margin-left: 10px;">
+                        <input type="text" name="startTime" id="startTime" placeholder="请选择核销开始时间" class="layui-input"/>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-input-block" style="margin-left: 10px;">
+                        <input type="text" name="endTime" id="endTime" placeholder="请选择核销结束时间" class="layui-input"/>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item" >
+                <div class="layui-inline">
+                    <div class="layui-input-block" style="margin-left: 10px; width: 180.43px;">
+                        <select id="wwUserId" name="wwUserId" xm-select="wechatworkSelect" xm-select-search="" xm-select-search-type="dl" xm-select-radio="">
+                            xm-select-radio="" >
+                            <option value="">请选择企微客服</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-input-block" style="margin-left: 10px;">
+                        <select id="subAccountStatus" name="subAccountStatus">
+                            <option value="">请选择分账状态</option>
+                            <option value="1">不分账</option>
+                            <option value="2">待分账</option>
+                            <option value="3">分账中</option>
+                            <option value="4">已分账</option>
+                            <option value="5">分账失败</option>
+                            <option value="6">分账退回中</option>
+                            <option value="7">分账已退回</option>
+                            <option value="8">分账退回失败</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item" >
+                <div class="layui-inline">
+                    <div class="layui-input-block" style="margin-left: 10px;">
+                        <a class="layui-btn layui-btn-radius add_btn" id="search" href="javascript:;"><i class="layui-icon layui-icon-search"></i>搜索</a>
+                        <a class="layui-btn layui-btn-radius add_btn" id="export" href="javascript:;"><i class="layui-icon layui-icon-release"></i>导出</a>
+                        <!--                        <a class="layui-btn layui-btn-radius add_btn" id="batchRefund" href="javascript:;"><i class="layui-icon layui-icon-release"></i>批量退款</a>-->
+                        <a class="layui-btn layui-btn-radius add_btn" id="carOrder" href="javascript:;"><i class="layui-icon layui-icon-release"></i>下单车型统计</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </blockquote>
+    <table id="fissionGoodsOrderList" lay-filter="fissionActivityTool"></table>
+</form>
+
+<!-- 表格操作列按钮 -->
+<script type="text/html" id="barBtn">
+    {{# if(d.orderStatus=="3"){ }}
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="refund"><i class="layui-icon layui-icon-edit">退款</i></a>
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="checked"><i class="layui-icon layui-icon-edit">核销</i></a>
+    {{# } }}
+    {{# if(d.orderStatus=="4" || d.orderStatus=="11"){ }}
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="coupon_list"><i class="layui-icon layui-icon-edit">卡券明细</i></a>
+    {{# } }}
+</script>
+
+<script type="text/javascript" src="/common/js/tools.js"></script>                              
+<!-- layui 初始化 -->
+<script type="text/javascript" th:inline="javascript">
+    layui.use(['form', 'layer', 'table', 'laydate'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            table = layui.table,
+            formSelects = layui.formSelects,
+            laydate = layui.laydate;
+
+        // 裂变活动列表
+        var tableIns = table.render({
+            elem: '#fissionGoodsOrderList',
+            url : '/afterSale/order/getOrderList',
+            cellMinWidth : 100,
+            page : true,
+            height : "full",
+            limits : [10,20,50,100],
+            limit : 10,
+            id : "goodsOrderListTable",
+            width: "100%",
+            height: 600,
+            even:true,
+            cols: [
+                [
+                    {field: 'orderCode', title: '订单编号', align: "center", minWidth: 160},
+                    {field: 'activityName', title: '活动名称', minWidth: 180, align: "left"},
+                    {field: 'dealerName', title: '经销商名称', minWidth: 220, align: "left"},
+                    {field: 'goodsName', title: '商品名称', align: "center",minWidth: 160},
+                    {field: 'orderTypeFormat', title: '商品类型', align: "center",minWidth: 160},
+                    {field: 'userNickName', title: '微信昵称', align: "center",minWidth: 160},
+                    {field: 'licencePlate', title: '下单车牌', align: "center",width: 110, templet: function (d) {
+                            var r = '';
+                            if (d.keepOnRecordUser==true) {
+                                r = '<sup style="margin-left: 5px;">R</sup>';
+                            }
+                            var html = '<div><div style="display: inline-block">'+d.licencePlate+'</div>'+r+'</div>';
+                            return html;
+                        }
+                    },
+                    {field: 'csName', title: '车型', align: "center", width: 100},
+                    {field: 'userPhone', title: '手机号', align: "center", width: 120},
+                    {field: 'userTypeFormat', title: '客户身份', align: "center"},
+                    {field: 'orderMoney', title: '订单金额', align: "center"},
+                    {field: 'orderStatusName', title: '订单状态', align: "center", templet: function (d) {
+                            if(d.orderStatus==11){
+                                return '<span style="color:red">'+d.orderStatusName+'</span>';
+                            }else{
+                                return d.orderStatusName;
+                            }
+                        }
+                    },
+                    {field: 'channelName', title: '渠道', align: "center"},
+                    {field: 'payTime', title: '购买时间', align: "center", minWidth: 200},
+                    {field: 'channelName', title: '购买渠道', align: "center", minWidth: 200},
+                    {field: '', title: '直接邀请人', align: "center", minWidth: 200, templet: function (d) {
+                            if (d.channel==2) {
+                                return d.wwUserNameCreateDt;
+                                // return d.wwUserName +"<br/>"+d.wwCreateDt;
+                            } else {
+                                if(d.agentWxUnionId==d.shareWxUnionId){
+                                    return d.agentName?d.agentName:'';
+                                }else{
+                                    return d.shareNickName!=undefined&&d.shareNickName!=null?d.shareNickName:'';
+                                }
+                            }
+                        }
+                    },
+                    {field: 'agentName', title: '所属代理人', align: "center", minWidth: 200},
+                    {field: 'checkedDate', title: '核销时间', align: "center", minWidth: 200},
+                    {field: 'checkedSalesName', title: '核销人', align: "center", minWidth: 200},
+                    {field: 'subAccountStatusFormat', title: '分账状态', align: "center", minWidth: 120, templet: function (d) {
+                            var html = '';
+                            if (d.subAccountStatus==5 || d.subAccountStatus==8) {
+                                html = '&nbsp;<i class="layui-icon alone-tips" lay-tips="'+d.subAccountDesc+'">&#xe60b;</i>';
+                            }
+                            return (d.subAccountStatusFormat?d.subAccountStatusFormat:'')+html;
+                        }
+                    },
+                    {field: 'subAccountAmount', title: '分账金额', align: "center", minWidth: 120},
+                    { title: '操作', align: 'center', toolbar: '#barBtn', fixed: 'right'},
+
+                ]
+            ],
+            done: function (res, curr, count) {
+                $('*[lay-tips]').on('mouseenter', function () {
+                    let content = $(this).attr('lay-tips');
+                    this.index = layer.tips('<div style="padding: 10px; font-size: 14px; color: #eee;">' + content + '</div>', this, {
+                        time: -1
+                        , maxWidth: 280
+                        , tips: [3, '#3A3D49']
+                    });
+                }).on('mouseleave', function () {
+                    layer.close(this.index);
+                });
+                //解决因固定操作栏导致和表格错位的问题
+                $(".layui-table-main tr").each(function (index, val) {
+                    $($(".layui-table-fixed-r .layui-table-body tbody tr")[index]).height($(val).height()-1);
+                });
+            }
+        });
+
+        var payTimeBegin = laydate.render({
+            elem: '#payTimeBegin',
+            type : 'datetime',
+            trigger: 'click',
+            done: function(value, date) {
+                if (date.year!=undefined) {
+                    payTimeEnd.config.min = {
+                        year : date.year,
+                        month : date.month - 1,
+                        date : date.date,
+                        hours : date.hours,
+                        minutes : date.minutes,
+                        seconds : date.seconds
+                    };
+                }
+            }
+        });
+        var payTimeEnd = laydate.render({
+            elem: '#payTimeEnd',
+            type : 'datetime',
+            trigger: 'click',
+            done: function(value, date) {
+                if (date.year!=undefined) {
+                    payTimeBegin.config.max = {
+                        year : date.year,
+                        month : date.month - 1,
+                        date : date.date,
+                        hours : date.hours,
+                        minutes : date.minutes,
+                        seconds : date.seconds
+                    };
+                }
+            }
+        });
+        var startTime = laydate.render({
+            elem: '#startTime',
+            type : 'datetime',
+            trigger: 'click',
+            done: function(value, date) {
+                if (date.year!=undefined) {
+                    payTimeBegin.config.max = {
+                        year : date.year,
+                        month : date.month - 1,
+                        date : date.date,
+                        hours : date.hours,
+                        minutes : date.minutes,
+                        seconds : date.seconds
+                    };
+                }
+            }
+        });
+        var endTime = laydate.render({
+            elem: '#endTime',
+            type : 'datetime',
+            trigger: 'click',
+            done: function(value, date) {
+                if (date.year!=undefined) {
+                    payTimeBegin.config.max = {
+                        year : date.year,
+                        month : date.month - 1,
+                        date : date.date,
+                        hours : date.hours,
+                        minutes : date.minutes,
+                        seconds : date.seconds
+                    };
+                }
+            }
+        });
+
+        $.ajax({
+            url: "/afterSale/stat/dealer",
+            success: function (res) {
+                var array = [];
+                for (var i = 0; i < res.length; i++) {
+                    array.push({"name": res[i].dealerName, "value": res[i].id})
+                }
+                layui.formSelects.data('dealerSelect', 'local', {
+                    arr: array
+                });
+            }
+        });
+
+        $.ajax({
+            url: "/afterSale/stat/activity",
+            success: function (res) {
+                var array = [];
+                for (var i = 0; i < res.length; i++) {
+                    array.push({"name": res[i].activityName, "value": res[i].id})
+                }
+                layui.formSelects.data('activitySelect', 'local', {
+                    arr: array
+                });
+            }
+        });
+        //企微客服列表
+        $.ajax({
+            url: "/afterSale/wechatwork/getWechatworkConcactList",
+            success: function (res) {
+                var array = [];
+                for (var i = 0; i < res.length; i++) {
+                    array.push({"name": res[i].wwUserName, "value": res[i].wwUserId})
+                }
+                layui.formSelects.data('wechatworkSelect', 'local', {
+                    arr: array
+                });
+            }
+        });
+        /*form.on('select(activitySelect)', function(data){
+            console.log(data);
+        });*/
+        layui.formSelects.on('activitySelect', function (id, vals, val, isAdd, isDisabled) {
+            if (isAdd) {
+                getAfterSaleAgentList(val.value);
+            }else{
+                setSaleAgentSel({});
+            }
+
+        });
+        layui.formSelects.on('dealerSelect', function (id, vals, val, isAdd, isDisabled) {
+            var url;
+            if (isAdd) {
+                url = "/afterSale/stat/activity?dealerId=" + val.value;
+            } else {
+                url = "/afterSale/stat/activity"
+            }
+            $.ajax({
+                url: url,
+                success: function (res) {
+                    var array = [];
+                    for (var i = 0; i < res.length; i++) {
+                        array.push({"name": res[i].activityName, "value": res[i].id})
+                    }
+                    layui.formSelects.data('activitySelect', 'local', {
+                        arr: array
+                    });
+                }
+            });
+
+        });
+
+        // 操作事件
+        table.on('tool(fissionActivityTool)', function(obj){
+            var data = obj.data;
+            if(obj.event == 'refund'){
+                layer.confirm('是否确认退款?', {icon: 3, title:'提示'}, function(index){
+                    var loading = layer.msg('退款中，请稍候……', { icon: 16, shade: 0.01,shadeClose:false,time:600*1000 });
+                    $.ajax({
+                        type: "post",
+                        url: '/afterSale/order/batchRefund',
+                        dataType:'json',
+                        data: {id:data.id},
+                        dataType: "json",
+                        success: function (s) {
+                            layer.close(loading);
+                            var message = s.msg;
+                            var icon = 5;
+                            if(s.code == 200) icon=6;
+                            layer.alert(message, {icon: icon,title:'提示'}, function (index) {
+                                //关闭弹窗
+                                layer.close(index);
+                                refresh();
+                            });
+                        },
+                        error: function (e) {
+                            layer.close(loading);
+                            layer.alert('网络繁忙', {icon: 5,title:'提示'});
+                        }
+                    })
+                    layer.close(index);
+                });
+            } else if(obj.event == 'checked'){
+                commOpenAndRefresh('订单核销','/afterSale/order/toCheckedOrderPage?orderCode='+data.orderCode,'80%','80%',false);
+            } else if(obj.event == 'coupon_list'){
+                commOpen('卡券明细','/afterSale/coupon/toCouponListPage?orderCode='+data.orderCode,'100%','100%', true);
+            }
+
+
+        });
+
+        //搜索订单
+        $("#search").on("click", function () {
+            table.reload("goodsOrderListTable", {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: getData()
+            })
+        });
+        $("#export").on("click", function () {
+            var params = getData();
+            window.open("/afterSale/order/orderListExport" + queryParams(params, true));
+        });
+        $("#carOrder").on("click", function () {
+            var url = "";
+            var activityId = formSelects.value("activitySelect", "val");
+            if(activityId!=""){
+                url += "?activityId="+parseInt(activityId);
+            }
+            var dealerId = formSelects.value("dealerSelect", "val");
+            if(dealerId!=""){
+                url += (url=="" ? "?" : "&")+"dealerId="+parseInt(dealerId);
+            }
+            commOpen('下单车型统计','/afterSale/order/toCarOrderPage'+url,'100%','100%', true);
+        });
+
+        function getAfterSaleAgentList(activityId) {
+            var saleAgentSel = $("#saleAgentSel");
+            var opt0='<option value="">请先选择活动</option>';
+            if(activityId=="") {
+                saleAgentSel.empty();
+                saleAgentSel.append(opt0);
+                form.render("select");
+                alert("清空1");
+                return;
+            }
+            $.ajax({
+                url: '/afterSale/agent/getAgentList',
+                data: {activityId: activityId},
+                success: function (data) {
+                    saleAgentSel.empty();
+                    if (data != null && data != "") {
+                        var arr = [];
+                        for (var i = 0; i < data.length; i++) {
+                            arr.push({"name": data[i].name, "value": data[i].agentWxUnionId})
+                        }
+                        setSaleAgentSel(arr);
+                    }else{
+                        setSaleAgentSel({});
+                    }
+                }
+            })
+        }
+        function setSaleAgentSel(array){
+            layui.formSelects.data('saleAgentSel', 'local', {
+                arr: array
+            });
+        }
+        //重新加载
+        var refresh = function () {
+            table.reload("goodsOrderListTable", {
+                where: getData()
+            })
+        }
+
+        function getData() {
+            var wwUserId = formSelects.value("wechatworkSelect", "val");
+            var dealerId = formSelects.value("dealerSelect", "val");
+            var activityId = formSelects.value("activitySelect", "val");
+            var agentWxUnionId = formSelects.value("saleAgentSel", "val");
+            var orderStatus = $("#orderStatus").val();
+            var licencePlate = $("#licencePlate").val();
+            var userPhone = $("#userPhone").val();
+            var orderCode = $("#orderCode").val();
+            var orderType = $("#orderType").val();
+            var channel = $("#channel").val();
+            var payTimeBegin = $("#payTimeBegin").val();
+            var payTimeEnd = $("#payTimeEnd").val();
+            var startTime = $("#startTime").val();
+            var endTime = $("#endTime").val();
+            var userType = $("#userType").val();
+            var subAccountStatus = $("#subAccountStatus").val();
+            var data = {
+                "wwUserId": wwUserId.length>0?wwUserId[0]:null
+                ,"activityId": activityId != "" ? parseInt(activityId) : null
+                ,"dealerId": dealerId != "" ? parseInt(dealerId) : null
+                ,"orderStatus": orderStatus
+                , "userPhone": userPhone
+                , "licencePlate": licencePlate
+                , "orderCode": orderCode
+                , "orderType": orderType
+                , "channel": channel
+                , "payTimeBegin": payTimeBegin
+                , "payTimeEnd": payTimeEnd
+                , "startTime": startTime
+                , "endTime": endTime
+                , "agentWxUnionId": agentWxUnionId.length>0 ? agentWxUnionId[0] : null
+                , "userType": userType
+                , "subAccountStatus": subAccountStatus
+
+            };
+            console.log(data);
+            return data;
+        }
+
+        function queryParams(data, isPrefix) {
+            isPrefix = isPrefix ? isPrefix : false
+            let prefix = isPrefix ? '?' : ''
+            let _result = []
+            for (let key in data) {
+                let value = data[key]
+                // 去掉为空的参数
+                if (['', undefined, null].includes(value)) {
+                    continue
+                }
+                if (value.constructor === Array) {
+                    value.forEach(_value => {
+                        _result.push(encodeURIComponent(key) + '[]=' + encodeURIComponent(_value))
+                    })
+                } else {
+                    _result.push(encodeURIComponent(key) + '=' + encodeURIComponent(value))
+                }
+            }
+
+            return _result.length ? prefix + _result.join('&') : ''
+        }
+
+        var commOpen = function(title,url,width,height,scrollbar) {
+            layer.open({
+                title: title,
+                type: 2,
+                shadeClose: true,
+                content: url,
+                scrollbar : scrollbar,
+                area: [width, height],
+            });
+        }
+        var commOpenAndRefresh = function(title,url,width,height,scrollbar) {
+            layer.open({
+                title: title,
+                type: 2,
+                shadeClose: true,
+                content: url,
+                scrollbar : scrollbar,
+                area: [width, height],
+                end : function () {
+                    refresh();
+                }
+            });
+        }
+    });
+
+</script>
+
+</body>
+</html>

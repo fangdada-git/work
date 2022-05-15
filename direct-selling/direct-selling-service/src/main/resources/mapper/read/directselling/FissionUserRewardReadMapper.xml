@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.FissionUserRewardReadMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FissionUserReward">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="fission_id" jdbcType="INTEGER" property="fissionId" />
+    <result column="user_wx_union_id" jdbcType="CHAR" property="userWxUnionId" />
+    <result column="task_id" jdbcType="INTEGER" property="taskId" />
+    <result column="reward_amount" jdbcType="DECIMAL" property="rewardAmount" />
+    <result column="payment_or_not" jdbcType="BIT" property="paymentOrNot" />
+    <result column="task_record_id" jdbcType="BIGINT" property="taskRecordId" />
+    <result column="trade_record_id" jdbcType="BIGINT" property="tradeRecordId" />
+    <result column="delete_flag" jdbcType="BIT" property="deleteFlag" />
+    <result column="create_dt" jdbcType="TIMESTAMP" property="createDt" />
+    <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, fission_id, user_wx_union_id, task_id, reward_amount, payment_or_not, task_record_id,
+    trade_record_id, delete_flag, create_dt, update_dt
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from fission_user_reward
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <!--C端用户可打款列表-->
+  <select id="selectUserPayableList" resultMap="BaseResultMap">
+      SELECT
+      fur.*
+      FROM
+      fission_user_reward fur
+      JOIN fission_activity fa ON fur.fission_id = fa.id AND fa.on_state = 1
+      WHERE
+      fur.delete_flag = 0
+      AND fur.payment_or_not = 0
+      AND fa.start_time &lt; now() AND (fa.end_time &gt;= now()
+      OR DATE_ADD(fa.end_time, INTERVAL + 3 HOUR) &gt;= now())
+  </select>
+
+
+  <select id="selectUserRewardListByFissionId" resultType="com.tuanche.directselling.dto.FissionUserRewardDto">
+    SELECT
+        fission_id,
+		user_wx_union_id,
+		sum(reward_amount) as totalAmount,
+		fa.activity_name AS activityName
+    FROM
+        fission_user_reward fur
+        LEFT JOIN fission_activity fa ON fur.fission_id = fa.id
+    WHERE
+        fur.delete_flag = 0
+        AND fur.fission_id = #{fissionId}
+    GROUP BY fission_id, user_wx_union_id
+  </select>
+
+  <select id="selectTotalAmountByFissionId" resultType="java.math.BigDecimal">
+    SELECT
+        sum( reward_amount ) AS totalAmount
+    FROM
+        fission_user_reward fur
+    WHERE
+        fur.delete_flag = 0
+        AND fur.fission_id = #{fissionId}
+  </select>
+  <!-- 获取裂变用户某一任务奖励及裂变任务已分发的总奖金额 -->
+  <select id="getRewardAmountAndTotalRewarByFissionId" resultType="com.tuanche.directselling.dto.FissionUserRewardDto">
+      SELECT
+          (SELECT SUM(reward_amount) FROM fission_user_reward WHERE fission_id = #{fissionId} ) AS totalAmount,
+          (SELECT SUM(reward_amount) AS rewardAmount
+               FROM
+                   fission_user_reward
+               WHERE user_wx_union_id = #{userWxUnionId}
+                 AND fission_id = #{fissionId}
+                 AND task_id = #{taskId}) AS rewardAmount
+  </select>
+
+  <select id="selectFissionUserRewardByWxUnionIds" resultType="com.tuanche.directselling.dto.FissionUserRewardDto">
+      select user_wx_union_id,task_id,payment_or_not,sum(reward_amount) reward_amount,GROUP_CONCAT(DISTINCT trade_record_id) trade_record_ids
+        from fission_user_reward
+      where delete_flag=0
+      <if test="fissionId != null">
+          and fission_id=#{fissionId}
+      </if>
+      and user_wx_union_id in <foreach collection="userWxUnionIds" item="item" index="index" separator="," open="(" close=")">
+      #{item}
+      </foreach>
+      <choose>
+          <when test="payBeginTime != null and payEndTime == null">
+              and EXISTS (select id from fission_trade_record where trade_record_id=id and pay_time &gt; #{payBeginTime})
+          </when>
+          <when test="payBeginTime == null and payEndTime != null">
+              and EXISTS (select id from fission_trade_record where trade_record_id=id and pay_time &lt; #{payEndTime})
+          </when>
+          <when test="payBeginTime != null and payEndTime != null">
+              and EXISTS (select id from fission_trade_record where trade_record_id=id and pay_time &gt; #{payBeginTime} and pay_time &lt; #{payEndTime})
+          </when>
+      </choose>
+      GROUP BY user_wx_union_id,task_id,payment_or_not
+  </select>
+</mapper>

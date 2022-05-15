@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.AfterSaleActivityChannelStatisticsWriteMapper" >
+
+  <insert id="insertBatch" parameterType="com.tuanche.directselling.model.AfterSaleActivityChannelStatistics" >
+    insert into after_sale_activity_channel_statistics (activity_id, channel,
+      promotion_card_total, promotion_card_amount, 
+      package_card_total, package_card_amount, promotion_card_refunds_total_active, 
+      promotion_card_refunds_amount_active, promotion_card_refunds_total_passive, 
+      promotion_card_refunds_amount_passive, primary_fission_total, 
+      beyond_primary_fission_total, promotion_cards_written_off_total, 
+      promotion_cards_written_off_amount, visitors_total)
+      values
+      <foreach collection="list" item="item" index="index" separator=",">
+          (#{item.activityId,jdbcType=INTEGER}, #{item.channel,jdbcType=INTEGER},
+          #{item.promotionCardTotal,jdbcType=INTEGER}, #{item.promotionCardAmount,jdbcType=DECIMAL},
+          #{item.packageCardTotal,jdbcType=INTEGER}, #{item.packageCardAmount,jdbcType=DECIMAL}, #{item.promotionCardRefundsTotalActive,jdbcType=INTEGER},
+          #{item.promotionCardRefundsAmountActive,jdbcType=DECIMAL}, #{item.promotionCardRefundsTotalPassive,jdbcType=INTEGER},
+          #{item.promotionCardRefundsAmountPassive,jdbcType=DECIMAL}, #{item.primaryFissionTotal,jdbcType=INTEGER},
+          #{item.beyondPrimaryFissionTotal,jdbcType=INTEGER}, #{item.promotionCardsWrittenOffTotal,jdbcType=INTEGER},
+          #{item.promotionCardsWrittenOffAmount,jdbcType=DECIMAL}, #{item.visitorsTotal,jdbcType=INTEGER})
+      </foreach>
+  </insert>
+
+  <update id="updateBatch" parameterType="com.tuanche.directselling.model.AfterSaleActivityChannelStatistics" >
+      <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+        update after_sale_activity_channel_statistics
+          set promotion_card_total = #{item.promotionCardTotal,jdbcType=INTEGER},
+              promotion_card_amount = #{item.promotionCardAmount,jdbcType=DECIMAL},
+              package_card_total = #{item.packageCardTotal,jdbcType=INTEGER},
+              package_card_amount = #{item.packageCardAmount,jdbcType=DECIMAL},
+              promotion_card_refunds_total_active = #{item.promotionCardRefundsTotalActive,jdbcType=INTEGER},
+              promotion_card_refunds_amount_active = #{item.promotionCardRefundsAmountActive,jdbcType=DECIMAL},
+              promotion_card_refunds_total_passive = #{item.promotionCardRefundsTotalPassive,jdbcType=INTEGER},
+              promotion_card_refunds_amount_passive = #{item.promotionCardRefundsAmountPassive,jdbcType=DECIMAL},
+              primary_fission_total = #{item.primaryFissionTotal,jdbcType=INTEGER},
+              beyond_primary_fission_total = #{item.beyondPrimaryFissionTotal,jdbcType=INTEGER},
+              promotion_cards_written_off_total = #{item.promotionCardsWrittenOffTotal,jdbcType=INTEGER},
+              promotion_cards_written_off_amount = #{item.promotionCardsWrittenOffAmount,jdbcType=DECIMAL},
+              visitors_total = #{item.visitorsTotal,jdbcType=INTEGER}
+          where id = #{item.id,jdbcType=INTEGER}
+      </foreach>
+  </update>
+</mapper>

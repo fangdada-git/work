@@ -1,0 +1,13 @@
+.idea
+*.iml
+target
+logs
+.classpath
+.project
+.settings
+.pydevproject
+.amateras
+/.idea
+/.idea/workspace.xml
+/upload.log*
+/pic_tmp

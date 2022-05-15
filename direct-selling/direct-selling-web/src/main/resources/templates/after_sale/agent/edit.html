@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>团车直卖-代理人编辑</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.all.js"></script>
+    <script src="/common/js/jquery-1.12.4.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/magnify/css/jquery.magnify.css">
+    <style type="text/css">
+        .layui-table-header .layui-table tr {
+            height: auto;
+            line-height: 50px;
+        }
+        .layui-table tr{height: 65px}
+        .layui-form-label{width: 100px}
+        .layui-input-block{
+            margin-left: 131px;
+            min-height: 36px;
+        }
+        .layui-input{
+            width: 217.44px;
+        }
+        .layui-input-block-p{
+            padding-top: 8px;
+        }
+        .layui-table-cell {
+            height:auto;
+        }
+    </style>
+</head>
+<body class="childrenBody" style="padding-top: 20px;overflow: hidden">
+<form class="layui-form" style="background-color:#ffffff" lay-filter="fissionActivityForm">
+    <div class="layui-form-item" style="width: 437px;">
+        <label class="layui-form-label required">姓名</label>
+        <div class="layui-input-block">
+            <input type="text" name="activityName" id="name" lay-verify="required"
+                   placeholder="请输姓名" maxlength="30"  autocomplete="off" class="layui-input"  style="width: 300px;">
+        </div>
+    </div>
+    <div class="layui-form-item" style="width: 437px;">
+        <label class="layui-form-label required">手机号</label>
+        <div class="layui-input-block">
+            <input type="text" name="activityName" id="phone" lay-verify="required"
+                   placeholder="请输入手机号" maxlength="20"  autocomplete="off" class="layui-input"  style="width: 300px;">
+        </div>
+    </div>
+    <div class="layui-form-item" style="width: 437px;">
+        <label class="layui-form-label required">职位</label>
+        <div class="layui-input-block">
+            <input type="text" name="activityName" id="position" lay-verify="required"
+                   placeholder="请输职位" maxlength="30"  autocomplete="off" class="layui-input"  style="width: 300px;">
+        </div>
+    </div>
+    <div class="layui-form-item" style="margin-bottom: 225px;">
+        <div class="layui-input-block">
+            <button type="submit" class="layui-btn layui-btn-normal" id="submitBtn" lay-submit lay-filter="submitBtn">
+                <i class="layui-icon layui-icon-ok-circle"></i>立即提交
+            </button>
+            <button type="button" class="layui-btn layui-btn-normal" id="backBtn"><i class="layui-icon layui-icon-close-fill"></i>返回</button>
+        </div>
+    </div>
+</form>
+
+
+<script type="text/javascript" src="/common/js/tools.js"></script>                              
+<!-- layui 初始化 -->
+<script type="text/javascript" th:inline="javascript">
+    layui.use(['form','layer'],function() {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery;
+        // 监听提交
+        form.on('submit(submitBtn)', function(data){
+            var phone = $("#phone").val();
+            var rg = /^(13[0-9]|14[5|7]|15[0-9]|18[0-9]|17[0-9])\d{8}$/;
+            if(!rg.test(phone)){
+                layer.msg("请输正确的手机号！", {icon: 5});
+                return false;
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '/afterSale/agent/edit',
+                contentType: "application/json",
+                data: JSON.stringify({
+                    "id": [[${agent.id}]],
+                    "name": $("#name").val(),
+                    "phone": $("#phone").val(),
+                    "position": $("#position").val()
+                }),
+                success :function(data){
+                    if (data.code == 200) {
+                        layer.msg("修改成功", {
+                            icon: 6, time: 2000, end: function () {
+                                parent.reload();
+                                parent.layerClose();
+                            }
+                        });
+                    } else {
+                        layer.alert(data.msg == null ? "有一丝丝问题，请联系管理员" : data.msg, {icon: 5});
+                        $('#submitBtn').removeAttr('disabled');
+                    }
+                },
+                error :function(e){
+                    console.log(e);
+                    parent.layerClose();
+                    layer.msg("有一丝丝问题，请联系管理员", {icon: 5});
+                    $('#submitBtn').removeAttr('disabled');
+                    return false;
+                }
+            });
+            return false;
+        });
+
+        $("#backBtn").on("click",function () {
+            parent.layerClose();
+        })
+
+
+    });
+
+</script>
+
+</body>
+</html>

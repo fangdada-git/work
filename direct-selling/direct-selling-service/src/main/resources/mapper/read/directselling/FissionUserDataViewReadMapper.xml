@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.FissionUserDataViewReadMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FissionUserDataView">
+    <!--@mbg.generated-->
+    <!--@Table fission_user_data_view-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="fission_id" jdbcType="INTEGER" property="fissionId" />
+    <result column="prize_pool" jdbcType="DECIMAL" property="prizePool" />
+    <result column="issued" jdbcType="DECIMAL" property="issued" />
+    <result column="customer_count" jdbcType="INTEGER" property="customerCount" />
+    <result column="delete_flag" jdbcType="BOOLEAN" property="deleteFlag" />
+    <result column="create_dt" jdbcType="TIMESTAMP" property="createDt" />
+    <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, fission_id, prize_pool, issued, customer_count, delete_flag, create_dt, update_dt
+  </sql>
+  <select id="selectByFissionId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from fission_user_data_view
+    where fission_id = #{fissionId,jdbcType=INTEGER} and delete_flag=0
+  </select>
+
+  <select id="selectByFissionIds" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from fission_user_data_view where fission_id in
+    <foreach item="id" collection="fissionIds" separator="," open="(" close=")" index="">
+      #{id}
+    </foreach>
+    </select>
+</mapper>

@@ -1,0 +1,2 @@
+dubboFilter=com.tuanche.arch.dubbo.filter.DubboFilter
+ExceptionFilter=com.tuanche.directselling.filter.ExceptionFilter

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.FissionLiveRemindReadMapper">
+    <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FissionLiveRemind">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="fission_id" jdbcType="INTEGER" property="fissionId" />
+        <result column="live_id" jdbcType="INTEGER" property="liveId" />
+        <result column="wx_scene" jdbcType="INTEGER" property="wxScene" />
+        <result column="sale_wx_union_id" jdbcType="CHAR" property="saleWxUnionId" />
+        <result column="share_wx_union_id" jdbcType="CHAR" property="shareWxUnionId" />
+        <result column="user_wx_open_id" jdbcType="CHAR" property="userWxOpenId" />
+        <result column="user_wx_union_id" jdbcType="CHAR" property="userWxUnionId" />
+        <result column="user_phone" jdbcType="VARCHAR" property="userPhone" />
+        <result column="user_id" jdbcType="INTEGER" property="userId" />
+        <result column="channel" jdbcType="INTEGER" property="channel" />
+        <result column="remind_state" jdbcType="BIT" property="remindState" />
+        <result column="create_dt" jdbcType="TIMESTAMP" property="createDt" />
+        <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, fission_id, live_id, wx_scene, sale_wx_union_id, share_wx_union_id, user_wx_open_id, user_wx_union_id,
+    user_phone, user_id, channel,remind_state, create_dt, update_dt
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from fission_live_remind
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <!--查询直播预约提醒列表-->
+    <select id="selectLiveRemindList" parameterType="com.tuanche.directselling.model.FissionLiveRemind" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from fission_live_remind
+        <where>
+            <if test="fissionId != null">
+                fission_id = #{fissionId}
+            </if>
+            <if test="liveId != null">
+                AND live_id = #{liveId}
+            </if>
+            <if test="remindState != null">
+                AND remind_state = #{remindState}
+            </if>
+        </where>
+    </select>
+    <!--是否预约过-->
+    <select id="existAppoint" resultType="java.lang.Integer">
+        SELECT
+            count(1)
+        FROM
+            fission_live_remind
+        WHERE
+            fission_id = #{fissionId}
+            AND live_id = #{liveId}
+            AND user_wx_union_id = #{userWxUnionId}
+    </select>
+
+
+
+    <!--微信消息订阅场景值是否可用-->
+    <select id="useOfWxSceneList" resultMap="BaseResultMap">
+        SELECT
+            fission_id,wx_scene
+        FROM
+            fission_live_remind
+        WHERE
+            remind_state = 0
+            group by fission_id,wx_scene
+    </select>
+</mapper>

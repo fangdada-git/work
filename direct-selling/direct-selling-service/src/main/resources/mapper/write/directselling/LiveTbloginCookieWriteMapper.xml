@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.LiveTbloginCookieWriteMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.LiveTbloginCookie">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="cookies" jdbcType="VARCHAR" property="cookies" />
+    <result column="create_dt" jdbcType="TIMESTAMP" property="createDt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, cookies, create_dt
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from live_tblogin_cookie
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from live_tblogin_cookie
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tuanche.directselling.model.LiveTbloginCookie">
+    insert into live_tblogin_cookie (id, cookies, create_dt
+      )
+    values (#{id,jdbcType=INTEGER}, #{cookies,jdbcType=VARCHAR}, #{createDt,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.tuanche.directselling.model.LiveTbloginCookie">
+    insert into live_tblogin_cookie
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="cookies != null">
+        cookies,
+      </if>
+      <if test="createDt != null">
+        create_dt,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="cookies != null">
+        #{cookies,jdbcType=VARCHAR},
+      </if>
+      <if test="createDt != null">
+        #{createDt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.LiveTbloginCookie">
+    update live_tblogin_cookie
+    <set>
+      <if test="cookies != null">
+        cookies = #{cookies,jdbcType=VARCHAR},
+      </if>
+      <if test="createDt != null">
+        create_dt = #{createDt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tuanche.directselling.model.LiveTbloginCookie">
+    update live_tblogin_cookie
+    set cookies = #{cookies,jdbcType=VARCHAR},
+      create_dt = #{createDt,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="delAll">
+    delete from live_tblogin_cookie
+  </select>
+ </mapper>

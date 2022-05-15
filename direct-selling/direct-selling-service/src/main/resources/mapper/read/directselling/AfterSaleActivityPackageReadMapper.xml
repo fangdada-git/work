@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.AfterSaleActivityPackageReadMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.AfterSaleActivityPackage">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="activity_id" jdbcType="INTEGER" property="activityId" />
+    <result column="goods_id" jdbcType="INTEGER" property="goodsId" />
+    <result column="commodity_name" jdbcType="VARCHAR" property="commodityName" />
+    <result column="commodity_price" jdbcType="DECIMAL" property="commodityPrice" />
+    <result column="commodity_count" jdbcType="INTEGER" property="commodityCount" />
+    <result column="original_price" jdbcType="DECIMAL" property="originalPrice" />
+    <result column="up_shelf_time" jdbcType="TIMESTAMP" property="upShelfTime" />
+    <result column="down_shelf_time" jdbcType="TIMESTAMP" property="downShelfTime" />
+    <result column="rel_status" jdbcType="INTEGER" property="relStatus" />
+    <result column="rel_time" jdbcType="TIMESTAMP" property="relTime" />
+    <result column="operate_user" jdbcType="INTEGER" property="operateUser" />
+  </resultMap>
+  <resultMap id="resultDtoMap" extends="BaseResultMap" type="com.tuanche.directselling.dto.AfterSaleActivityPackageDto">
+    <result column="coupon_count" jdbcType="INTEGER" property="couponCount" />
+    <result column="dealer_id" jdbcType="INTEGER" property="dealerId" />
+    <result column="brand_id" jdbcType="INTEGER" property="brandId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    t1.id, t1.activity_id, t1.goods_id, t1.commodity_name, t1.commodity_price, t1.commodity_count, t1.original_price,
+    t1.up_shelf_time, t1.down_shelf_time, t1.rel_status, t1.rel_time, t1.operate_user
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from after_sale_activity_package t1
+    where t1.id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="getAfterSaleActivityPackageList" parameterType="com.tuanche.directselling.model.AfterSaleActivityPackage" resultMap="resultDtoMap">
+    select
+    <include refid="Base_Column_List" />
+    ,t2.dealer_id
+    ,t2.brand_id
+    from after_sale_activity_package t1
+    left join after_sale_activity t2 on t1.activity_id = t2.id
+    <where>
+      t1.rel_status = 1
+      <if test="activityId != null">
+        and t1.activity_id = #{activityId,jdbcType=INTEGER}
+      </if>
+      <if test="goodsId != null">
+        and t1.goods_id = #{goodsId,jdbcType=INTEGER}
+      </if>
+      <if test="commodityName != null and commodityName != ''">
+        and t1.commodity_name LIKE CONCAT("%",#{commodityName},"%")
+      </if>
+      <if test="commodityPrice != null">
+        and t1.commodity_price = #{commodityPrice,jdbcType=DECIMAL}
+      </if>
+      <if test="commodityCount != null">
+        and t1.commodity_count = #{commodityCount,jdbcType=INTEGER}
+      </if>
+      <if test="originalPrice != null">
+        and t1.original_price = #{originalPrice,jdbcType=DECIMAL}
+      </if>
+      <if test="upShelfTime != null">
+        and t1.up_shelf_time = #{upShelfTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="downShelfTime != null">
+        and t1.down_shelf_time = #{downShelfTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="relTime != null">
+        and t1.rel_time = #{relTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="operateUser != null">
+        and t1.operate_user = #{operateUser,jdbcType=INTEGER}
+      </if>
+    </where>
+    ORDER BY commodity_price
+  </select>
+
+  <select id="getAfterSaleActivityPackageByPage" parameterType="com.tuanche.directselling.model.AfterSaleActivityPackage" resultMap="resultDtoMap">
+    select
+    pack.id, pack.activity_id, pack.goods_id, pack.commodity_name, pack.commodity_price, pack.commodity_count, pack.original_price,
+    pack.up_shelf_time, pack.down_shelf_time, pack.rel_status, pack.rel_time, pack.operate_user,count(cou.id) as coupon_count
+    from after_sale_activity_package pack
+    LEFT JOIN after_sale_activity_coupon cou ON cou.package_id = pack.id AND cou.type = 2 AND cou.rel_status = 1
+    where
+      pack.rel_status = 1
+      <if test="activityId != null">
+        and pack.activity_id = #{activityId,jdbcType=INTEGER}
+      </if>
+      <if test="goodsId != null">
+        and pack.goods_id = #{goodsId,jdbcType=INTEGER}
+      </if>
+      <if test="commodityName != null and commodityName != ''">
+        and pack.commodity_name LIKE CONCAT("%",#{commodityName},"%")
+      </if>
+      <if test="commodityPrice != null">
+        and pack.commodity_price = #{commodityPrice,jdbcType=DECIMAL}
+      </if>
+      <if test="commodityCount != null">
+        and pack.commodity_count = #{commodityCount,jdbcType=INTEGER}
+      </if>
+      <if test="originalPrice != null">
+        and pack.original_price = #{originalPrice,jdbcType=DECIMAL}
+      </if>
+      <if test="upShelfTime != null">
+        and pack.up_shelf_time = #{upShelfTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="downShelfTime != null">
+        and pack.down_shelf_time = #{downShelfTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="relTime != null">
+        and pack.rel_time = #{relTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="operateUser != null">
+        and pack.operate_user = #{operateUser,jdbcType=INTEGER}
+      </if>
+      <if test="primaryLabelId != null || secondaryLabelId != null">
+        AND pack.id IN(
+          SELECT
+            package_id
+          FROM after_sale_activity_package_label
+          WHERE delete_flag=0
+            <if test="primaryLabelId != null">
+                AND primary_label_id=#{primaryLabelId}
+            </if>
+            <if test="secondaryLabelId != null">
+                AND secondary_label_id=#{secondaryLabelId}
+            </if>
+          )
+      </if>
+    GROUP BY pack.id
+  </select>
+
+</mapper>

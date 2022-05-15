@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.GiftRefuelingcardGiftrecordReadMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.GiftRefuelingcardGiftrecord">
+      <id column="id" property="id" jdbcType="INTEGER" />
+      <result column="dealer_id" property="dealerId" jdbcType="INTEGER" />
+      <result column="dealer_name" property="dealerName" jdbcType="VARCHAR" />
+      <result column="periods_id" property="periodsId" jdbcType="INTEGER" />
+      <result column="periods_name" property="periodsName" jdbcType="VARCHAR" />
+      <result column="order_channel" property="orderChannel" jdbcType="VARCHAR" />
+      <result column="platform_order_id" property="platformOrderId" jdbcType="VARCHAR" />
+      <result column="goods_tb_id" property="goodsTbId" jdbcType="VARCHAR" />
+      <result column="phone" property="phone" jdbcType="VARCHAR" />
+      <result column="name" property="name" jdbcType="VARCHAR" />
+      <result column="order_money" property="orderMoney" jdbcType="DECIMAL" />
+      <result column="commodity_type" property="commodityType" jdbcType="VARCHAR" />
+      <result column="commodity_type_name" property="commodityTypeName" jdbcType="VARCHAR" />
+      <result column="send_time" property="sendTime" jdbcType="TIMESTAMP" />
+      <result column="cb_id" property="cbId" jdbcType="INTEGER" />
+      <result column="cb_name" property="cbName" jdbcType="VARCHAR" />
+      <result column="cs_id" property="csId" jdbcType="INTEGER" />
+      <result column="cs_name" property="csName" jdbcType="VARCHAR" />
+      <result column="delete_flag" property="deleteFlag" jdbcType="BIT" />
+      <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+      <result column="create_name" property="createName" jdbcType="VARCHAR" />
+      <result column="update_dt" property="updateDt" jdbcType="TIMESTAMP" />
+      <result column="update_name" property="updateName" jdbcType="VARCHAR" />
+  </resultMap>
+    <resultMap id="GiftRefuelingcardGiftrecordDto" type="com.tuanche.directselling.dto.GiftRefuelingcardGiftrecordDto" extends="BaseResultMap">
+        <result column="refueling_code" property="refuelingCode" jdbcType="VARCHAR"></result>
+        <result column="presentedCardNum" property="presentedCardNum"  jdbcType="INTEGER"></result>
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id, dealer_id, dealer_name, periods_id, periods_name, order_channel, platform_order_id,
+        goods_tb_id, phone, name, order_money,commodity_type,commodity_type_name, send_time, cb_id, cb_name, cs_id, cs_name
+    </sql>
+    <!-- 根据赠送记录ID获取赠送记录 -->
+  <select id="getGiftRefuelingcardGiftrecordById" parameterType="int" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM gift_refuelingcard_giftrecord
+     WHERE id = #{id}
+  </select>
+    <!-- 获取赠送记录列表 -->
+  <select id="getGiftRefuelingcardGiftrecordList" parameterType="com.tuanche.directselling.vo.GiftRefuelingcardGiftrecordVo" resultMap="GiftRefuelingcardGiftrecordDto">
+    SELECT
+    <include refid="Base_Column_List" />,
+      (SELECT COUNT(*)
+      FROM gift_refuelingcard_giftrecord_cards t4
+      WHERE t4.giftrecord_id = t1.id) AS presentedCardNum
+    FROM gift_refuelingcard_giftrecord t1
+    <where>
+        t1.delete_flag = 0
+        <if test="dealerName != null and dealerName != ''">
+            AND t1.dealer_name LIKE CONCAT('%',#{dealerName},'%')
+        </if>
+        <if test="dealerId != null">
+            AND t1.dealer_id = #{dealerId}
+        </if>
+        <if test="periodsId != null">
+            AND t1.periods_id = #{periodsId}
+        </if>
+    </where>
+  </select>
+  <!-- 获取经销商赠送油卡总数 -->
+  <select id="getDealerGiveTotal" parameterType="com.tuanche.directselling.vo.GiftRefuelingcardGiftrecordVo" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM
+            gift_refuelingcard_giftrecord
+        <where>
+            delete_flag = 0
+            <if test="dealerId != null">
+                AND dealer_id = #{dealerId}
+            </if>
+            <if test="periodsId != null">
+                AND periods_id = #{periodsId}
+            </if>
+            <if test="phone != null">
+                AND phone = #{phone}
+            </if>
+        </where>
+    </select>
+  <!-- 获取赠送记录和油卡卡号 -->
+  <select id="getGiftrecordAndRefuelingCode" parameterType="com.tuanche.directselling.vo.GiftRefuelingcardGiftrecordVo" resultMap="GiftRefuelingcardGiftrecordDto">
+      SELECT
+          t1.id,
+          t1.phone
+      FROM gift_refuelingcard_giftrecord t1
+      WHERE t1.id = #{id}
+    </select>
+</mapper>

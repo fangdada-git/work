@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.FashionCarMarkeHelperUserReadMapper" >
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FashionCarMarkeHelperUser" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="periods_id" property="periodsId" jdbcType="INTEGER" />
+    <result column="car_fashion_id" property="carFashionId" jdbcType="INTEGER" />
+    <result column="goods_id" property="goodsId" jdbcType="INTEGER" />
+    <result column="helper_type" property="helperType" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="user_wx_union_id" property="userWxUnionId" jdbcType="VARCHAR" />
+    <result column="helper_user_id" property="helperUserId" jdbcType="INTEGER" />
+    <result column="helper_wx_union_id" property="helperWxUnionId" jdbcType="VARCHAR" />
+    <result column="buy_flag" property="buyFlag" jdbcType="INTEGER" />
+    <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+    <result column="update_dt" property="updateDt" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    t1.id, t1.periods_id, t1.car_fashion_id, t1.goods_id, t1.helper_type, t1.user_id, t1.user_wx_union_id, t1.helper_user_id, t1.helper_wx_union_id, t1.buy_flag, t1.create_dt, t1.update_dt
+  </sql>
+  <sql id="where_param" >
+    <if test="grantWinNumFlag!=null">
+      left join fashion_car_marke_win_num t2 on t1.id=t2.help_user_id
+    </if>
+    <where>
+      <if test="periodsId != null" >
+        and t1.periods_id = #{periodsId}
+      </if>
+      <if test="carFashionId != null" >
+        and t1.car_fashion_id = #{carFashionId,jdbcType=INTEGER}
+      </if>
+      <if test="goodsId != null" >
+        and t1.goods_id = #{goodsId,jdbcType=INTEGER}
+      </if>
+      <if test="helperType != null" >
+        and t1.helper_type = #{helperType,jdbcType=INTEGER}
+      </if>
+      <if test="userId != null or userWxUnionId != null" >
+        and (t1.user_id = #{userId,jdbcType=INTEGER} or t1.user_wx_union_id = #{userWxUnionId,jdbcType=VARCHAR})
+      </if>
+<!--      <if test="userWxUnionId != null" >-->
+<!--        and t1.user_wx_union_id = #{userWxUnionId,jdbcType=VARCHAR}-->
+<!--      </if>-->
+      <if test="helperUserId != null or helperWxUnionId != null" >
+        and (t1.helper_user_id = #{helperUserId,jdbcType=INTEGER} or t1.helper_wx_union_id = #{helperWxUnionId,jdbcType=VARCHAR})
+      </if>
+<!--      <if test="helperWxUnionId != null" >-->
+<!--        and t1.helper_wx_union_id = #{helperWxUnionId,jdbcType=VARCHAR}-->
+<!--      </if>-->
+      <if test="buyFlag != null" >
+        and t1.buy_flag = #{buyFlag,jdbcType=INTEGER}
+      </if>
+      <if test="grantWinNumFlag!=null">
+        <if test="grantWinNumFlag==1">
+          and t2.help_user_id is not null
+        </if>
+        <if test="grantWinNumFlag==2">
+          and t2.help_user_id is null
+        </if>
+      </if>
+    </where>
+    group by t1.id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from fashion_car_marke_helper_user t1
+    where t1.id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="getFashionCarMarkeHelperUserList" resultMap="BaseResultMap" parameterType="com.tuanche.directselling.model.FashionCarMarkeHelperUser" >
+    select 
+    <include refid="Base_Column_List" />
+    from fashion_car_marke_helper_user t1
+    <include refid="where_param" />
+  </select>
+
+  <select id="getFashionCarMarkeHelperUserCount" resultType="java.lang.Integer" parameterType="com.tuanche.directselling.model.FashionCarMarkeHelperUser" >
+    select count(tt.id) from
+    (select
+        t1.id
+    from fashion_car_marke_helper_user t1
+    <include refid="where_param" />) tt
+  </select>
+
+</mapper>

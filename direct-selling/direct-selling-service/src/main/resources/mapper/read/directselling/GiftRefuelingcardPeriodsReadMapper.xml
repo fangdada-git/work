@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.GiftRefuelingcardPeriodsReadMapper" >
+    <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.GiftRefuelingcardPeriods" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="periods_id" property="periodsId" jdbcType="INTEGER" />
+        <result column="periods_name" property="periodsName" jdbcType="VARCHAR" />
+        <result column="begin_time" property="beginTime" jdbcType="TIMESTAMP" />
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+        <result column="delete_flag" property="deleteFlag" jdbcType="BIT" />
+        <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+        <result column="create_name" property="createName" jdbcType="VARCHAR" />
+        <result column="update_dt" property="updateDt" jdbcType="TIMESTAMP" />
+        <result column="update_name" property="updateName" jdbcType="VARCHAR" />
+    </resultMap>
+    <resultMap id="GiftRefuelingcardPeriodsDto" type="com.tuanche.directselling.dto.GiftRefuelingcardPeriodsDto" extends="BaseResultMap">
+        <result column="commodityNames" property="commodityNames" />
+        <result column="fuelCardRules" property="fuelCardRules" />
+    </resultMap>
+    <resultMap id="GiftRefuelingcardPeriodsDto2" type="com.tuanche.directselling.dto.GiftRefuelingcardPeriodsDto" extends="BaseResultMap">
+        <collection property="commodityList" javaType="ArrayList" column="{rcPeriodsId=id}" ofType="giftRefuelingcardPeriodsCommodity" select="com.tuanche.directselling.mapper.read.directselling.GiftRefuelingcardPeriodsCommodityReadMapper.getByRcPeriodsId"></collection>
+        <collection property="fuelCardRuleList" javaType="ArrayList" column="{rcPeriodsId=id}" ofType="giftRefuelingcardPeriodsGiftNum" select="com.tuanche.directselling.mapper.read.directselling.GiftRefuelingcardPeriodsGiftNumReadMapper.getByRcPeriodsId"></collection>
+    </resultMap>
+    <sql id="Dto_Column_List" >
+        id, periods_id, periods_name, begin_time, end_time
+    </sql>
+    <sql id="Base_Column_List" >
+        id, periods_id, periods_name, begin_time, end_time, delete_flag, create_dt, create_name,
+        update_dt, update_name
+    </sql>
+    <!-- 根据ID获取油卡场次配置 -->
+    <select id="getById" resultMap="GiftRefuelingcardPeriodsDto" parameterType="integer">
+        SELECT
+        <include refid="Base_Column_List" />
+          FROM gift_refuelingcard_periods
+         WHERE id=#{id}
+    </select>
+    <!-- 根据ID获取油卡场次配置详细新（商品类型列表，油卡配置列表） -->
+    <select id="getDetailsById" resultMap="GiftRefuelingcardPeriodsDto2" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="Base_Column_List" />
+          FROM gift_refuelingcard_periods
+         WHERE id=#{id}
+    </select>
+    <!-- 根据大场次ID获取油卡场次配置 -->
+    <select id="getByPeriodsId" resultMap="GiftRefuelingcardPeriodsDto" parameterType="integer">
+        SELECT
+        <include refid="Base_Column_List" />
+          FROM gift_refuelingcard_periods
+         WHERE periods_id=#{periodsId}
+           AND delete_flag = 0
+    </select>
+    <!-- 获取油卡场次配置列表-带格式化的商品类型和油卡规则 -->
+   <select id="getFuelCardPeriodsConfigList" resultMap="GiftRefuelingcardPeriodsDto" parameterType="com.tuanche.directselling.vo.GiftRefuelingcardPeriodsVo" >
+    SELECT
+    <include refid="Dto_Column_List" />,
+      (SELECT GROUP_CONCAT(commodity_name) FROM gift_refuelingcard_periods_commodity WHERE rc_periods_id = t1.id) AS commodityNames,
+      (SELECT GROUP_CONCAT(commodity_price,'元',gift_num,'张油卡') FROM gift_refuelingcard_periods_gift_num WHERE rc_periods_id = t1.id) AS fuelCardRules
+      FROM gift_refuelingcard_periods t1
+     WHERE delete_flag = 0
+    <if test="periodsId != null">
+       AND periods_id = #{periodsId}
+    </if>
+    ORDER BY t1.id DESC
+  </select>
+
+</mapper>

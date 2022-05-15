@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>裂变-销售打款审核</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.js"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/magnify/css/jquery.magnify.css" >
+    <script src="/layui/js/formSelects-v4.js"></script>
+    <link rel="stylesheet" href="/layui/css/formSelects-v4.css" media="all">
+    <style type="text/css">
+        .layui-table-header .layui-table tr {
+            height: auto;
+            line-height: 50px;
+        }
+        .layui-table-cell {
+            height: auto;
+        }
+        .layui-table-col-special {
+            height: auto;
+        }
+        .layui-table tr{height: 65px}
+        /*#addtmp .layui-input,#addtmp .layui-textarea, #addtmp .layui-form-select, #addtmp .layui-select-title{width: 50%}*/
+    </style>
+</head>
+<body class="childrenBody">
+<div style="padding: 20px;background-color: #fbfbfb;">
+    <form class="layui-form">
+        <blockquote class="layui-elem-quote quoteBox">
+            <form class="layui-form">
+                <div class="layui-inline">
+                    <div class="layui-input-inline" style="width: 260px;">
+                        <select name="activitySelect" id="activitySelect" xm-select="activitySelect" xm-select-search="" xm-select-search-type="dl" xm-select-radio="">
+                            <option value="">裂变活动</option>
+                            <option th:each="activity : ${activtiyList}" th:value="${activity.id}" th:text="${activity.activityName}"></option>
+                        </select>
+                    </div>
+
+                    <div class="layui-input-inline">
+                        <label class="layui-form-label">活动时间：</label>
+                        <div class="layui-form-mid" id="activityTimeScope"></div>
+                    </div>
+                    <br/>
+
+                    <div class="layui-input-inline" style="width: 260px;">
+                        <input type="text" class="layui-input" id="saleName" placeholder="销售姓名"/>
+                    </div>
+
+                    <div class="layui-input-inline" style="width: 260px;">
+                        <input type="text" class="layui-input" id="salePhone" placeholder="销售手机号"/>
+                    </div>
+                </div>
+                <div style="padding-left: 220px" class="layui-inline">
+                    <a class="layui-btn search_btn" data-type="reload"><i class="layui-icon layui-icon-search"></i>查询</a>
+                </div>
+                <br/>
+                <div class="layui-inline">
+                    <label class="layui-form-label" style="width: 100px;">资金池总金额：</label>
+                    <div class="layui-form-mid" id="activityTimeScope">￥<em id="prizePool" style="font-size: large;color: red;"></em> 元，共<em id="saleNum" style="font-size: large;"></em> 个销售可瓜分该资金池。</div>
+                </div>
+                <br/>
+                <div class="layui-input-inline">
+                    <a class="layui-btn auditBtn" data-type="reload"><i class="layui-icon layui-icon-ok"></i>审核无误</a>
+                    <a class="layui-btn payBtn" data-type="reload"><i class="layui-icon layui-icon-rmb"></i>确认打款</a>
+                </div>
+            </form>
+        </blockquote>
+        <table id="salePayList" lay-filter="salePayTool"></table>
+    </form>
+</div>
+<!-- 表格操作列按钮 -->
+<script type="text/html" id="barBtn">
+    {{# if(d.deleteFlag == false){ }}
+    <a class="layui-btn layui-btn-normal layui-btn-xs freezeStatus" lay-event="freezeStatus"><i class="layui-icon layui-icon-flag">冻结</i></a>
+    {{# }else{ }}
+    <a class="layui-btn layui-btn-normal layui-btn-xs freezeStatus" lay-event="freezeStatus"><i class="layui-icon layui-icon-flag">解冻</i></a>
+    {{# } }}
+</script>
+<script type="text/javascript" src="http://static.tuanche.com/layuiadmin/button_hide.js "></script>
+<script type="text/javascript" src="/common/js/tools.js"></script>
+<script type="text/javascript" src="/common/js/date.js"></script>
+<!-- layui 初始化 -->
+<script type="text/javascript" th:inline="javascript">
+    layui.use(['form','layer','table'],function(){
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            table = layui.table,
+            formSelects = layui.formSelects;
+
+        var tableIns = table.render({
+            elem: '#salePayList',
+            url : '/fission/searchSalePayList',
+            cellMinWidth : 95,
+            page : true,
+            height : "full-125",
+            limits : [10,20,50,100],
+            limit : 10,
+            id : "salePayListTable",
+            cols: [
+                [
+                    {field: 'saleId', title: 'saleId', minWidth: 100, align: "center", hide: true},
+                    {field: 'saleName', title: '姓名', minWidth: 100, align: "center"},
+                    {field: 'salePhone', title: '手机号', minWidth: 100, align: "center"},
+                    {field: 'dealerName', title: '经销商', minWidth: 100, align: "center"},
+                    {field: 'realIncome', title: '实际收入', minWidth: 100, align: "center"},
+                    {field: 'taskIntegral', title: '总积分', minWidth: 160, align: "center"},
+                    {
+                        field: 'deleteFlag', title: '状态', minWidth: 100, align: 'center', templet: function (d) {
+                            if (d.deleteFlag == false) {
+                                return '正常';
+                            } else {
+                                return '已冻结';
+                            }
+                        }
+                    },
+                    {field: "opt", fixed: '', title: '操作', minWidth: 200, align: 'center', toolbar: '#barBtn'},
+                ]
+            ],
+            done: function (res, curr, count){
+                // console.log(res);
+                // console.log(curr);
+                // console.log(count);
+                $.each(res.data, function(index,value){
+                    if(!value.deleteFlag){
+                        if(value.financialAuditStatus ==0){
+                            $('.payBtn').addClass('layui-btn-disabled');
+                            return;
+                        }
+                        else if(value.financialAuditStatus ==1){
+                            $('.freezeStatus').addClass('layui-btn-disabled');
+                            $('.auditBtn').addClass('layui-btn-disabled');
+                            return;
+                        }
+                        else{
+                            $('.freezeStatus').addClass('layui-btn-disabled');
+                            $('.auditBtn').addClass('layui-btn-disabled');
+                            $('.payBtn').addClass('layui-btn-disabled');
+                            return;
+                        }
+                    }
+                });
+            }
+        });
+
+
+    // 获取搜索表单
+    function getSearchInput(){
+        // 获取场次活动名称
+        var saleName = $("#saleName").val();
+            if (saleName != null && saleName != undefined) {
+                saleName = saleName.trim();
+            }
+            var salePhone = $("#salePhone").val();
+            if (salePhone != null && salePhone != undefined) {
+                salePhone = salePhone.trim();
+            }
+            var fissionId = layui.formSelects.value("activitySelect","val");
+            var params = {"fissionId":fissionId!="" ? parseInt(fissionId) : null, "saleName": saleName !=""?saleName:null, "salePhone": salePhone !=""?salePhone:null};
+
+            return params;
+        }
+
+        //搜索
+        $(".search_btn").on("click",function(){
+            var params = getSearchInput();
+            table.reload("salePayListTable",{
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: params
+            })
+        });
+
+        // 操作事件
+        table.on('tool(salePayTool)', function (obj) {
+            var data = obj.data;
+            if(data.financialAuditStatus ==0){
+                if(data.deleteFlag == 0){
+                    layer.confirm('是否确认冻结该销售收入？',{
+                        btn : [ '确定', '取消' ]//按钮
+                    },function () {
+                        payAudit(data.deleteFlag == 0 ? 3 : 4,data.saleId);
+                    })
+                }
+                else{
+                    payAudit(data.deleteFlag == 0 ? 3 : 4,data.saleId);
+                }
+            }
+        });
+
+        $(".auditBtn").on("click",function(){
+            if(canOpt(this)) {
+                layer.confirm('确认审核无误吗？', {
+                    btn: ['确定', '取消']//按钮
+                }, function () {
+                    payAudit(1, null);
+                });
+            }
+        });
+
+        $(".payBtn").on("click",function(){
+            if(canOpt(this)) {
+                layer.confirm('确认打款吗？', {
+                    btn: ['确定', '取消']//按钮
+                }, function () {
+                    payAudit(2, null);
+                });
+            }
+        });
+
+        function canOpt(obj) {
+            return !$(obj).hasClass('layui-btn-disabled');
+        }
+
+        function payAudit(type ,saleId){
+            var fissionId = layui.formSelects.value("activitySelect","val");
+            if(fissionId == "" || fissionId == undefined){
+                alterError("请选择裂变活动");
+                return;
+            }
+            var index = layer.load(0,{shade: [0.7, '#393D49']}, {shadeClose: true}); //0代表加载的风格，支持0-2
+            var params = {
+                fissionId: parseInt(fissionId),
+                saleId: saleId,
+                auditType: type
+            };
+
+            $.ajax({
+                url: '/fission/salePayAudit',
+                type: "POST",
+                dataType: 'json',
+                data: params,
+                success: function (data) {
+                    if (data.code == 200) {
+                        alterSuccess('操作成功');
+                        resetBtn();
+                        $(".search_btn").click();
+                    } else {
+                        alterError(data.msg);
+                    }
+                },
+                error: function (result) {
+                    alterError("网络异常");
+                }
+            });
+
+            layer.close(index);
+        }
+
+        // 场次下拉框选择事件
+        formSelects.on('activitySelect', function(id, vals, val, isAdd, isDisabled){
+            //选中值才会触发
+            if(vals.length >0){
+                resetBtn();
+                getActivityDetail(val.value);
+                $(".search_btn").click();
+            }
+        },true);
+
+        function resetBtn() {
+            $('.freezeStatus').removeClass('layui-btn-disabled');
+            $('.auditBtn').removeClass('layui-btn-disabled');
+            $('.payBtn').removeClass('layui-btn-disabled');
+        }
+
+        function getActivityDetail(fissionId) {
+            $.ajax({
+                type: "get",
+                url: "/fission/getActivityDtoById",
+                dataType: 'json',
+                data: {fissionId: fissionId},
+                success: function (data) {
+                    if (data.code == 200) {
+                        $('#activityTimeScope').empty();
+                        $('#prizePool').empty();
+                        $('#saleNum').empty();
+                        $('#activityTimeScope').append(DateUtils.dataTimeFormatter(new Date(data.result.startTime), 6) + "-" + DateUtils.dataTimeFormatter(new Date(data.result.endTime), 6));
+                        $('#prizePool').append(data.result.totalReward);
+                        $('#saleNum').append(data.result.divideUpPrizeSaleNum);
+                    } else {
+                        alterError(data.msg)
+                        return;
+                    }
+                },
+                error: function () {
+                    alterError('系统异常')
+                }
+            })
+        }
+
+        function alterError(msg){
+            layer.msg(msg,{icon : 2,time : 2000});
+        }
+
+        function alterSuccess(msg) {
+            layer.msg(msg, {icon: 1, time: 2000});
+        }
+    })
+</script>
+</body>
+</html>

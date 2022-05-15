@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.FissionActivityGoodsRecordWriteMapper" >
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from fission_activity_goods_record
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <delete id="deleteActivityGoodsRecordByFissionIdAndGoodsId" parameterType="java.lang.Integer" >
+    delete from fission_activity_goods_record
+    where fission_id = #{fissionId}
+    <if test="goodsId!=null">
+      and goods_id=#{goodsId}
+    </if>
+  </delete>
+
+  <insert id="insertSelectiveList">
+    insert into fission_activity_goods_record (fission_id, goods_id)
+    values
+    <foreach collection="activityGoodsRecordList" item="item" separator=",">
+      (#{item.fissionId}, #{item.goodsId})
+    </foreach>
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.tuanche.directselling.model.FissionActivityGoodsRecord" >
+    insert into fission_activity_goods_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="fissionId != null" >
+        fission_id,
+      </if>
+      <if test="goodsId != null" >
+        goods_id,
+      </if>
+      <if test="createDt != null" >
+        create_dt,
+      </if>
+      <if test="updateDt != null" >
+        update_dt,
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="fissionId != null" >
+        #{fissionId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsId != null" >
+        #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="createDt != null" >
+        #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDt != null" >
+        #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteFlag != null" >
+        #{deleteFlag,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.FissionActivityGoodsRecord" >
+    update fission_activity_goods_record
+    <set >
+      <if test="fissionId != null" >
+        fission_id = #{fissionId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsId != null" >
+        goods_id = #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="createDt != null" >
+        create_dt = #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDt != null" >
+        update_dt = #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+</mapper>

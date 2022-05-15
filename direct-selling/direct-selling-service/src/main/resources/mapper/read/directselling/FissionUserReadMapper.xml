@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.FissionUserReadMapper" >
+    <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FissionUser" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="fission_id" property="fissionId" jdbcType="INTEGER" />
+        <result column="activity_name" property="activityName" jdbcType="VARCHAR" />
+        <result column="user_wx_open_id" property="userWxOpenId" jdbcType="CHAR" />
+        <result column="user_wx_union_id" property="userWxUnionId" jdbcType="CHAR" />
+        <result column="nick_name" property="nickName" jdbcType="VARCHAR" />
+        <result column="user_wx_head" property="userWxHead" jdbcType="VARCHAR" />
+        <result column="city_id" property="cityId" jdbcType="INTEGER" />
+        <result column="delete_flag" property="deleteFlag" jdbcType="BIT" />
+        <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+        <result column="update_dt" property="updateDt" jdbcType="TIMESTAMP" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id, fission_id, user_wx_open_id,user_wx_union_id, nick_name,user_wx_head, city_id, delete_flag, create_dt, update_dt
+    </sql>
+    <!-- 用户是否存在于裂变活动中 -->
+  <select id="userExistInFissionId" resultType="integer" parameterType="com.tuanche.directselling.model.FissionUser" >
+    SELECT 1 FROM fission_user WHERE fission_id = #{fissionId} AND user_wx_union_id = #{userWxUnionId} LIMIT 1;
+  </select>
+    <!-- 获取裂变活动用户信息 -->
+    <select id="getFissionUser" resultMap="BaseResultMap" parameterType="com.tuanche.directselling.model.FissionUser">
+        SELECT
+            *
+        FROM
+            fission_user
+        WHERE
+            user_wx_union_id = #{userWxUnionId}
+          AND fission_id = #{fissionId}
+            LIMIT 1
+    </select>
+    <select id="getUserWxInfo" resultMap="BaseResultMap" parameterType="com.tuanche.directselling.model.FissionUser" >
+    SELECT 
+    <include refid="Base_Column_List"></include>
+    FROM fission_user 
+    WHERE delete_flag =0
+    <if test="fissionId != null">
+        and fission_id = #{fissionId}
+    </if>
+    <if test="userWxOpenId != null">
+        and user_wx_open_id = #{userWxOpenId}
+    </if>
+    <if test="userWxOpenIdList != null and userWxOpenIdList.size()>0">
+        and user_wx_open_id in
+        <foreach collection="userWxOpenIdList" item="userWxOpenId" open="(" separator="," close=")">
+            #{userWxOpenId}
+        </foreach>
+    </if>
+    <if test="nickName != null">
+        and nick_name = #{nickName}
+    </if>
+    <if test="cityId != null">
+        and city_id = #{cityId}
+    </if>
+  </select>
+
+    <select id="selectNickNameByUnionId" parameterType="com.tuanche.directselling.model.FissionUser" resultMap="BaseResultMap">
+        SELECT
+            user_wx_open_id,
+            nick_name,
+            city_id
+        FROM
+            fission_user
+        WHERE
+            delete_flag = 0
+            AND user_wx_union_id = #{userWxUnionId}
+        UNION ALL
+        SELECT
+            sale_wx_open_id as user_wx_open_id,
+            sale_name AS nick_name,
+            0 AS city_id
+        FROM
+            fission_sale
+        WHERE
+            delete_flag = 0
+            AND sale_wx_union_id = #{userWxUnionId}
+    </select>
+
+    <select id="selectFissionRewardUser" resultMap="BaseResultMap" parameterType="com.tuanche.directselling.dto.UserRewardReconciliationDto">
+        SELECT
+        fu.id,
+        fu.user_wx_open_id,
+        fu.user_wx_union_id,
+        fu.fission_id,
+        fa.activity_name,
+        fu.city_id,
+        fu.nick_name,
+        fu.user_wx_head
+        FROM fission_user fu inner join fission_user_reward fur on fu.user_wx_union_id=fur.user_wx_union_id
+        left join fission_activity fa on fu.fission_id=fa.id
+        WHERE fu.delete_flag =0 and fur.reward_amount&gt;0 and fur.delete_flag=0
+        <if test="fissionId != null">
+            and fu.fission_id = #{fissionId}
+        </if>
+        <choose>
+            <when test="payBeginTime != null and payEndTime == null">
+                and EXISTS (select id from fission_trade_record where fur.trade_record_id=id and pay_time &gt; #{payBeginTime})
+            </when>
+            <when test="payBeginTime == null and payEndTime != null">
+                and EXISTS (select id from fission_trade_record where fur.trade_record_id=id and pay_time &lt; #{payEndTime})
+            </when>
+            <when test="payBeginTime != null and payEndTime != null">
+                and EXISTS (select id from fission_trade_record where fur.trade_record_id=id and pay_time &gt; #{payBeginTime} and pay_time &lt; #{payEndTime})
+            </when>
+        </choose>
+        GROUP BY fu.user_wx_open_id
+    </select>
+</mapper>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<title>标签管理</title>
+<head th:replace="/common/vue.html"></head>
+<style>
+    .el-tag + .el-tag {
+        margin-left: 10px;
+    }
+    .button-new-tag {
+        margin-left: 10px;
+        height: 32px;
+        line-height: 30px;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+    .input-new-tag {
+        width: 90px;
+        margin-left: 10px;
+        vertical-align: bottom;
+    }
+    .babel_input{
+        width: 50px;
+        border: 0px;
+    }
+</style>
+<body>
+<div class="content" id="labelList">
+    <el-form  label-width="100px" class="demo-form-inline" :inline="true">
+        <div v-for="(lab, pIndex) in labels" style="white-space: nowrap;">
+            <el-form-item label="一级标签">
+                <el-tag @click.native="changePrimaryLabel(pIndex)">
+                    <input
+                            class="babel_input"
+                            type="text" v-model="lab.labelName"
+                            @keyup.enter.native="primaryLabelInputConfirm(pIndex)"
+                            @blur="primaryLabelInputConfirm(pIndex)">
+                </el-tag>
+            </el-form-item>
+            <el-form-item label="二级标签">
+                <el-tag
+                        :key="tag"
+                        v-for="(tag,sIndex) in lab.secondaryLabels"
+                        closable="true"
+                        :disable-transitions="false"
+                        @click.native="changeSecondaryLabel(pIndex,sIndex)"
+                        @close="handleClose(pIndex,sIndex)">
+                    <input
+                            class="babel_input"
+                            type="text" v-model="tag.labelName"
+                            @keyup.enter.native="secondaryLabelInputConfirm(pIndex,sIndex)"
+                            @blur="secondaryLabelInputConfirm(pIndex,sIndex)">
+                </el-tag>
+                </el-input>
+                <el-button class="button-new-tag" size="small" @click="addTag(pIndex)">添加标签</el-button>
+            </el-form-item>
+            <el-form-item >
+                <el-button v-if="pIndex>0" type="danger" size="small" @click.prevent="removeLabel(pIndex)">删除</el-button>
+            </el-form-item>
+        </div>
+    </el-form>
+    <div style="text-align: center">
+        <el-button type="success" @click="addLabel()">增加一行</el-button>
+        <el-button type="primary" @click="save">提交</el-button>
+        <el-button @click="closeWinow">关闭</el-button>
+    </div>
+    <div>
+        <p style="font-size: 8px;color: #6d737b">
+            提示：<br>
+            1、二级标签可以没有
+        </p>
+    </div>
+</div>
+<script>
+    var activityId = [[${activityId}]];
+    var app = new Vue({
+        el: "#labelList",
+        //绑定变量
+        data: {
+            labels:[],
+            inputVisible: false,
+        },
+        //加载完VUE执行
+        mounted: function () {
+            this.getLabels()
+        },
+        //方法
+        methods: {
+            getLabels(){
+                that = this;
+                $.ajax({
+                    url:'/afterSale/packageLabel/config/getLabel',
+                    data:{activityId:activityId},
+                    success:function(res){
+                        if(res&&res.length > 0){
+                            that.labels = res;
+                        }else{
+                            that.labels.push(that.initLabel());
+                        }
+                    }
+                });
+
+            },
+            save(){
+                var packageLabels = this.labels;
+                for(var i=0;i<packageLabels.length;i++){
+                    packageLabels[i]["activityId"]=activityId;
+                }
+                var that = this;
+                $.ajax({
+                    type:"post",
+                    url:'/afterSale/packageLabel/config/saveLabel',
+                    contentType:"application/json",
+                    data:JSON.stringify(packageLabels),
+                    success:function(res){
+                        if(res){
+                            if(res.responseHeader.status==200){
+                                that.$message({
+                                    showClose: true,
+                                    message: "保存成功",
+                                    type: 'success',
+                                    duration:1000
+                                });
+                                setTimeout(function () {
+                                    that.closeWinow();
+                                },1000)
+                            }else{
+                                that.$message({
+                                    showClose: true,
+                                    message: res.responseHeader.message,
+                                    type: 'warning',
+                                    duration:1000
+                                });
+                            }
+                        }else{
+                            that.$message({
+                                showClose: true,
+                                message: "系统错误，请稍后再试或联系开发人员",
+                                type: 'warning',
+                                duration:1000
+                            });
+                        }
+
+
+                    }
+                });
+            },
+            initLabel(){
+              return  {id:0,labelName:"",secondaryLabels:[]};
+              // return  {id:0,labelName:"",secondaryLabels:[this.initSecondaryLabel(),this.initSecondaryLabel()]};
+            },
+            initSecondaryLabel(){
+              return  {id:0,labelName:""};
+            },
+            handleClose(pIndex,sIndex) {
+                this.labels[pIndex].secondaryLabels.splice(sIndex, 1);
+            },
+            addTag(pIndex) {
+                if(this.labels[pIndex].secondaryLabels.length==0){
+                    this.labels[pIndex].secondaryLabels.push(this.initSecondaryLabel());
+                }
+                this.labels[pIndex].secondaryLabels.push(this.initSecondaryLabel());
+            },
+            changePrimaryLabel(index){
+                this.labels[index].showInput=true;
+            },
+            primaryLabelInputConfirm(index){
+                var lab = this.labels[index];
+                var labelName= this.trim(lab.labelName);
+                if(labelName==null || labelName.length<1){
+                    this.$message.warning("标签名称不能为空");
+                    return;
+                }
+                this.labels[index].showInput=false;
+                console.log(this.labels[index]);
+            },
+            changeSecondaryLabel(pIndex,sIndex){
+                this.labels[pIndex].secondaryLabels[sIndex].showInput=true;
+            },
+            secondaryLabelInputConfirm(pIndex,sIndex){
+                var lab = this.labels[pIndex].secondaryLabels[sIndex];
+                var labelName= this.trim(lab.labelName);
+                if(labelName==null || labelName.length<1){
+                    this.$message.warning("标签名称不能为空");
+                    return;
+                }
+                this.labels[pIndex].secondaryLabels[sIndex].showInput=false;
+                console.log(this.labels[pIndex]);
+            },
+            addLabel() {
+                this.labels.push(this.initLabel());
+            },
+            removeLabel(pIndex) {
+                this.labels.splice(pIndex, 1);
+            },
+            trim(inputValue){
+                return inputValue.replace(/^\s\s*/, '').replace(/\s\s*$/, '')
+            },
+            closeWinow(){
+                    var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                    parent.layer.close(index);//关闭弹出的子页面窗口
+            }
+        }
+    })
+
+</script>
+</body>
+</html>

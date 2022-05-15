@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.FashionCarMarkeWinNumWriteMapper">
+    <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FashionCarMarkeWinNum">
+        <!--@mbg.generated-->
+        <!--@Table fashion_car_marke_win_num-->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="car_fashion_id" jdbcType="INTEGER" property="carFashionId"/>
+        <result column="activity_date" jdbcType="TIMESTAMP" property="activityDate"/>
+        <result column="brand_id" jdbcType="INTEGER" property="brandId"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="user_type" jdbcType="TINYINT" property="userType"/>
+        <result column="help_user_id" jdbcType="INTEGER" property="helpUserId"/>
+        <result column="win_num" jdbcType="INTEGER" property="winNum"/>
+        <result column="is_win" jdbcType="TINYINT" property="isWin"/>
+        <result column="create_dt" jdbcType="TIMESTAMP" property="createDt"/>
+        <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt"/>
+        <result column="delete_flag" jdbcType="BOOLEAN" property="deleteFlag"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, user_id,user_type,car_fashion_id,activity_date, brand_id,help_user_id, win_num, is_win, create_dt,
+        update_dt,
+        delete_flag
+    </sql>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        <!--@mbg.generated-->
+        delete from fashion_car_marke_win_num
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id"
+            parameterType="com.tuanche.directselling.model.FashionCarMarkeWinNum" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into fashion_car_marke_win_num
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="periodsId != null">
+                periods_id,
+            </if>
+            <if test="carFashionId != null">
+                car_fashion_id,
+            </if>
+            <if test="activityDate != null">
+                activity_date,
+            </if>
+            <if test="brandId != null">
+                brand_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="userType != null">
+                user_type,
+            </if>
+            <if test="helpUserId != null">
+                help_user_id,
+            </if>
+            <if test="winNum != null">
+                win_num,
+            </if>
+            <if test="isWin != null">
+                is_win,
+            </if>
+            <if test="createDt != null">
+                create_dt,
+            </if>
+            <if test="updateDt != null">
+                update_dt,
+            </if>
+            <if test="deleteFlag != null">
+                delete_flag,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="periodsId != null">
+                #{periodsId,jdbcType=INTEGER},
+            </if>
+            <if test="carFashionId != null">
+                #{carFashionId,jdbcType=INTEGER},
+            </if>
+            <if test="activityDate != null">
+                #{activityDate,jdbcType=DATE},
+            </if>
+            <if test="brandId != null">
+                #{brandId,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="userType != null">
+                #{userType,jdbcType=TINYINT},
+            </if>
+            <if test="helpUserId != null">
+                #{helpUserId,jdbcType=INTEGER},
+            </if>
+            <if test="winNum != null">
+                #{winNum,jdbcType=INTEGER},
+            </if>
+            <if test="isWin != null">
+                #{isWin,jdbcType=TINYINT},
+            </if>
+            <if test="createDt != null">
+                #{createDt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateDt != null">
+                #{updateDt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleteFlag != null">
+                #{deleteFlag,jdbcType=BOOLEAN},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.FashionCarMarkeWinNum">
+        <!--@mbg.generated-->
+        update fashion_car_marke_win_num
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="carFashionId != null">
+                car_fashion_id = #{carFashionId,jdbcType=INTEGER},
+            </if>
+            <if test="brandId != null">
+                brand_id = #{brandId,jdbcType=INTEGER},
+            </if>
+            <if test="activityDate != null">
+                activity_date = #{activityDate,jdbcType=DATE},
+            </if>
+            <if test="helpUserId != null">
+                help_user_id = #{helpUserId,jdbcType=INTEGER},
+            </if>
+            <if test="winNum != null">
+                win_num = #{winNum,jdbcType=INTEGER},
+            </if>
+            <if test="isWin != null">
+                is_win = #{isWin,jdbcType=TINYINT},
+            </if>
+            <if test="createDt != null">
+                create_dt = #{createDt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateDt != null">
+                update_dt = #{updateDt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleteFlag != null">
+                delete_flag = #{deleteFlag,jdbcType=BOOLEAN},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByWinNum">
+        update fashion_car_marke_win_num set win_num=#{winNumNew} where periods_id=#{periodsId} and win_num=#{winNum}
+    </update>
+</mapper>

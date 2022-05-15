@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.AfterSaleUserShareReadMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.AfterSaleUserShare">
+    <!--@mbg.generated-->
+    <!--@Table after_sale_user_share-->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="activity_id" jdbcType="INTEGER" property="activityId" />
+    <result column="agent_wx_union_id" jdbcType="CHAR" property="agentWxUnionId" />
+    <result column="share_wx_union_id" jdbcType="CHAR" property="shareWxUnionId" />
+    <result column="user_wx_union_id" jdbcType="CHAR" property="userWxUnionId" />
+    <result column="page_url" jdbcType="VARCHAR" property="pageUrl" />
+    <result column="ip" jdbcType="VARCHAR" property="ip" />
+    <result column="chanel" jdbcType="TINYINT" property="chanel" />
+    <result column="create_dt" jdbcType="TIMESTAMP" property="createDt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, activity_id, agent_wx_union_id, share_wx_union_id, user_wx_union_id, page_url, 
+    ip, chanel, create_dt
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from after_sale_user_share
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectLatestIdByTime" resultType="java.lang.Integer">
+    select max(id) from after_sale_user_share where create_dt &gt;=#{startTime} and create_dt &lt;=#{endTime}
+  </select>
+
+  <select id="selectShareCount" resultType="com.tuanche.directselling.dto.AfterSaleUserShareStatDto">
+    select agent_wx_union_id,count(*) as `value` from after_sale_user_share where
+    activity_id=#{activityId} and agent_wx_union_id=share_wx_union_id and agent_wx_union_id is not null and
+    agent_wx_union_id&lt;&gt;''
+    <if test="startTime != null">
+      and create_dt &gt;=#{startTime}
+    </if>
+    <if test="endTime != null">
+      and create_dt &lt;=#{endTime}
+    </if>
+    group by agent_wx_union_id
+  </select>
+
+  <select id="selectPeriodShareCount" resultType="com.tuanche.directselling.dto.AfterSaleUserShareStatPeriodDto">
+    select DATE_ADD(
+    date_format(create_dt, '%Y-%m-%d %H:00:00'),
+    INTERVAL (FLOOR(date_format(create_dt, '%i') / 15 + 1) * 15) MINUTE
+    ) date_time,count(*) as `value` from after_sale_user_share where
+    activity_id=#{activityId} and agent_wx_union_id=share_wx_union_id and agent_wx_union_id is not null and
+    agent_wx_union_id&lt;&gt;'' and create_dt &gt;=#{startTime} and create_dt &lt;#{endTime}
+    group by date_time
+  </select>
+
+  <select id="selectShareCountTotal" resultType="int">
+    select count(*) from after_sale_user_share where
+    activity_id=#{activityId} and agent_wx_union_id=share_wx_union_id and agent_wx_union_id is not null and
+    agent_wx_union_id&lt;&gt;'' and create_dt &gt;=#{startTime} and create_dt &lt;#{endTime}
+    </select>
+</mapper>

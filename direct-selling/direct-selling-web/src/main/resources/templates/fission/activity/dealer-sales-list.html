@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>团车直卖-裂变经销商销售管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.js"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/magnify/css/jquery.magnify.css" >
+    <script src="/layui/js/formSelects-v4.js"></script>
+    <link rel="stylesheet" href="/layui/css/formSelects-v4.css" media="all">
+    <style type="text/css">
+        .layui-table-header .layui-table tr {
+            height: auto;
+            line-height: 50px;
+        }
+        .layui-table-cell {
+            height: auto;
+        }
+        .layui-table-col-special {
+            height: auto;
+        }
+        .layui-table tr{height: 65px}
+    </style>
+</head>
+<body class="childrenBody">
+<div class="layui-card-header">经销商名称：[[${dealerName}]]  &nbsp;&nbsp;&nbsp;销售总人数：[[${salesCount}]]  &nbsp;&nbsp;&nbsp;参与人数：[[${joinSalesCount}]]</div>
+
+<table id="fissionDealerSalesList" ></table>
+
+<script type="text/javascript" src="/common/js/tools.js"></script>
+<!-- layui 初始化 -->
+<script type="text/javascript" th:inline="javascript">
+    layui.use(['form','layer','table','laydate'],function(){
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            table = layui.table;
+        var fissionId = [[${fissionId}]];
+        var dealerId = [[${dealerId}]];
+        // 经销商销售列表
+        var tableIns = table.render({
+            elem: '#fissionDealerSalesList',
+            url : '/fission/activity/dealerSalesList?fissionId='+fissionId + "&dealerId=" + dealerId,
+            cellMinWidth : 60,
+            page : false,
+            height : "full-125",
+            limits : [10,20,50,100],
+            limit : 10,
+            id : "fissionDealerSalesList",
+            cols: [
+                [
+                    {field: 'uname', title: '销售姓名', minWidth: 100, align: "center"},
+                    {field: 'uphone', title: '销售手机号', minWidth: 160, align: "center"},
+                    {field: 'ulevel', title: '身份', minWidth: 160, align: "center", templet: function (d) {
+                            if(d.ulevel == 4){
+                                return '普通成员'
+                            }else{
+                                return '管理员'
+                            }
+                        }
+                    },
+                    {field: 'joinFission', title: '是否参与', maxWidth: 60, align: 'center', templet: function (d) {
+                            if(d.joinFission == 1){
+                                return '是'
+                            }else{
+                                return '否'
+                            }
+                        }
+                    }
+                ]
+            ]
+        });
+    })
+
+</script>
+</body>
+</html>

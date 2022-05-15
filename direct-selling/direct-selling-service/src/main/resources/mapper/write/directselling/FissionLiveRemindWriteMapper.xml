@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.FissionLiveRemindWriteMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FissionLiveRemind">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="fission_id" jdbcType="INTEGER" property="fissionId" />
+    <result column="live_id" jdbcType="INTEGER" property="liveId" />
+    <result column="wx_scene" jdbcType="INTEGER" property="wxScene" />
+    <result column="sale_wx_union_id" jdbcType="CHAR" property="saleWxUnionId" />
+    <result column="share_wx_union_id" jdbcType="CHAR" property="shareWxUnionId" />
+    <result column="user_wx_open_id" jdbcType="CHAR" property="userWxOpenId" />
+    <result column="user_wx_union_id" jdbcType="CHAR" property="userWxUnionId" />
+    <result column="user_phone" jdbcType="VARCHAR" property="userPhone" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="remind_state" jdbcType="BIT" property="remindState" />
+    <result column="create_dt" jdbcType="TIMESTAMP" property="createDt" />
+    <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, fission_id, live_id, wx_scene, sale_wx_union_id, share_wx_union_id, user_wx_open_id,user_wx_union_id,
+    user_phone, user_id, remind_state, create_dt, update_dt
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from fission_live_remind
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from fission_live_remind
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.tuanche.directselling.model.FissionLiveRemind">
+    insert into fission_live_remind
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="fissionId != null">
+        fission_id,
+      </if>
+      <if test="liveId != null">
+        live_id,
+      </if>
+      <if test="wxScene != null">
+        wx_scene,
+      </if>
+      <if test="saleWxUnionId != null">
+        sale_wx_union_id,
+      </if>
+      <if test="shareWxUnionId != null">
+        share_wx_union_id,
+      </if>
+      <if test="userWxOpenId != null">
+        user_wx_open_id,
+      </if>
+     <if test="userWxUnionId != null">
+       user_wx_union_id,
+      </if>
+      <if test="userPhone != null">
+        user_phone,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="channel != null">
+          channel,
+      </if>
+      <if test="remindState != null">
+        remind_state,
+      </if>
+      <if test="createDt != null">
+        create_dt,
+      </if>
+      <if test="updateDt != null">
+        update_dt,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="fissionId != null">
+        #{fissionId,jdbcType=INTEGER},
+      </if>
+      <if test="liveId != null">
+        #{liveId,jdbcType=INTEGER},
+      </if>
+      <if test="wxScene != null">
+        #{wxScene,jdbcType=INTEGER},
+      </if>
+      <if test="saleWxUnionId != null">
+        #{saleWxUnionId,jdbcType=CHAR},
+      </if>
+      <if test="shareWxUnionId != null">
+        #{shareWxUnionId,jdbcType=CHAR},
+      </if>
+      <if test="userWxOpenId != null">
+        #{userWxOpenId,jdbcType=CHAR},
+      </if>
+      <if test="userWxUnionId != null">
+        #{userWxUnionId,jdbcType=CHAR},
+      </if>
+      <if test="userPhone != null">
+        #{userPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="channel != null">
+        #{channel,jdbcType=INTEGER},
+      </if>
+      <if test="remindState != null">
+        #{remindState,jdbcType=BIT},
+      </if>
+      <if test="createDt != null">
+        #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDt != null">
+        #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.FissionLiveRemind">
+    update fission_live_remind
+    <set>
+      <if test="fissionId != null">
+        fission_id = #{fissionId,jdbcType=INTEGER},
+      </if>
+      <if test="liveId != null">
+        live_id = #{liveId,jdbcType=INTEGER},
+      </if>
+      <if test="wxScene != null">
+        wx_scene = #{wxScene,jdbcType=INTEGER},
+      </if>
+      <if test="saleWxUnionId != null">
+        sale_wx_union_id = #{saleWxUnionId,jdbcType=CHAR},
+      </if>
+      <if test="shareWxUnionId != null">
+        share_wx_union_id = #{shareWxUnionId,jdbcType=CHAR},
+      </if>
+      <if test="userWxOpenId != null">
+        user_wx_open_id = #{userWxOpenId,jdbcType=CHAR},
+      </if>
+      <if test="userWxUnionId != null">
+        user_wx_union_id = #{userWxUnionId,jdbcType=CHAR},
+      </if>
+      <if test="userPhone != null">
+        user_phone = #{userPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="remindState != null">
+        remind_state = #{remindState,jdbcType=BIT},
+      </if>
+      <if test="createDt != null">
+        create_dt = #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDt != null">
+        update_dt = #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <!--更新提醒状态-->
+  <update id="updateRemindStateByLiveId" parameterType="java.lang.Integer">
+    UPDATE fission_live_remind
+    SET remind_state = 1,
+    update_dt = now()
+    WHERE
+        live_id = #{liveId}
+        AND remind_state =0
+  </update>
+</mapper>

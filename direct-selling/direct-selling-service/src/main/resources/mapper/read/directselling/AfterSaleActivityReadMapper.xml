@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.AfterSaleActivityReadMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.AfterSaleActivity">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="business_type" jdbcType="INTEGER" property="businessType" />
+    <result column="dealer_id" jdbcType="INTEGER" property="dealerId" />
+    <result column="brand_id" jdbcType="INTEGER" property="brandId" />
+    <result column="public_account" jdbcType="VARCHAR" property="publicAccount" />
+    <result column="merchant_no" jdbcType="VARCHAR" property="merchantNo" />
+    <result column="activity_name" jdbcType="VARCHAR" property="activityName" />
+    <result column="goods_id" jdbcType="INTEGER" property="goodsId" />
+    <result column="goods_fission_count" jdbcType="INTEGER" property="goodsFissionCount" />
+    <result column="sale_start_time" jdbcType="TIMESTAMP" property="saleStartTime" />
+    <result column="sale_end_time" jdbcType="TIMESTAMP" property="saleEndTime" />
+    <result column="gift_coupon_id" jdbcType="INTEGER" property="giftCouponId" />
+    <result column="gift_coupon_name" jdbcType="VARCHAR" property="giftCouponName" />
+    <result column="gift_fission_count" jdbcType="INTEGER" property="giftFissionCount" />
+    <result column="offline_convert_start_time" jdbcType="TIMESTAMP" property="offlineConvertStartTime" />
+    <result column="offline_convert_end_time" jdbcType="TIMESTAMP" property="offlineConvertEndTime" />
+    <result column="agent_award_base" jdbcType="DECIMAL" property="agentAwardBase" />
+    <result column="agent_award_inviter_count" jdbcType="INTEGER" property="agentAwardInviterCount" />
+    <result column="agent_award_extra" jdbcType="DECIMAL" property="agentAwardExtra" />
+    <result column="share_award_base" jdbcType="DECIMAL" property="shareAwardBase" />
+    <result column="share_award_inviter_count" jdbcType="INTEGER" property="shareAwardInviterCount" />
+    <result column="share_award_extra" jdbcType="DECIMAL" property="shareAwardExtra" />
+    <result column="buyer_award_base" jdbcType="DECIMAL" property="buyerAwardBase" />
+    <result column="we_chat_title" jdbcType="VARCHAR" property="weChatTitle" />
+    <result column="we_chat_description" jdbcType="VARCHAR" property="weChatDescription" />
+    <result column="we_chat_pic" jdbcType="VARCHAR" property="weChatPic" />
+    <result column="poster_url" jdbcType="VARCHAR" property="posterUrl" />
+    <result column="on_state" jdbcType="INTEGER" property="onState" />
+    <result column="budget" jdbcType="DECIMAL" property="budget" />
+    <result column="amount_alarm" jdbcType="DECIMAL" property="amountAlarm" />
+    <result column="alarm_phone" jdbcType="VARCHAR" property="alarmPhone" />
+    <result column="alarm_email" jdbcType="VARCHAR" property="alarmEmail" />
+    <result column="sub_account_ratio" jdbcType="DECIMAL" property="subAccountRatio" />
+    <result column="public_qr_code" jdbcType="VARCHAR" property="publicQrCode" />
+    <result column="look_phone_before_days" jdbcType="INTEGER" property="lookPhoneBeforeDays" />
+    <result column="on_sub_account" jdbcType="TINYINT" property="onSubAccount" />
+    <result column="delete_flag" jdbcType="INTEGER" property="deleteFlag" />
+    <result column="create_by" jdbcType="INTEGER" property="createBy" />
+    <result column="create_dt" jdbcType="TIMESTAMP" property="createDt" />
+    <result column="update_by" jdbcType="INTEGER" property="updateBy" />
+    <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
+    <result column="payment_time" jdbcType="TIMESTAMP" property="paymentTime"/>
+  </resultMap>
+  <resultMap id="BaseResultSimpleMap" type="com.tuanche.directselling.vo.AfterSaleActivitySimpleVo">
+    <id column="id" jdbcType="INTEGER" property="activityId" />
+    <result column="dealer_id" jdbcType="INTEGER" property="dealerId" />
+    <result column="activity_name" jdbcType="VARCHAR" property="activityName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id,
+    business_type,
+    dealer_id,
+    brand_id,
+    public_account,
+    merchant_no,
+    activity_name,
+    goods_id,
+    goods_fission_count,
+    sale_start_time,
+    sale_end_time,
+    gift_coupon_id,
+    gift_coupon_name,
+    gift_fission_count,
+    offline_convert_start_time,
+    offline_convert_end_time,
+    agent_award_base,
+    agent_award_inviter_count,
+    agent_award_extra,
+    share_award_base,
+    share_award_inviter_count,
+    share_award_extra,
+    buyer_award_base,
+    we_chat_title,
+    we_chat_description,
+    we_chat_pic,
+    poster_url,
+    on_state,
+    budget,
+    amount_alarm,
+    alarm_phone,
+    alarm_email,
+    sub_account_ratio,
+    public_qr_code,
+    look_phone_before_days,
+    on_sub_account,
+    delete_flag,
+    create_by,
+    create_dt,
+    update_by,
+    update_dt,
+    payment_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from after_sale_activity
+    where delete_flag = 0 and id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectActivityList"  resultMap="BaseResultMap" parameterType="com.tuanche.directselling.dto.AfterSaleActivityDto">
+    select
+    <include refid="Base_Column_List" />
+    from after_sale_activity
+    where delete_flag = 0
+    <if test="dealerId !=null">
+      AND dealer_id = #{dealerId}
+    </if>
+    <if test="onState !=null">
+      AND on_state = #{onState}
+    </if>
+    <if test="activityName !=null and activityName != ''">
+      AND activity_name LIKE CONCAT("%",#{activityName},"%")
+    </if>
+    <if test="agentWxUnionId != null and agentWxUnionId != ''">
+      and id in (select activity_id from after_sale_agent where agent_wx_union_id=#{agentWxUnionId} and delete_flag=0)
+    </if>
+    order by id desc
+  </select>
+
+  <select id="selectActivityDealerList"  resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from after_sale_activity
+    where delete_flag = 0
+    <if test="dealerId !=null">
+      AND dealer_id = #{dealerId}
+    </if>
+    GROUP BY dealer_id
+    order by id desc
+  </select>
+
+  <select id="selectActivityListByIds"  resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from after_sale_activity
+    where delete_flag = 0
+    and id in
+    <foreach collection="ids" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </select>
+
+  <select id="selectActivitySimpleList"  resultMap="BaseResultSimpleMap">
+    select
+    <include refid="Base_Column_List" />
+    from after_sale_activity
+    where delete_flag = 0
+    <if test="activityId !=null">
+      AND id = #{activityId}
+    </if>
+    <if test="dealerId !=null">
+      AND dealer_id = #{dealerId}
+    </if>
+    <if test="onState == 1">
+      AND on_state = #{onState} AND NOW() <![CDATA[ <= ]]> sale_end_time
+    </if>
+    <if test="onState == 0">
+      AND on_state = #{onState}
+    </if>
+    <if test="activityName !=null and activityName != ''">
+      AND activity_name LIKE CONCAT("%",#{activityName},"%")
+    </if>
+    order by id desc
+  </select>
+
+  <select id="getAfterSaleActivityByOrderCodes" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from after_sale_activity
+    where delete_flag = 0
+    and id in (select activity_id from after_sale_order_record where order_code in <foreach collection="orderCodes"
+                                                                                            item="item" open="("
+                                                                                            separator="," close=")">
+    #{item}
+  </foreach>)
+  </select>
+ <!-- 获取进行中的活动ID列表，活动开始时间到线下活动结束时间的数据 -->
+  <select id="getOngoingActivityIds" resultType="integer" parameterType="com.tuanche.directselling.dto.AfterSaleActivityDto">
+    SELECT
+    id
+    FROM
+    after_sale_activity
+    WHERE
+    #{saleStartTimeStr} BETWEEN sale_start_time AND offline_convert_end_time
+    AND on_state = 1
+    <if test="onSubAccount != null">
+        <choose>
+            <when test="onSubAccount==1">
+                AND on_sub_account IN (1,2)
+            </when>
+        </choose>
+    </if>
+
+  </select>
+    <!--获取线下兑换正在进行中的活动-->
+  <select id="getOfflineOngoingActivityIdsMap" parameterType="integer" resultType="com.tuanche.directselling.dto.AfterSaleActivityDto">
+      SELECT
+          id,
+          dealer_id as dealerId,
+          offline_convert_start_time AS offlineConvertStartTime,
+          offline_convert_end_time AS offlineConvertEndTime
+      FROM after_sale_activity
+      WHERE
+          <choose>
+              <when test="day>0">
+                  DATE_FORMAT(NOW(),'%Y-%m-%d')=DATE_FORMAT(DATE_SUB(offline_convert_start_time,INTERVAL #{day} DAY),'%Y-%m-%d')
+              </when>
+              <otherwise>
+                  NOW() BETWEEN offline_convert_start_time AND offline_convert_end_time
+              </otherwise>
+          </choose>
+        AND on_state=1 AND delete_flag=0
+  </select>
+    <!--获取活动结束前day天的活动 -->
+  <select id="getEndTimeBeforActivityMap" parameterType="integer" resultType="com.tuanche.directselling.dto.ResultMapDto">
+      SELECT
+          id AS mapKey,
+          DATE_FORMAT(sale_end_time,'%Y-%m-%d') AS mapValue
+      FROM after_sale_activity
+      WHERE
+         DATE_FORMAT(NOW(),'%Y-%m-%d')=DATE_FORMAT(DATE_SUB(sale_end_time,INTERVAL #{day} DAY),'%Y-%m-%d')
+        AND on_state=1 AND delete_flag=0
+  </select>
+  <select id="getAfterSaleDealerIds" resultType="java.lang.Integer">
+    select distinct dealer_id
+    from after_sale_activity
+    where delete_flag = 0
+    order by id desc
+  </select>
+
+  <select id="getAfterSaleActivityByDealerId" resultType="com.tuanche.directselling.dto.AfterSaleActivityDto">
+    select id, activity_name
+    from after_sale_activity
+    where delete_flag = 0
+    <if test="dealerId != null">
+      and dealer_id=#{dealerId}
+    </if>
+    order by id desc
+  </select>
+
+  <select id="getOngoingActivities" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from after_sale_activity
+    where delete_flag = 0 and on_state=1 and #{dateTime} BETWEEN sale_start_time AND sale_end_time
+  </select>
+</mapper>

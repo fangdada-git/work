@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.tuanche.arch</groupId>
+        <artifactId>parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>com.tuanche</groupId>
+    <artifactId>direct-selling</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>direct-selling-api</module>
+        <module>direct-selling-service</module>
+        <module>direct-selling-web</module>
+    </modules>
+
+    <properties>
+        <java.version>1.8</java.version>
+        <tuanche-utils.version>2.0.0.0.0-SNAPSHOT</tuanche-utils.version>
+        <framework-utils.version>1.0-SNAPSHOT</framework-utils.version>
+        <lombok.version>1.16.20</lombok.version>
+        <fastjson.version>1.2.4</fastjson.version>
+        <javax.mail.version>1.6.1</javax.mail.version>
+        <tuanche.framework.version>2.3.0-Releases</tuanche.framework.version>
+        <mybatis-spring-boot-starter-test.version>2.0.0</mybatis-spring-boot-starter-test.version>
+        <mybatis-spring-boot-starter-test.version>2.0.0</mybatis-spring-boot-starter-test.version>
+        <swagger-dubbo.version>2.0.1</swagger-dubbo.version>
+        <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
+        <arch-district-api.version>1.0-SNAPSHOT</arch-district-api.version>
+        <arch_auto_storage_api.version>1.0-SNAPSHOT</arch_auto_storage_api.version>
+        <manu-outapi.version>2.3.5-SNAPSHOT</manu-outapi.version><!--<version>1.0.0-SNAPSHOT</version>-->
+        <manubasecenter.version>1.0.0-SNAPSHOT</manubasecenter.version>
+        <zipkin.version>1.0-SNAPSHOT</zipkin.version><!--<version>1.0-SNAPSHOT</version>-->
+        <inner-sso-core.version>0.1.1-SNAPSHOT</inner-sso-core.version>
+        <console-rpc.version>20210927-back-tide-SNAPSHOT</console-rpc.version>
+        <tuanche-framework-oss.version>1.0-SNAPSHOT</tuanche-framework-oss.version>
+        <tuanche-framework-kafka.version>1.0-SNAPSHOT</tuanche-framework-kafka.version>
+        <direct-selling-api.version>1.0.0-SNAPSHOT</direct-selling-api.version>
+        <org-apache-poi-version>3.16</org-apache-poi-version>
+        <arch-tuanche-merchant-api-version>2.0.1.0-SNAPSHOT</arch-tuanche-merchant-api-version>
+        <eap_api-version>2.0-SNAPSHOT</eap_api-version>
+        <dict_api>1.0-SNAPSHOT</dict_api>
+        <certificate-api-version>1.0-SNAPSHOT</certificate-api-version>
+        <tuanche-pay-api>1.0.1-SNAPSHOT</tuanche-pay-api>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.tuanche.duo</groupId>
+            <artifactId>tuanche-utils</artifactId>
+            <version>${tuanche-utils.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tuanche</groupId>
+            <artifactId>eap_api</artifactId>
+            <version>${eap_api-version}</version>
+        </dependency>
+    </dependencies>
+</project>

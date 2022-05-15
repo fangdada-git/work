@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.AfterSaleActivityStatisticsReadMapper">
+    <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.AfterSaleActivityStatistics">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="activity_id" jdbcType="INTEGER" property="activityId" />
+        <result column="uv" jdbcType="INTEGER" property="uv" />
+        <result column="promotion_card_total" jdbcType="INTEGER" property="promotionCardTotal" />
+        <result column="promotion_card_amount" jdbcType="DECIMAL" property="promotionCardAmount" />
+        <result column="package_card_total" jdbcType="INTEGER" property="packageCardTotal" />
+        <result column="package_card_amount" jdbcType="DECIMAL" property="packageCardAmount" />
+        <result column="reward_total" jdbcType="DECIMAL" property="rewardTotal" />
+        <result column="gift_certificates_total" jdbcType="INTEGER" property="giftCertificatesTotal" />
+        <result column="autonomous_fission_total" jdbcType="INTEGER" property="autonomousFissionTotal" />
+        <result column="promotion_card_refunds_total_active" jdbcType="INTEGER" property="promotionCardRefundsTotalActive" />
+        <result column="promotion_card_refunds_amount_active" jdbcType="DECIMAL" property="promotionCardRefundsAmountActive" />
+        <result column="promotion_card_refunds_total_passive" jdbcType="INTEGER" property="promotionCardRefundsTotalPassive" />
+        <result column="promotion_card_refunds_amount_passive" jdbcType="DECIMAL" property="promotionCardRefundsAmountPassive" />
+        <result column="write_off_gift_voucher_total" jdbcType="INTEGER" property="writeOffGiftVoucherTotal" />
+        <result column="promotion_card_net_revenue" jdbcType="DECIMAL" property="promotionCardNetRevenue" />
+        <result column="agent_fission_total_one" jdbcType="INTEGER" property="agentFissionTotalOne" />
+        <result column="agent_fission_total_two" jdbcType="INTEGER" property="agentFissionTotalTwo" />
+        <result column="keep_on_record_user_total" jdbcType="INTEGER" property="keepOnRecordUserTotal" />
+        <result column="promotion_cards_written_off_total" property="promotionCardsWrittenOffTotal" jdbcType="INTEGER" />
+        <result column="promotion_cards_written_off_amount" property="promotionCardsWrittenOffAmount" jdbcType="DECIMAL" />
+        <result column="visitors_total" jdbcType="INTEGER" property="visitorsTotal" />
+        <result column="create_dt" jdbcType="TIMESTAMP" property="createDt" />
+        <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id, activity_id, uv, promotion_card_total, promotion_card_amount, package_card_total,
+        package_card_amount, reward_total, gift_certificates_total, autonomous_fission_total,
+        promotion_card_refunds_total_active, promotion_card_refunds_amount_active, promotion_card_refunds_total_passive,
+        promotion_card_refunds_amount_passive, write_off_gift_voucher_total, promotion_card_net_revenue,
+        agent_fission_total_one, agent_fission_total_two, keep_on_record_user_total, promotion_cards_written_off_total,
+        promotion_cards_written_off_amount, visitors_total, create_dt, update_dt
+    </sql>
+  <select id="getByActivityId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from after_sale_activity_statistics
+    where activity_id = #{activityId,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectAfterSaleActivityDataVerify"
+          resultType="com.tuanche.directselling.dto.AfterSaleActivityDataVerifyDto">
+      select stat.activity_id,
+      act.on_state,
+      act.sale_start_time,
+      act.sale_end_time,
+      act.dealer_id,
+      act.activity_name,
+      act.offline_convert_start_time,
+      act.offline_convert_end_time,
+      stat.uv,
+      stat.visitors_total,
+      stat.promotion_card_total,
+      stat.promotion_card_amount,
+      stat.reward_total,
+      stat.promotion_card_refunds_total_active+stat.promotion_card_refunds_total_passive as
+      promotion_card_refunds_total,
+      stat.promotion_card_refunds_amount_active+stat.promotion_card_refunds_amount_passive as
+      promotion_card_refunds_amount,
+      stat.write_off_gift_voucher_total,
+      stat.promotion_card_net_revenue,
+      stat.package_card_total,
+      stat.package_card_amount,
+      stat.agent_fission_total_one,
+      stat.agent_fission_total_two,
+      stat.autonomous_fission_total,
+      stat.keep_on_record_user_total,
+      stat.gift_certificates_total,
+      stat.write_off_gift_voucher_total,
+      stat.promotion_card_refunds_total_passive,
+      stat.promotion_card_refunds_amount_passive
+      from after_sale_activity_statistics stat
+      left join after_sale_activity act
+      on stat.activity_id = act.id
+      <where>
+          <if test="dealerId != null">
+              and act.dealer_id=#{dealerId}
+          </if>
+          <if test="activityId != null">
+              and stat.activity_id=#{activityId}
+          </if>
+          <!--开启状态 0未开启，1已开启-->
+          <!--传参 0已结束，1进行中-->
+          <if test="onState == 0">
+              and act.offline_convert_end_time &lt;= now()
+          </if>
+          <if test="onState == 1"><!--所有海纳系统里的判断活动结束以线下兑换时间为准,WIKI：售后特卖V1.3.2优化需求-->
+              and act.on_state=1 and act.sale_start_time &lt;= now() and act.offline_convert_end_time &gt;= now()
+          </if>
+          <if test="activityName != null and activityName != ''">
+              and act.activity_name like CONCAT('%',#{activityName},'%')
+          </if>
+          <if test="startTime != null">
+              and act.offline_convert_end_time&gt;=#{startTime}
+          </if>
+          <if test="endTime != null">
+              and act.offline_convert_end_time&lt;=#{endTime}
+          </if>
+      </where>
+      order by act.offline_convert_end_time desc
+  </select>
+
+  <select id="selectAfterSaleActivityDataVerifySum"
+          resultType="com.tuanche.directselling.dto.AfterSaleActivityDataVerifyDto">
+    select
+      sum(stat.uv) as uv,
+      sum(stat.visitors_total) as visitors_total,
+      sum(stat.promotion_card_total) as promotion_card_total,
+      sum(stat.promotion_card_amount) as promotion_card_amount,
+      sum(stat.reward_total) as reward_total,
+      sum(stat.promotion_card_net_revenue) as promotion_card_net_revenue,
+      sum(stat.package_card_total) as package_card_total,
+      sum(stat.package_card_amount) as package_card_amount
+      from after_sale_activity_statistics stat
+      left join after_sale_activity act
+      on stat.activity_id = act.id
+      <where>
+      <if test="dealerId != null">
+        and act.dealer_id=#{dealerId}
+      </if>
+      <if test="activityId != null">
+        and stat.activity_id=#{activityId}
+      </if>
+      <!--开启状态 0未开启，1已开启-->
+      <!--传参 0已结束，1进行中-->
+      <if test="onState == 0">
+        and act.offline_convert_end_time &lt;= now()
+      </if>
+      <if test="onState == 1">
+        and act.on_state=1 and act.sale_start_time &lt;= now() and act.offline_convert_end_time &gt;= now()
+      </if>
+      <if test="activityName != null and activityName != ''">
+        and act.activity_name like CONCAT('%',#{activityName},'%')
+      </if>
+      <if test="startTime != null">
+          and act.offline_convert_end_time&gt;=#{startTime}
+      </if>
+      <if test="endTime != null">
+          and act.offline_convert_end_time&lt;=#{endTime}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectAfterSaleDealerPaymentVerify"
+          resultType="com.tuanche.directselling.dto.AfterSaleDealerPaymentVerifyDto">
+      select stat.activity_id,
+      act.on_state,
+      act.dealer_id,
+      act.activity_name,
+      act.sub_account_ratio,
+      act.sale_start_time,
+      act.sale_end_time,
+      act.offline_convert_end_time,
+      stat.package_card_amount,
+      act.actual_amount,
+      act.payment_time,
+      act.payment_flow_num,
+      act.payment_remark
+      from after_sale_activity_statistics stat
+      left join after_sale_activity act
+      on stat.activity_id = act.id
+      where stat.package_card_amount&gt;0
+      <if test="dealerId != null">
+            and act.dealer_id=#{dealerId}
+        </if>
+        <if test="activityId != null">
+            and stat.activity_id=#{activityId}
+        </if>
+        <!--开启状态 0未开启，1已开启-->
+        <!--传参 0已结束，1进行中-->
+        <if test="onState == 0">
+            and act.offline_convert_end_time &lt;= now()
+        </if>
+        <if test="onState == 1">
+            and act.on_state=1 and act.sale_start_time &lt;= now() and act.offline_convert_end_time &gt;= now()
+        </if>
+        <if test="activityName != null and activityName != ''">
+            and act.activity_name like CONCAT('%',#{activityName},'%')
+        </if>
+        <if test="startTime != null">
+            and act.payment_time&gt;=#{startTime}
+        </if>
+        <if test="endTime != null">
+            and act.payment_time&lt;=#{endTime}
+        </if>
+      order by act.offline_convert_end_time desc
+  </select>
+
+    <select id="selectAfterSaleActivityDataDetailDto"
+            resultType="com.tuanche.directselling.dto.AfterSaleActivityDataDetailDto">
+        select stat.activity_id,
+        act.on_state,
+        act.sale_start_time,
+        act.sale_end_time,
+        act.dealer_id,
+        act.activity_name,
+        act.offline_convert_start_time,
+        act.offline_convert_end_time,
+        stat.uv,
+        stat.browse_total,
+        stat.visitors_total,
+        stat.promotion_card_total,
+        stat.promotion_card_amount,
+        stat.reward_total,
+        stat.promotion_card_refunds_total_passive,
+        stat.promotion_card_refunds_total_active+stat.promotion_card_refunds_total_passive as
+        promotion_card_refunds_total,
+        stat.promotion_card_refunds_amount_active+stat.promotion_card_refunds_amount_passive as
+        promotion_card_refunds_amount,
+        stat.write_off_gift_voucher_total,
+        stat.promotion_card_net_revenue,
+        stat.package_card_total,
+        stat.package_card_amount,
+        stat.agent_fission_total_one,
+        stat.agent_fission_total_two,
+        stat.autonomous_fission_total,
+        stat.lost_user_total,
+        stat.keep_on_record_user_total,
+        stat.gift_certificates_total,
+        stat.write_off_gift_voucher_total,
+        stat.keep_on_record_finish_user_total,
+        stat.primary_fission_total,
+        stat.beyond_primary_fission_total,
+        stat.promotion_cards_written_off_total,
+        stat.promotion_cards_waiting_release_total
+        from after_sale_activity_statistics stat
+        left join after_sale_activity act
+        on stat.activity_id = act.id
+        where stat.activity_id=#{activityId}
+    </select>
+    <!-- 获取活动统计的ID -->
+    <select id="getActivityStatisticIdMap" resultType="com.tuanche.directselling.dto.ResultMapDto">
+        SELECT
+            activity_id AS mapKey,
+            id AS mapValue
+        FROM after_sale_activity_statistics
+        WHERE
+          activity_id IN
+        <foreach collection="activityIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="selectAfterSaleActivityCount" resultType="int">
+        select count(*)
+        from after_sale_activity act
+        <where>
+            <if test="dealerId != null">
+                and act.dealer_id=#{dealerId}
+            </if>
+            <if test="activityId != null">
+                and act.id=#{activityId}
+            </if>
+            <!--开启状态 0未开启，1已开启-->
+            <!--传参 0已结束，1进行中-->
+            <if test="onState == 0">
+                and act.offline_convert_end_time &lt;= now()
+            </if>
+            <if test="onState == 1">
+                and act.on_state=1 and act.sale_start_time &lt;= now() and act.offline_convert_end_time &gt;= now()
+            </if>
+            <if test="activityName != null and activityName != ''">
+                and act.activity_name like CONCAT('%',#{activityName},'%')
+            </if>
+            <if test="startTime != null">
+                and act.offline_convert_end_time&gt;=#{startTime}
+            </if>
+            <if test="endTime != null">
+                and act.offline_convert_end_time&lt;=#{endTime}
+            </if>
+        </where>
+    </select>
+</mapper>

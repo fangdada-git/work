@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.GiftRefuelingcardDealerGiftNumReadMapper" >
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.GiftRefuelingcardDealerGiftNum" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="dealer_id" property="dealerId" jdbcType="INTEGER" />
+    <result column="gift_num" property="giftNum" jdbcType="INTEGER" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="BIT" />
+    <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="update_dt" property="updateDt" jdbcType="TIMESTAMP" />
+    <result column="update_name" property="updateName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, dealer_id, gift_num, delete_flag, create_dt, create_name, update_dt, update_name
+  </sql>
+    <!-- 获取经销商的礼品赠送次数 -->
+  <select id="getGiftNumByDealerId" resultType="integer" parameterType="java.lang.Integer" >
+    SELECT gift_num
+      FROM gift_refuelingcard_dealer_gift_num
+     WHERE dealer_id = #{dealerId}
+  </select>
+
+</mapper>

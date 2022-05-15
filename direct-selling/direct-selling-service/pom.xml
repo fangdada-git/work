@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.tuanche</groupId>
+        <artifactId>direct-selling</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <packaging>war</packaging>
+    <artifactId>direct-selling-service</artifactId>
+
+    <dependencies>
+
+        <!-- 依赖服务注册的核心组件 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- dubbo -->
+        <dependency>
+            <groupId>com.alibaba.boot</groupId>
+            <artifactId>dubbo-spring-boot-starter</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>netty</artifactId>
+                    <groupId>io.netty</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
+
+        <!-- 依赖工具包 -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.47</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.tuanche.arch</groupId>
+            <artifactId>tuanche-framework-apollo-config</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.tuanche.arch</groupId>
+            <artifactId>tuanche-framework-dubbo</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>slf4j-log4j12</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>${javax.mail.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.tuanche.service</groupId>
+            <artifactId>framework</artifactId>
+            <version>${tuanche.framework.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-test</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter-test</artifactId>
+            <version>${mybatis-spring-boot-starter-test.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.deepoove</groupId>
+            <artifactId>swagger-dubbo</artifactId>
+            <version>${swagger-dubbo.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>javassist</artifactId>
+                    <groupId>org.javassist</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.tuanche.arch</groupId>
+            <artifactId>tuanche-framework-zipkin</artifactId>
+            <version>${zipkin.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.tuanche</groupId>
+            <artifactId>direct-selling-api</artifactId>
+            <version>${direct-selling-api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tuanche.arch</groupId>
+            <artifactId>tuanche-framework-kafka</artifactId>
+            <version>${tuanche-framework-kafka.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>log4j</artifactId>
+                    <groupId>log4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.tuanche</groupId>
+            <artifactId>manubasecenter-api</artifactId>
+            <version>${manubasecenter.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>arch_auto_storage_api</artifactId>
+                    <groupId>1.0-SNAPSHOT</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>arch_auto_storage_api</artifactId>
+                    <groupId>com.tuanche</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.tuanche.arch</groupId>
+            <artifactId>tuanche-framework-redis</artifactId>
+            <version>1.1.1-SNAPSHOT</version>
+        </dependency>
+
+        <!-- 车型库接口 -->
+        <dependency>
+            <groupId>com.tuanche</groupId>
+            <artifactId>arch_auto_storage_api</artifactId>
+            <version>1.4.6-SNAPSHOT</version>
+        </dependency>
+        <!-- 生成海报 -->
+<!--        <dependency>-->
+<!--            <groupId>com.tuanche.arch.merchant</groupId>-->
+<!--            <artifactId>arch-tuanche-merchant-api</artifactId>-->
+<!--            <version>1.0.1.0-SNAPSHOT</version>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>com.tuanche</groupId>
+            <artifactId>eap_api</artifactId>
+            <version>2.0-SNAPSHOT</version>
+        </dependency>
+
+        <!--manuapi 获取到店礼品-->
+        <dependency>
+            <groupId>com.tuanche</groupId>
+            <artifactId>manu_api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>mybatis</artifactId>
+                    <groupId>org.mybatis</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>javax.mail</artifactId>
+                    <groupId>com.sun.mail</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>fxxk_api</artifactId>
+                    <groupId>com.tuanche.duo</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jackson-mapper-asl</artifactId>
+                    <groupId>org.codehaus.jackson</groupId>
+                </exclusion>
+                <exclusion>
+                        <groupId>com.tuanche.duo</groupId>
+                        <artifactId>eap_console_api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- C端场次服务 -->
+        <dependency>
+            <groupId>com.tuanche</groupId>
+            <artifactId>console-rpc</artifactId>
+            <version>2021111-big-activity-type-SNAPSHOT</version>
+        </dependency>
+        <!-- C端直播 -->
+        <dependency>
+            <groupId>com.tuanche</groupId>
+            <artifactId>broadcast-rpc</artifactId>
+            <version>20200921-liebianzhibo-SNAPSHOT</version>
+        </dependency>
+
+        <!--微信企业付款-->
+        <dependency>
+            <groupId>org.weixin4j</groupId>
+            <artifactId>weixin4j</artifactId>
+            <version>0.0.9.2-SNAPSHOT</version>
+        </dependency>
+        <!-- xxl-job start -->
+        <dependency>
+            <groupId>com.tuanche.arch</groupId>
+            <artifactId>tuanche-framework-job</artifactId>
+        </dependency>
+        <!-- xxl-job end -->
+
+        <dependency>
+            <groupId>com.tuanche.tdn</groupId>
+            <artifactId>tuanche_tdn_api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <!-- QR start -->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>3.3.0</version>
+        </dependency>
+        <!-- QR end -->
+        <dependency>
+            <groupId>com.tuanche</groupId>
+            <artifactId>arch-district-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <!--	直播活动配置	--> <!-- 生成海报 -->
+        <dependency>
+            <groupId>com.tuanche.arch.merchant</groupId>
+            <artifactId>arch-tuanche-merchant-api</artifactId>
+            <version>${arch-tuanche-merchant-api-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tuanche</groupId>
+            <artifactId>dict_api</artifactId>
+            <version>${dict_api}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shardingsphere</groupId>
+            <artifactId>sharding-jdbc-core</artifactId>
+            <version>4.1.0</version>
+        </dependency>
+
+        <!--卡券服务-->
+        <dependency>
+            <groupId>com.tuanche</groupId>
+            <artifactId>certificate-api</artifactId>
+            <version>${certificate-api-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>3.16.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tuanche.apply</groupId>
+            <artifactId>applyRpc</artifactId>
+            <version>20210922-inferiorQuality-SNAPSHOT</version>
+            <!--<version>2.0.2-RELEASE</version>-->
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.github.binarywang</groupId>
+            <artifactId>java-emoji-converter</artifactId>
+            <version>0.1.1</version>
+        </dependency>
+        <!--企微依赖-->
+        <dependency>
+            <groupId>com.tuanche</groupId>
+            <artifactId>wechatwork_api</artifactId>
+            <version>1.7.0-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>hutool-log</artifactId>
+                    <groupId>cn.hutool</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>hutool-all</artifactId>
+                    <groupId>cn.hutool</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!--企微依赖-->
+        <dependency>
+            <groupId>com.tuanche</groupId>
+            <artifactId>wechatwork_api</artifactId>
+            <version>1.7.0-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>hutool-log</artifactId>
+                    <groupId>cn.hutool</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>hutool-all</artifactId>
+                    <groupId>cn.hutool</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.tuanche</groupId>
+            <artifactId>tuanche-pay-api</artifactId>
+            <version>${tuanche-pay-api}</version>
+        </dependency>
+    </dependencies>
+
+    <!-- 打包相关的操作 -->
+    <build>
+        <finalName>direct-selling-service</finalName>
+        <plugins>
+            <plugin>
+                <!-- 打包-->
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skipTests>true</skipTests>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

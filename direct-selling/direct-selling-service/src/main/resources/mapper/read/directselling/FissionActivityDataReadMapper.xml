@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.FissionActivityDataReadMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FissionActivityData">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="fission_id" jdbcType="INTEGER" property="fissionId" />
+    <result column="browse_base" jdbcType="INTEGER" property="browseBase" />
+    <result column="browse_coefficient" jdbcType="INTEGER" property="browseCoefficient" />
+    <result column="browse_num" jdbcType="INTEGER" property="browseNum" />
+    <result column="subscribe_base" jdbcType="INTEGER" property="subscribeBase" />
+    <result column="subscribe_coefficient" jdbcType="INTEGER" property="subscribeCoefficient" />
+    <result column="subscribe_num" jdbcType="INTEGER" property="subscribeNum" />
+    <result column="share_base" jdbcType="INTEGER" property="shareBase" />
+    <result column="share_coefficient" jdbcType="INTEGER" property="shareCoefficient" />
+    <result column="share_num" jdbcType="INTEGER" property="shareNum" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, fission_id, browse_base, browse_coefficient, browse_num, subscribe_base, subscribe_coefficient,
+    subscribe_num, share_base, share_coefficient, share_num
+  </sql>
+  <select id="selectByFissionId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from fission_activity_data
+    where fission_id = #{fissionId}
+  </select>
+
+</mapper>

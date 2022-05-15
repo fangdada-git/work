@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.AfterSaleCouponRecordReadMapper" >
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.AfterSaleCouponRecord" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_coupon_id" property="userCouponId" jdbcType="INTEGER" />
+    <result column="coupon_id" property="couponId" jdbcType="INTEGER" />
+    <result column="coupon_code" property="couponCode" jdbcType="VARCHAR" />
+    <result column="order_code" property="orderCode" jdbcType="VARCHAR" />
+    <result column="activity_id" property="activityId" jdbcType="INTEGER" />
+    <result column="dealer_id" property="dealerId" jdbcType="INTEGER" />
+    <result column="cb_id" property="cbId" jdbcType="INTEGER" />
+    <result column="cs_id" property="csId" jdbcType="INTEGER" />
+    <result column="coupon_type" property="couponType" jdbcType="INTEGER" />
+    <result column="coupon_status" property="couponStatus" jdbcType="TINYINT" />
+    <result column="user_wx_union_id" property="userWxUnionId" jdbcType="VARCHAR" />
+    <result column="checked_sales_id" property="checkedSalesId" jdbcType="INTEGER" />
+    <result column="checked_dealer_id" property="checkedDealerId" jdbcType="INTEGER" />
+    <result column="checked_date" property="checkedDate" />
+    <result column="create_dt" property="createDt" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
+  </resultMap>
+
+  <resultMap id="AfterSaleCouponDtoResultMap" type="com.tuanche.directselling.dto.AfterSaleCouponDto" extends="BaseResultMap">
+    <result column="licence_plate" property="licencePlate" jdbcType="VARCHAR" />
+    <result column="agent_wx_union_id" property="agentWxUnionId" jdbcType="VARCHAR" />
+    <result column="share_wx_union_id" property="shareWxUnionId" jdbcType="VARCHAR" />
+    <result column="user_phone" property="userPhone" jdbcType="VARCHAR" />
+    <result column="coupon_name" property="couponName" jdbcType="VARCHAR"/>
+    <result column="goods_id" property="goodsId"/>
+  </resultMap>
+
+    <resultMap id="mapResult" type="HashMap">
+        <result property="couponCountSum" column="couponCountSum" jdbcType="BIGINT" />
+        <result property="couponGiveOutCount" column="couponGiveOutCount" jdbcType="BIGINT" />
+        <result property="couponUseCount" column="couponUseCount" jdbcType="BIGINT"/>
+    </resultMap>
+
+  <sql id="Base_Column_List" >
+    t1.id, t1.coupon_id, t1.coupon_code, t1.order_code, t1.activity_id, t1.dealer_id, t1.coupon_status, t1.user_wx_union_id,
+    t1.checked_sales_id, t1.checked_dealer_id, t1.checked_date, t1.delete_flag, t1.coupon_type, t1.user_coupon_id, t1.cs_id,
+    t1.cb_id, t1.create_dt
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from after_sale_coupon_record t1
+    where t1.id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="getAfterSaleCouponByUserCouponId" resultMap="AfterSaleCouponDtoResultMap">
+    select
+    <include refid="Base_Column_List" />
+    ,t2.licence_plate
+    ,t2.agent_wx_union_id
+    ,t2.user_phone
+    from after_sale_coupon_record t1
+    left join after_sale_order_record t2 on t1.order_code=t2.order_code
+    where t1.user_coupon_id = #{userCouponId}
+    <if test="userWxUnionId!=null and userWxUnionId!=''">
+      and t1.user_wx_union_id =#{userWxUnionId}
+    </if>
+    group by t1.user_coupon_id
+  </select>
+
+  <select id="getAfterSaleCouponList" resultMap="AfterSaleCouponDtoResultMap" parameterType="com.tuanche.directselling.model.AfterSaleCouponRecord" >
+    select
+    <include refid="Base_Column_List" />
+    ,t2.licence_plate
+    ,t2.agent_wx_union_id
+    from after_sale_coupon_record t1
+    left join after_sale_order_record t2 on t1.order_code=t2.order_code
+    where t1.delete_flag=0
+    <if test="couponId!=null">
+      and t1.coupon_id = #{couponId}
+    </if>
+    <if test="userCouponId!=null">
+      and t1.user_coupon_id = #{userCouponId}
+    </if>
+    <if test="orderCode!=null">
+      and t1.order_code = #{orderCode}
+    </if>
+    <if test="activityId!=null">
+      and t1.activity_id = #{activityId}
+    </if>
+    <if test="dealerId!=null">
+      and t1.dealer_id = #{dealerId}
+    </if>
+    <if test="cbId != null" >
+      AND t1.cb_id = #{cbId}
+    </if>
+    <if test="csId != null" >
+      AND t1.cs_id = #{csId}
+    </if>
+    <if test="couponStatus!=null">
+      and t1.coupon_status = #{couponStatus}
+    </if>
+    <if test="couponStatusList!=null and couponStatusList.size>0">
+      and t1.coupon_status in
+        <foreach collection="couponStatusList" item="couponStatus" open="(" separator="," close=")">
+            #{couponStatus}
+        </foreach>
+    </if>
+    <if test="userWxUnionId!=null">
+      and t1.user_wx_union_id = #{userWxUnionId}
+    </if>
+    <if test="checkedSalesId!=null">
+      and t1.checked_sales_id = #{checkedSalesId}
+    </if>
+    <if test="checkedDealerId!=null">
+      and t1.checked_dealer_id = #{checkedDealerId}
+    </if>
+    <if test="couponType!=null">
+      and t1.coupon_type = #{couponType}
+    </if>
+    <if test="couponTypeList!=null and couponTypeList.size>0">
+      and t1.coupon_type in
+        <foreach collection="couponTypeList" item="item" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+    </if>
+    group by t1.id
+  </select>
+
+  <select id="getAfterSaleCouponWrittenOffList" resultMap="AfterSaleCouponDtoResultMap" parameterType="com.tuanche.directselling.dto.AfterSaleCouponDto">
+    SELECT
+          cr.id,
+          cr.user_coupon_id,
+          cr.coupon_id,
+          cr.coupon_code,
+      cr.order_code,
+      cr.coupon_type,
+      ap.commodity_name as coupon_name,
+      asor.goods_id,
+      asor.licence_plate
+      FROM
+      after_sale_coupon_record cr
+      LEFT JOIN after_sale_order_record asor ON cr.order_code = asor.order_code
+      LEFT JOIN after_sale_activity_package ap ON asor.goods_id = ap.goods_id
+      where asor.checked_dealer_id=#{checkedDealerId} and asor.checked_sales_id=#{checkedSalesId} and
+      cr.coupon_type=#{couponType} and cr.coupon_status=0
+      <if test="activityIds != null and activityIds.size() != 0">
+          and cr.activity_id in
+          <foreach collection="activityIds" separator="," close=")" open="(" index="index" item="item">
+              #{item}
+          </foreach>
+      </if>
+      <if test="licencePlate != null and licencePlate != ''">
+          and asor.licence_plate=#{licencePlate}
+      </if>
+      <if test="userPhone != null and userPhone != ''">
+          and asor.user_phone=#{userPhone}
+      </if>
+      <if test="couponIds != null and couponIds.size() != 0">
+          and cr.id in
+          <foreach collection="couponIds" separator="," close=")" open="(" index="index" item="item">
+        #{item}
+      </foreach>
+    </if>
+    group by asor.goods_id
+  </select>
+
+  <select id="getAfterSaleCouponByOrderCode" resultMap="AfterSaleCouponDtoResultMap">
+    select id, user_coupon_id, coupon_id, coupon_code, activity_id, dealer_id, coupon_status,coupon_type
+    from after_sale_coupon_record where order_code=#{orderCode} and coupon_type=#{couponType}
+  </select>
+    <!-- 获取核销礼品券数量 -->
+    <select id="getWriteOffGiftVoucherMap"  resultType="com.tuanche.directselling.dto.ResultMapDto">
+        SELECT
+            t2.activity_id AS mapKey,
+            COUNT(1) AS mapValue
+        FROM
+            after_sale_coupon_record t2
+        WHERE
+            t2.activity_id IN
+            <foreach collection="activityIds" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+          AND t2.coupon_type = 2
+          AND t2.coupon_status = 2
+         GROUP BY t2.activity_id
+
+    </select>
+
+    <!-- 获取已经核销了礼品券的用户 -->
+    <select id="getWriteOffGgiftCertificatesUserMap" resultType="com.tuanche.directselling.dto.ResultMapDto">
+        SELECT
+            CONCAT(activity_id,'_',user_wx_union_id) AS mapKey,
+            COUNT(1) AS mapValue
+        FROM
+          after_sale_coupon_record
+        WHERE
+        (activity_id,user_wx_union_id) IN
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            (#{item.activityId},#{item.userWxUnionId})
+        </foreach>
+        AND coupon_type=2
+        AND coupon_status=2
+        GROUP BY activity_id,user_wx_union_id
+    </select>
+
+    <select id="supplyAgainCoupon" resultType="com.tuanche.directselling.dto.AfterSaleOrderCouponInfoDto">
+        SELECT
+            ttt.coupon_count2-ttt.coupon_count couponCount
+            , ttt.activity_id activityId
+            , ttt.goods_id goodsId
+            , ttt.order_code orderCode
+        FROM
+        (
+        SELECT
+            tt1.activity_id
+            , tt1.goods_id
+            , tt1.order_code
+            , tt1.coupon_count
+            , tt2.activity_id2
+            , tt2.goods_id2
+            , tt2.coupon_count2
+        FROM
+        <!--订单维度，实际发了多少券-->
+            (
+                SELECT
+                t1.order_code, t1.activity_id, t1.goods_id, COUNT(t2.id) coupon_count
+                FROM after_sale_order_record t1
+                LEFT JOIN after_sale_coupon_record t2 ON t1.order_code=t2.order_code
+                WHERE  t2.coupon_type=3 AND t2.delete_flag=0
+                <choose>
+                    <when test="activityStart==1">
+                        AND t1.activity_id IN (SELECT asa.id FROM after_sale_activity asa WHERE asa.on_state=1 AND NOW() BETWEEN asa.sale_start_time AND asa.sale_end_time)
+                    </when>
+                    <otherwise>
+                        <if test="activityId!=null">
+                            AND t1.activity_id=#{activityId}
+                        </if>
+                        <if test="orderCode!=null and orderCode!=''">
+                            AND t1.order_code=#{orderCode}
+                        </if>
+                    </otherwise>
+                </choose>
+                GROUP BY t1.order_code
+            ) tt1
+            LEFT JOIN
+        <!--活动、商品维度，应该发多少券-->
+            (
+            <!--套餐卡：活动、商品维度，应该发多少券-->
+                SELECT t3.activity_id activity_id2, t3.goods_id goods_id2, SUM(t4.coupon_count) coupon_count2 FROM after_sale_activity_package t3
+                LEFT JOIN after_sale_activity_coupon t4 ON t3.id=t4.package_id
+                WHERE t4.type=2 AND t3.rel_status=1 AND t4.rel_status=1
+                <choose>
+                    <when test="activityStart==1">
+                        and t3.activity_id IN (SELECT asa.id FROM after_sale_activity asa WHERE asa.on_state=1 AND NOW() BETWEEN asa.sale_start_time AND asa.sale_end_time)
+                    </when>
+                    <otherwise>
+                        <if test="activityId!=null">
+                            and t3.activity_id = #{activityId}
+                        </if>
+                    </otherwise>
+                </choose>
+                GROUP BY t3.activity_id,t3.goods_id
+                UNION ALL
+                <!--推广卡：活动、商品维度，应该发多少券-->
+                SELECT t5.id activity_id2, t5.goods_id goods_id2, SUM(t6.coupon_count) coupon_count2 FROM after_sale_activity t5
+                LEFT JOIN after_sale_activity_coupon t6 ON t5.id=t6.activity_id
+                WHERE t5.delete_flag=0  AND t6.type=1 AND t6.rel_status=1
+                <choose>
+                    <when test="activityStart==1">
+                        AND t5.id IN (SELECT asa.id FROM after_sale_activity asa WHERE asa.on_state=1 AND NOW() BETWEEN asa.sale_start_time AND asa.sale_end_time)
+                    </when>
+                    <otherwise>
+                        <if test="activityId!=null">
+                            AND t5.id= #{activityId}
+                        </if>
+                    </otherwise>
+                </choose>
+                GROUP BY t5.id , t5.goods_id
+            ) tt2
+            ON tt1.activity_id=tt2.activity_id2 AND tt1.goods_id=tt2.goods_id2
+            GROUP BY tt1.order_code
+        ) ttt
+        WHERE ttt.coupon_count &lt; ttt.coupon_count2;
+    </select>
+    <select id="getOrderCouponCount" resultType="com.tuanche.directselling.dto.AfterSaleOrderCouponInfoDto">
+        SELECT
+            t1.order_code orderCode
+            , t1.activity_id activityId
+            , t1.goods_id goodsId
+            , t2.coupon_id couponId
+            , COUNT(t2.id) couponCount
+            ,t1.user_id userId
+            , t1.user_phone userPhone
+            , t1.dealer_id dealerId
+            , t1.cb_id cbId
+            , t1.cs_id csId
+            , t1.user_wx_union_id userWxUnionId
+        FROM after_sale_order_record t1
+        LEFT JOIN after_sale_coupon_record t2 ON t1.order_code=t2.order_code
+        WHERE  t2.coupon_type=3 AND t2.delete_flag=0
+        <if test="orderCodeList!=null and orderCodeList.size()>0">
+            AND t1.order_code in
+            <foreach collection="orderCodeList" item="orderCode" open="(" separator="," close=")">
+                #{orderCode}
+            </foreach>
+        </if>
+        GROUP BY t1.order_code, t2.coupon_id
+    </select>
+
+    <select id="getActivityGoodsCouponCount" resultType="com.tuanche.directselling.dto.AfterSaleOrderCouponInfoDto">
+        <!--套餐卡：活动、商品维度，应该发多少券-->
+            SELECT
+                   t3.activity_id activityId, t3.goods_id goodsId, t4.coupon_id couponId, SUM(t4.coupon_count) couponCount
+            FROM after_sale_activity_package t3
+            LEFT JOIN after_sale_activity_coupon t4 ON t3.id=t4.package_id
+            WHERE t4.type=2 AND t3.rel_status=1 AND t4.rel_status=1 AND (t3.activity_id, t3.goods_id) in
+            <foreach collection="couponCountList" item="item" open="(" separator="," close=")">
+               (#{item.activityId},  #{item.goodsId})
+            </foreach>
+            GROUP BY t3.activity_id,t3.goods_id, t4.coupon_id
+            UNION ALL
+            <!--推广卡：活动、商品维度，应该发多少券-->
+            SELECT t5.id activityId, t5.goods_id goodsId, t6.coupon_id couponId, SUM(t6.coupon_count) couponCount
+            FROM after_sale_activity t5
+            LEFT JOIN after_sale_activity_coupon t6 ON t5.id=t6.activity_id
+            WHERE t5.delete_flag=0  AND t6.type=1 AND t6.rel_status=1 AND (t5.id, t5.goods_id) in
+            <foreach collection="couponCountList" item="item" open="(" separator="," close=")">
+                (#{item.activityId},  #{item.goodsId})
+            </foreach>
+            GROUP BY t5.id , t5.goods_id ,t6.coupon_id
+    </select>
+
+    <select id="getCouponCountByOrderCode" parameterType="java.lang.String" resultMap="mapResult">
+        SELECT
+            CAST(COUNT(id) AS SIGNED) couponCountSum,
+            CAST(IFNULL(SUM(IF(coupon_status=2 OR coupon_status=1,1,0)),0) AS SIGNED) couponGiveOutCount,
+            CAST(IFNULL(SUM(IF(coupon_status=2,1,0)),0) AS SIGNED) couponUseCount
+        FROM after_sale_coupon_record WHERE delete_flag=0 AND coupon_type=3 AND order_code=#{orderCode}
+    </select>
+
+</mapper>

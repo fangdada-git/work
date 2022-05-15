@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>团车直卖-经销商油卡配置列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.js"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <script src="/layui/js/formSelects-v4.js"></script>
+    <link rel="stylesheet" href="/layui/css/formSelects-v4.css" media="all">
+    <link rel="stylesheet" href="/magnify/css/jquery.magnify.css" >
+    <style type="text/css">
+        .layui-table-header .layui-table tr {
+            height: auto;
+            line-height: 50px;
+        }
+        .layui-table-cell {
+            height: auto;
+        }
+        .layui-table-col-special {
+            height: auto;
+        }
+        .layui-table tr{height: 65px}
+    </style>
+</head>
+<body class="childrenBody">
+<form class="layui-form">
+    <blockquote class="layui-elem-quote quoteBox">
+        <form class="layui-form">
+            <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <select name="sceneCitySelect" xm-select="sceneCitySelect" xm-select-search="" xm-select-search-type="dl" xm-select-radio="">
+                        <option value="">活动城市</option>
+                        <option th:each="city : ${cityList}" th:value="${city.id}" th:text="${city.name}"></option>
+                    </select>
+                </div>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input companyName" placeholder="经销商名称"/>
+                </div>
+                <a class="layui-btn search_btn" data-type="reload">搜索</a>
+            </div>
+            <div class="layui-inline">
+                <a class="layui-btn layui-btn-radius add_btn" href="javascript:;" onclick="batchUpdate()">
+                    <i class="layui-icon layui-icon-release"></i>批量配置油卡上限
+                </a>
+            </div>
+        </form>
+    </blockquote>
+    <table id="giftList" lay-filter="giftList"></table>
+</form>
+
+<script type="text/javascript" src="/common/js/tools.js"></script>
+<!-- layui 初始化 -->
+<script type="text/javascript" th:inline="javascript">
+    layui.use(['form','layer','table','laydate'],function(){
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            table = layui.table,
+            laydate = layui.laydate;
+
+        var periodsId = [[${periodsId}]];
+
+        //油卡列表
+        var tableIns = table.render({
+            elem: '#giftList',
+            url : '/gift/searchDealerGifList',
+            cellMinWidth : 95,
+            method: 'post',
+            dataType: 'json',
+            contentType: "application/json;charset=utf-8",
+            page : false,
+            height : "full-125",
+            limits : [10,20,50,100],
+            limit : 10,
+            id : "giftListTable",
+            where:{periodsId : periodsId},
+            cols : [
+                [
+                    {type:'checkbox'},
+                    {field: 'cityName', title: '经销商城市', minWidth: 150, align: 'center'},
+                    {field: 'dealerName', title: '经销商', minWidth: 150, align: 'center'},
+                    {field: 'refuelingCardNum', title: '油卡上限', minWidth: 100, align: 'center',edit: 'text'},
+                ]
+            ]
+        });
+
+        //搜索
+        $(".search_btn").on("click",function(){
+            table.reload("giftListTable",{
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: {
+                    periodsId : periodsId,
+                    cityId : layui.formSelects.value("sceneCitySelect","valStr"),
+                    companyName : $(".companyName").val(),
+                }
+            })
+        });
+
+        //监听单元格编辑
+        table.on('edit(giftList)', function(obj){
+            var value = obj.value //得到修改后的值
+                ,data = obj.data //得到所在行所有键值
+                ,field = obj.field; //得到字段
+            var reg = /^[0-9]*$/;
+            if(value == null || value == ""){
+                layer.msg("请输入油卡上限", {icon: 5});
+                return false;
+            } else if(!reg.test(value)){
+                layer.msg("油卡数量只能输入大于等于0的正整数", {icon: 5});
+                return false;
+            } else {
+                $.ajax({
+                    type: 'POST',
+                    url: "/gift/batchUpdateGiftConfig",
+                    data: {
+                        dealerConfigIds: data.id,
+                        giftNum: value
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        var message = data.msg;
+                        if(data.code == 200){
+                            layer.msg(message, {
+                                icon: 6, time: 1500, end: function () {
+                                    $('.search_btn').trigger("click");//触发搜索按钮的点击事件
+                                }
+                            });
+                        } else {
+                            layer.alert(message, {icon: 5,title:'提示'});
+                            return;
+                        }
+                    }
+                });
+            }
+        });
+
+        // 打开批量更新油卡上限弹框
+        window.batchUpdate = function(){
+            // 获取选中的经销商
+            var dealerIds = "";
+            var checkStatus = table.checkStatus('giftListTable'),data = checkStatus.data;
+            for (var i = 0; i < data.length; i++) {
+                dealerIds += data[i].id + ",";
+            }
+            if(dealerIds == null || dealerIds == ""){
+                layer.alert("请选择要批量更新油卡上限的经销商", {icon: 5,title:'提示'});
+                return;
+            }
+            layer.prompt({
+                formType: 0,
+                maxlength:5,
+                type:'number',
+                value: '',
+                title: '批量更新油卡上限',
+                btn: ['确定','取消'], //按钮，
+                btnAlign: 'c'
+            }, function(value,index){
+                layer.close(index);
+                if (!(/(^[0-9]\d*$)/.test(value))) {
+                    layer.alert('油卡数量只能输入大于等于0的正整数', {icon: 5,title:'提示'});
+                    return false;
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: "/gift/batchUpdateGiftConfig",
+                    data: {
+                        dealerConfigIds: dealerIds,
+                        giftNum: value
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        var message = data.msg;
+                        if(data.code == 200){
+                            layer.msg(message, {
+                                icon: 6, time: 1500, end: function () {
+                                    $('.search_btn').trigger("click");//触发搜索按钮的点击事件
+                                }
+                            });
+                        } else {
+                            layer.alert(message, {icon: 5,title:'提示'});
+                            return;
+                        }
+                    }
+                });
+            },function (value,index) {
+
+            });
+        }
+
+    })
+
+</script>
+</body>
+</html>

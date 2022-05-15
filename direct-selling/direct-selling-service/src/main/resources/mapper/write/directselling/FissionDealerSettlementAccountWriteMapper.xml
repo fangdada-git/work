@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.FissionDealerSettlementAccountWriteMapper" >
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FissionDealerSettlementAccount" >
+      <id column="id" property="id" jdbcType="INTEGER" />
+      <result column="fission_id" property="fissionId" jdbcType="INTEGER" />
+      <result column="dealer_id" property="dealerId" jdbcType="INTEGER" />
+      <result column="account_type" property="accountType" jdbcType="TINYINT" />
+      <result column="bank_name" property="bankName" jdbcType="VARCHAR" />
+      <result column="bank_address" property="bankAddress" jdbcType="VARCHAR" />
+      <result column="bank_card_number" property="bankCardNumber" jdbcType="VARCHAR" />
+      <result column="bank_card_name" property="bankCardName" jdbcType="VARCHAR" />
+      <result column="bank_card_phone" property="bankCardPhone" jdbcType="VARCHAR" />
+      <result column="payment_status" property="paymentStatus" jdbcType="BIT" />
+      <result column="personal_account" property="personalAccount" jdbcType="BIT" />
+      <result column="delete_flag" property="deleteFlag" jdbcType="BIT" />
+      <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+      <result column="create_name" property="createName" jdbcType="VARCHAR" />
+      <result column="update_dt" property="updateDt" jdbcType="TIMESTAMP" />
+      <result column="update_name" property="updateName" jdbcType="VARCHAR" />
+  </resultMap>
+    <insert id="batchInsert" parameterType="com.tuanche.directselling.model.FissionDealerSettlementAccount" >
+        insert into fission_dealer_settlement_account (fission_id, dealer_id,
+                                                       account_type, bank_name, bank_address,
+                                                       bank_card_number, bank_card_name, bank_card_phone,
+                                                       create_name)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.fissionId,jdbcType=INTEGER}, #{item.dealerId,jdbcType=INTEGER},
+            #{item.accountType,jdbcType=TINYINT}, #{item.bankName,jdbcType=VARCHAR}, #{item.bankAddress,jdbcType=VARCHAR},
+            #{item.bankCardNumber,jdbcType=VARCHAR}, #{item.bankCardName,jdbcType=VARCHAR}, #{item.bankCardPhone,jdbcType=VARCHAR},
+             #{item.createName,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+
+  <insert id="insert" parameterType="com.tuanche.directselling.model.FissionDealerSettlementAccount" >
+      insert into fission_dealer_settlement_account
+      <trim prefix="(" suffix=")" suffixOverrides="," >
+          <if test="id != null" >
+              id,
+          </if>
+          <if test="fissionId != null" >
+              fission_id,
+          </if>
+          <if test="dealerId != null" >
+              dealer_id,
+          </if>
+          <if test="accountType != null" >
+              account_type,
+          </if>
+          <if test="bankName != null" >
+              bank_name,
+          </if>
+          <if test="bankAddress != null" >
+              bank_address,
+          </if>
+          <if test="bankCardNumber != null" >
+              bank_card_number,
+          </if>
+          <if test="bankCardName != null" >
+              bank_card_name,
+          </if>
+          <if test="bankCardPhone != null" >
+              bank_card_phone,
+          </if>
+          <if test="paymentStatus != null" >
+              payment_status,
+          </if>
+          <if test="personalAccount != null" >
+              personal_account,
+          </if>
+          <if test="deleteFlag != null" >
+              delete_flag,
+          </if>
+          <if test="createDt != null" >
+              create_dt,
+          </if>
+          <if test="createName != null" >
+              create_name,
+          </if>
+          <if test="updateDt != null" >
+              update_dt,
+          </if>
+          <if test="updateName != null" >
+              update_name,
+          </if>
+          <if test="dutyParagraph != null">
+              duty_paragraph,
+          </if>
+      </trim>
+      <trim prefix="values (" suffix=")" suffixOverrides="," >
+          <if test="id != null" >
+              #{id,jdbcType=INTEGER},
+          </if>
+          <if test="fissionId != null" >
+              #{fissionId,jdbcType=INTEGER},
+          </if>
+          <if test="dealerId != null" >
+              #{dealerId,jdbcType=INTEGER},
+          </if>
+          <if test="accountType != null" >
+              #{accountType,jdbcType=TINYINT},
+          </if>
+          <if test="bankName != null" >
+              #{bankName,jdbcType=VARCHAR},
+          </if>
+          <if test="bankAddress != null" >
+              #{bankAddress,jdbcType=VARCHAR},
+          </if>
+          <if test="bankCardNumber != null" >
+              #{bankCardNumber,jdbcType=VARCHAR},
+          </if>
+          <if test="bankCardName != null" >
+              #{bankCardName,jdbcType=VARCHAR},
+          </if>
+          <if test="bankCardPhone != null" >
+              #{bankCardPhone,jdbcType=VARCHAR},
+          </if>
+          <if test="paymentStatus != null" >
+              #{paymentStatus,jdbcType=BIT},
+          </if>
+          <if test="personalAccount != null" >
+              #{personalAccount,jdbcType=BIT},
+          </if>
+          <if test="deleteFlag != null" >
+              #{deleteFlag,jdbcType=BIT},
+          </if>
+          <if test="createDt != null" >
+              #{createDt,jdbcType=TIMESTAMP},
+          </if>
+          <if test="createName != null" >
+              #{createName,jdbcType=VARCHAR},
+          </if>
+          <if test="updateDt != null" >
+              #{updateDt,jdbcType=TIMESTAMP},
+          </if>
+          <if test="updateName != null" >
+              #{updateName,jdbcType=VARCHAR},
+          </if>
+          <if test="dutyParagraph != null">
+              #{dutyParagraph,jdbcType=VARCHAR},
+          </if>
+      </trim>
+  </insert>
+  <update id="updateById" parameterType="com.tuanche.directselling.model.FissionDealerSettlementAccount" >
+      update fission_dealer_settlement_account
+      <set >
+          <if test="fissionId != null" >
+              fission_id = #{fissionId,jdbcType=INTEGER},
+          </if>
+          <if test="dealerId != null" >
+              dealer_id = #{dealerId,jdbcType=INTEGER},
+          </if>
+          <if test="accountType != null" >
+              account_type = #{accountType,jdbcType=TINYINT},
+          </if>
+          <if test="bankName != null" >
+              bank_name = #{bankName,jdbcType=VARCHAR},
+          </if>
+          <if test="bankAddress != null" >
+              bank_address = #{bankAddress,jdbcType=VARCHAR},
+          </if>
+          <if test="bankCardNumber != null" >
+              bank_card_number = #{bankCardNumber,jdbcType=VARCHAR},
+          </if>
+          <if test="bankCardName != null" >
+              bank_card_name = #{bankCardName,jdbcType=VARCHAR},
+          </if>
+          <if test="bankCardPhone != null" >
+              bank_card_phone = #{bankCardPhone,jdbcType=VARCHAR},
+          </if>
+          <if test="paymentStatus != null" >
+              payment_status = #{paymentStatus,jdbcType=BIT},
+          </if>
+          <if test="personalAccount != null" >
+              personal_account = #{personalAccount,jdbcType=BIT},
+          </if>
+          <if test="deleteFlag != null" >
+              delete_flag = #{deleteFlag,jdbcType=BIT},
+          </if>
+          <if test="createDt != null" >
+              create_dt = #{createDt,jdbcType=TIMESTAMP},
+          </if>
+          <if test="createName != null" >
+              create_name = #{createName,jdbcType=VARCHAR},
+          </if>
+          <if test="updateDt != null" >
+              update_dt = #{updateDt,jdbcType=TIMESTAMP},
+          </if>
+          <if test="updateName != null" >
+              update_name = #{updateName,jdbcType=VARCHAR},
+          </if>
+          <if test="dutyParagraph != null" >
+              duty_paragraph = #{dutyParagraph,jdbcType=VARCHAR},
+          </if>
+      </set>
+      where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updatePaymentStatusByIds">
+          update fission_dealer_settlement_account
+              set payment_status=1
+          WHERE id in <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
+              #{item}
+      </foreach>
+    </update>
+
+    <update id="deleteDealerLastSettlementAccountByFissionIdAndDealerId">
+        update fission_dealer_settlement_account set delete_flag=1 where fission_id=#{fissionId} and dealer_id=#{dealerId}
+    </update>
+</mapper>

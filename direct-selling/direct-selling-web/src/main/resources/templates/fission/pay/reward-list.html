@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>裂变-C端奖励金列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.js"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/magnify/css/jquery.magnify.css" >
+    <script src="/layui/js/formSelects-v4.js"></script>
+    <link rel="stylesheet" href="/layui/css/formSelects-v4.css" media="all">
+    <style type="text/css">
+        .layui-table-header .layui-table tr {
+            height: auto;
+            line-height: 50px;
+        }
+        .layui-table-cell {
+            height: auto;
+        }
+        .layui-table-col-special {
+            height: auto;
+        }
+        .layui-table tr{height: 65px}
+        /*#addtmp .layui-input,#addtmp .layui-textarea, #addtmp .layui-form-select, #addtmp .layui-select-title{width: 50%}*/
+    </style>
+</head>
+<body class="childrenBody">
+<div style="padding: 20px;background-color: #fbfbfb;">
+    <form class="layui-form">
+        <blockquote class="layui-elem-quote quoteBox">
+            <form class="layui-form">
+                <div class="layui-inline">
+                    <div class="layui-input-inline" style="width: 260px;">
+                        <select name="activitySelect" id="activitySelect" xm-select="activitySelect" xm-select-search="" xm-select-search-type="dl" xm-select-radio="">
+                            <option value="">裂变活动</option>
+                            <option th:each="activity : ${activtiyList}" th:value="${activity.id}" th:text="${activity.activityName}"></option>
+                        </select>
+                    </div>
+
+                    <div class="layui-input-inline">
+                        <label class="layui-form-label">活动时间：</label>
+                        <div class="layui-form-mid" id="activityTimeScope"></div>
+                    </div>
+                    <br/>
+                </div>
+                <div style="padding-left: 220px" class="layui-inline">
+                    <a class="layui-btn export_btn" data-type="reload"><i class="layui-icon layui-icon-export"></i>导出</a>
+                </div>
+                <br/>
+                <div class="layui-inline">
+                    <div class="layui-form-mid">总金额<em id="totalReward" style="font-size: large;color: red;"></em> 元。</div>
+                </div>
+            </form>
+        </blockquote>
+        <table id="rewardList"></table>
+    </form>
+</div>
+
+<script type="text/javascript" src="/common/js/tools.js"></script>
+<script type="text/javascript" src="/common/js/date.js"></script>
+<!-- layui 初始化 -->
+<script type="text/javascript" th:inline="javascript">
+    layui.use(['form','layer','table'],function(){
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            table = layui.table,
+            formSelects = layui.formSelects;
+
+        var tableIns = table.render({
+            elem: '#rewardList',
+            url : '/fission/searchUserRewardList',
+            cellMinWidth : 95,
+            page : true,
+            height : "full-125",
+            limits : [10,20,50,100],
+            limit : 10,
+            id : "rewardListTable",
+            cols: [
+                [
+                    {field: 'userWxUnionId', title: '微信UnionId', minWidth: 100, align: "center"},
+                    {field: 'activityName', title: '活动名称', minWidth: 100, align: "center"},
+                    {field: 'totalAmount', title: '奖励金额', minWidth: 100, align: "center"},
+                ]
+            ]
+        });
+
+        //搜索
+        function dataReload(){
+            var fissionId = layui.formSelects.value("activitySelect","val");
+            var params = {"fissionId": fissionId != "" ? parseInt(fissionId) : null};
+
+            table.reload("rewardListTable",{
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: params
+            })
+        }
+
+        //导出
+        $(".export_btn").on("click",function(){
+            if($('#totalReward').text() == ""){
+                return;
+            }
+            var url = '/fission/rewardList/export';
+            var fissionId = layui.formSelects.value("activitySelect","val");
+            if(fissionId == undefined || fissionId.length ==0){
+                return;
+            }
+            window.location.href = url +'?fissionId='+fissionId;
+        });
+
+        // 场次下拉框选择事件
+        formSelects.on('activitySelect', function(id, vals, val, isAdd, isDisabled){
+            //选中值才会触发
+            if(vals.length >0){
+                getActivityRewardDetail(val.value);
+                dataReload();
+            }
+        },true);
+
+        function getActivityRewardDetail(fissionId) {
+            $.ajax({
+                type: "get",
+                url: "/fission/getActivityRewardDetailById",
+                dataType: 'json',
+                data: {fissionId: fissionId},
+                success: function (data) {
+                    if (data.code == 200) {
+                        $('#totalReward').empty();
+                        $('#activityTimeScope').empty();
+                        $('#totalReward').append(data.result.totalReward);
+                        $('#activityTimeScope').append(DateUtils.dataTimeFormatter(new Date(data.result.startTime), 6) + "-" + DateUtils.dataTimeFormatter(new Date(data.result.endTime), 6));
+                    } else {
+                        alterError(data.msg);
+                        return;
+                    }
+                },
+                error: function () {
+                    alterError('系统异常')
+                }
+            })
+        }
+
+        function alterError(msg){
+            layer.msg(msg,{icon : 2,time : 2000});
+        }
+
+        function alterSuccess(msg) {
+            layer.msg(msg, {icon: 1, time: 2000});
+        }
+    })
+</script>
+</body>
+</html>

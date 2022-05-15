@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>团车直卖-C端数据概览</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.all.js"></script>
+    <script src="/common/js/jquery-1.12.4.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/magnify/css/jquery.magnify.css">
+    <script src="/layui/js/tableSelect.js"></script>
+</head>
+<body class="childrenBody">
+<div style="padding: 20px; background-color: #F2F2F2;">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">C端裂变数据概览</div>
+                <div class="layui-card-body">
+                    <form class="layui-form" action="">
+                        <div class="layui-inline">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">活动名称：</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="" placeholder="请输入" autocomplete="off" class="layui-input"
+                                           id="acName">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="layui-tab layui-tab-card" lay-filter="tableTab" id="dataTab">
+                        <ul class="layui-tab-title">
+                            <li class="layui-this">全部的C端分享数据</li>
+                            <li>裸链接</li>
+                            <li>用户运营渠道</li>
+                            <li>销售渠道</li>
+                        </ul>
+                        <div class="layui-tab-content">
+                            <div class="layui-tab-item layui-show">
+                                <table class="layui-table" lay-even lay-skin="nob" id="allDataTable">
+                                    <tr>
+                                        <th>活动奖金上限</th>
+                                        <th>当前发放</th>
+                                        <th>获得奖金用户</th>
+                                        <th>人均奖金</th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td id="prizePool-all"></td>
+                                        <td id="issued-all"></td>
+                                        <td id="customerCount-all"></td>
+                                        <td id="averagePrize-all"></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>浏览总人次</th>
+                                        <th>浏览总人数</th>
+                                        <th>成功分享总人数</th>
+                                        <th>海报分享成功总人数</th>
+                                        <th>分享页面成功总人数</th>
+                                    </tr>
+                                    <tr>
+                                        <td id="uniqueVisitor-all"></td>
+                                        <td id="pageView-all"></td>
+                                        <td id="shareCount-all"></td>
+                                        <td id="sharePosterCount-all"></td>
+                                        <td id="sharePageCount-all"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>活动页商品购买数</th>
+                                        <th>活动页商品购买人数</th>
+                                        <th>直播间页面商品购买数</th>
+                                        <th>直播间页面商品购买人数</th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td id="activityOrderCount-all"></td>
+                                        <td id="activityProductUserCount-all"></td>
+                                        <td id="liveProductCount-all"></td>
+                                        <td id="liveProductUserCount-all"></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>预约直播总人数</th>
+                                        <th>直播间总人数</th>
+                                        <th>预约用户进入直播间总人数</th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td id="subscribeUserCount-all"></td>
+                                        <td id="liveUserCount-all"></td>
+                                        <td id="subscribeLiveUserCount-all"></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>活动页商品购买数(无分享人)</th>
+                                        <th>活动页商品购买人数(无分享人)</th>
+                                        <th>直播间页面商品购买数(无分享人)</th>
+                                        <th>直播间页面商品购买人数(无分享人)</th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td id="activityOrderCount-all-noShare"></td>
+                                        <td id="activityProductUserCount-all-noShare"></td>
+                                        <td id="liveProductCount-all-noShare"></td>
+                                        <td id="liveProductUserCount-all-noShare"></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>预约直播总人数(无分享人)</th>
+                                        <th>直播间总人数(无分享人)</th>
+                                        <th>预约用户进入直播间总人数(无分享人)</th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td id="subscribeUserCount-all-noShare"></td>
+                                        <td id="liveUserCount-all-noShare"></td>
+                                        <td id="subscribeLiveUserCount-all-noShare"></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="layui-tab-item">
+                                <table class="layui-table" lay-even lay-skin="nob" name="channelDataTable">
+                                    <tr>
+                                        <th>浏览总人次</th>
+                                        <th>浏览总人数</th>
+                                        <th>成功分享总人数</th>
+                                        <th>海报分享成功总人数</th>
+                                        <th>分享页面成功总人数</th>
+                                    </tr>
+                                    <tr>
+                                        <td name="uniqueVisitor-channel"></td>
+                                        <td name="pageView-channel"></td>
+                                        <td name="shareCount-channel"></td>
+                                        <td name="sharePosterCount-channel"></td>
+                                        <td name="sharePageCount-channel"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>活动页商品购买数</th>
+                                        <th>活动页商品购买人数</th>
+                                        <th>直播间页面商品购买数</th>
+                                        <th>直播间页面商品购买人数</th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td name="activityOrderCount-channel"></td>
+                                        <td name="activityProductUserCount-channel"></td>
+                                        <td name="liveProductCount-channel"></td>
+                                        <td name="liveProductUserCount-channel"></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>预约直播总人数</th>
+                                        <th>直播间总人数</th>
+                                        <th>预约用户进入直播间总人数</th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td name="subscribeUserCount-channel"></td>
+                                        <td name="liveUserCount-channel"></td>
+                                        <td name="subscribeLiveUserCount-channel"></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>浏览总人次(无分享人)</th>
+                                        <th>浏览总人数(无分享人)</th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td name="uniqueVisitor-channel-noShare"></td>
+                                        <td name="pageView-channel-noShare"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>活动页商品购买数(无分享人)</th>
+                                        <th>活动页商品购买人数(无分享人)</th>
+                                        <th>直播间页面商品购买数(无分享人)</th>
+                                        <th>直播间页面商品购买人数(无分享人)</th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td name="activityOrderCount-channel-noShare"></td>
+                                        <td name="activityProductUserCount-channel-noShare"></td>
+                                        <td name="liveProductCount-channel-noShare"></td>
+                                        <td name="liveProductUserCount-channel-noShare"></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>预约直播总人数(无分享人)</th>
+                                        <th>直播间总人数(无分享人)</th>
+                                        <th>预约用户进入直播间总人数(无分享人)</th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td name="subscribeUserCount-channel-noShare"></td>
+                                        <td name="liveUserCount-channel-noShare"></td>
+                                        <td name="subscribeLiveUserCount-channel-noShare"></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="layui-tab-item">
+                                <table class="layui-table" lay-even lay-skin="nob" name="channelDataTable">
+                                    <tr>
+                                        <th>浏览总人次</th>
+                                        <th>浏览总人数</th>
+                                        <th>成功分享总人数</th>
+                                        <th>海报分享成功总人数</th>
+                                        <th>分享页面成功总人数</th>
+                                    </tr>
+                                    <tr>
+                                        <td name="uniqueVisitor-channel"></td>
+                                        <td name="pageView-channel"></td>
+                                        <td name="shareCount-channel"></td>
+                                        <td name="sharePosterCount-channel"></td>
+                                        <td name="sharePageCount-channel"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>活动页商品购买数</th>
+                                        <th>活动页商品购买人数</th>
+                                        <th>直播间页面商品购买数</th>
+                                        <th>直播间页面商品购买人数</th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td name="activityOrderCount-channel"></td>
+                                        <td name="activityProductUserCount-channel"></td>
+                                        <td name="liveProductCount-channel"></td>
+                                        <td name="liveProductUserCount-channel"></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>预约直播总人数</th>
+                                        <th>直播间总人数</th>
+                                        <th>预约用户进入直播间总人数</th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td name="subscribeUserCount-channel"></td>
+                                        <td name="liveUserCount-channel"></td>
+                                        <td name="subscribeLiveUserCount-channel"></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>浏览总人次(无分享人)</th>
+                                        <th>浏览总人数(无分享人)</th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td name="uniqueVisitor-channel-noShare"></td>
+                                        <td name="pageView-channel-noShare"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>活动页商品购买数(无分享人)</th>
+                                        <th>活动页商品购买人数(无分享人)</th>
+                                        <th>直播间页面商品购买数(无分享人)</th>
+                                        <th>直播间页面商品购买人数(无分享人)</th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td name="activityOrderCount-channel-noShare"></td>
+                                        <td name="activityProductUserCount-channel-noShare"></td>
+                                        <td name="liveProductCount-channel-noShare"></td>
+                                        <td name="liveProductUserCount-channel-noShare"></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>预约直播总人数(无分享人)</th>
+                                        <th>直播间总人数(无分享人)</th>
+                                        <th>预约用户进入直播间总人数(无分享人)</th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td name="subscribeUserCount-channel-noShare"></td>
+                                        <td name="liveUserCount-channel-noShare"></td>
+                                        <td name="subscribeLiveUserCount-channel-noShare"></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="layui-tab-item">
+                                <table class="layui-table" lay-even lay-skin="nob" name="channelDataTable">
+                                    <tr>
+                                        <th>浏览总人次</th>
+                                        <th>浏览总人数</th>
+                                        <th>成功分享总人数</th>
+                                        <th>海报分享成功总人数</th>
+                                        <th>分享页面成功总人数</th>
+                                    </tr>
+                                    <tr>
+                                        <td name="uniqueVisitor-channel"></td>
+                                        <td name="pageView-channel"></td>
+                                        <td name="shareCount-channel"></td>
+                                        <td name="sharePosterCount-channel"></td>
+                                        <td name="sharePageCount-channel"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>活动页商品购买数</th>
+                                        <th>活动页商品购买人数</th>
+                                        <th>直播间页面商品购买数</th>
+                                        <th>直播间页面商品购买人数</th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td name="activityOrderCount-channel"></td>
+                                        <td name="activityProductUserCount-channel"></td>
+                                        <td name="liveProductCount-channel"></td>
+                                        <td name="liveProductUserCount-channel"></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>预约直播总人数</th>
+                                        <th>直播间总人数</th>
+                                        <th>预约用户进入直播间总人数</th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td name="subscribeUserCount-channel"></td>
+                                        <td name="liveUserCount-channel"></td>
+                                        <td name="subscribeLiveUserCount-channel"></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>浏览总人次(无分享人)</th>
+                                        <th>浏览总人数(无分享人)</th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td name="uniqueVisitor-channel-noShare"></td>
+                                        <td name="pageView-channel-noShare"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>活动页商品购买数(无分享人)</th>
+                                        <th>活动页商品购买人数(无分享人)</th>
+                                        <th>直播间页面商品购买数(无分享人)</th>
+                                        <th>直播间页面商品购买人数(无分享人)</th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td name="activityOrderCount-channel-noShare"></td>
+                                        <td name="activityProductUserCount-channel-noShare"></td>
+                                        <td name="liveProductCount-channel-noShare"></td>
+                                        <td name="liveProductUserCount-channel-noShare"></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>预约直播总人数(无分享人)</th>
+                                        <th>直播间总人数(无分享人)</th>
+                                        <th>预约用户进入直播间总人数(无分享人)</th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td name="subscribeUserCount-channel-noShare"></td>
+                                        <td name="liveUserCount-channel-noShare"></td>
+                                        <td name="subscribeLiveUserCount-channel-noShare"></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-col-md12" id="userCard">
+            <div class="layui-card">
+                <div class="layui-card-header">C端裂变奖金排行</div>
+                <div class="layui-card-body">
+                    <table class="layui-table" lay-even lay-skin="nob" id="userTable">
+                        <tr>
+                            <th>排行</th>
+                            <th>用户昵称</th>
+                            <th>邀请用户数</th>
+                            <th>邀请预约数</th>
+                            <th>邀请用户购买数</th>
+                            <th>实际收入(元)</th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var fissionId = 0;
+    var tabIndex = 0;
+    var selectDataType = 0;
+    ;!function () {
+        $("#dataTab").hide();
+        $("#userCard").hide();
+        var form = layui.form;
+        var tableSelect = layui.tableSelect;
+        var element = layui.element;
+        element.on('tab(tableTab)', function (data) {
+            dataChange();
+        });
+        tableSelect.render({
+            elem: '#acName',
+            checkedKey: 'id',
+            table: {
+                url: '/fission/data/view/business/activity/select',
+                cols: [
+                    [
+                        {type: 'radio'},
+                        {field: 'id', title: 'ID', width: 50},
+                        {field: 'activityName', title: '活动名称', width: 200},
+                        {field: 'startTime', title: '活动开始时间', width: 300},
+                        {field: 'endTime', title: '活动结束时间', width: 300}
+                    ]
+                ]
+            },
+            done: function (elem, data) {
+                var NEWJSON = []
+                layui.each(data.data, function (index, item) {
+                    fissionId = item.id;
+                    NEWJSON.push(item.activityName)
+
+                })
+                dataChange();
+                elem.val(NEWJSON.join(","))
+            }
+        })
+    }();
+
+    function dataChange() {
+        var tabIndex = 0;
+        $.each($("ul[class='layui-tab-title'] li"), function (i, n) {
+            if ($(n).attr("class") == 'layui-this') {
+                tabIndex = i;
+                return false;
+            }
+        });
+        if (tabIndex == 0) {
+            userDataViewInit();
+        } else {
+            var dataType = 0;
+            if (tabIndex == 1) {
+                dataType = 2;
+            } else if (tabIndex == 2) {
+                dataType = 3
+            } else {
+                dataType = 4
+            }
+            initChannelDataView(tabIndex - 1, dataType);
+        }
+        initUserTable(tabIndex);
+    }
+
+    function userDataViewInit() {
+        $.ajax({
+            url: '/fission/data/view/user/detail?id=' + $("#acName").attr("ts-selected"),
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json;charset=UTF-8",
+            success: function (data) {
+                var result = data.result;
+                if (result == null) {
+                    $("#prizePool-all").text("0");
+                    $("#issued-all").text("0");
+                    $("#customerCount-all").text("0");
+                    $("#averagePrize-all").text("0");
+                } else {
+                    $("#prizePool-all").text(result.prizePool);
+                    $("#issued-all").text(result.issued);
+                    $("#customerCount-all").text(result.customerCount);
+                    $("#averagePrize-all").text(result.averagePrize);
+                }
+                $("#dataTab").show();
+            }
+        });
+
+        $.ajax({
+            url: '/fission/data/view/' + $("#acName").attr("ts-selected") + "/1",
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json;charset=UTF-8",
+            success: function (data) {
+                var result = data.result;
+                $("#uniqueVisitor-all").text("0");
+                $("#pageView-all").text("0");
+                $("#shareCount-all").text("0");
+                $("#sharePosterCount-all").text("0");
+                $("#sharePageCount-all").text("0");
+
+                $("#activityOrderCount-all").text("0");
+                $("#activityProductUserCount-all").text("0");
+                $("#liveProductCount-all").text("0");
+                $("#liveProductUserCount-all").text("0");
+
+                $("#subscribeUserCount-all").text("0");
+                $("#liveUserCount-all").text("0");
+                $("#subscribeLiveUserCount-all").text("0");
+
+                $("#activityOrderCount-all-noShare").text("0");
+                $("#activityProductUserCount-all-noShare").text("0");
+                $("#liveProductCount-all-noShare").text("0");
+                $("#liveProductUserCount-all-noShare").text("0");
+
+                $("#subscribeUserCount-all-noShare").text("0");
+                $("#liveUserCount-all-noShare").text("0");
+                $("#subscribeLiveUserCount-all-noShare").text("0");
+                for (var r in result) {
+                    var res = result[r];
+                    if (res.share) {
+                        $("#uniqueVisitor-all").text(res.uniqueVisitor);
+                        $("#pageView-all").text(res.pageView);
+                        $("#shareCount-all").text(res.shareCount);
+                        $("#sharePosterCount-all").text(res.sharePosterCount);
+                        $("#sharePageCount-all").text(res.sharePageCount);
+
+                        $("#activityOrderCount-all").text(res.activityOrderCount);
+                        $("#activityProductUserCount-all").text(res.activityProductUserCount);
+                        $("#liveProductCount-all").text(res.liveProductCount);
+                        $("#liveProductUserCount-all").text(res.liveProductUserCount);
+
+                        $("#liveUserCount-all").text(res.liveUserCount);
+                        $("#subscribeUserCount-all").text(res.subscribeUserCount);
+                        $("#subscribeLiveUserCount-all").text(res.subscribeLiveUserCount);
+                    } else {
+                        $("#activityOrderCount-all-noShare").text(res.activityOrderCount);
+                        $("#activityProductUserCount-all-noShare").text(res.activityProductUserCount);
+                        $("#liveProductCount-all-noShare").text(res.liveProductCount);
+                        $("#liveProductUserCount-all-noShare").text(res.liveProductUserCount);
+
+                        $("#subscribeUserCount-all-noShare").text(res.subscribeUserCount);
+                        $("#liveUserCount-all-noShare").text(res.liveUserCount);
+                        $("#subscribeLiveUserCount-all-noShare").text(res.subscribeLiveUserCount);
+                    }
+                }
+                $("#dataTab").show();
+            }
+        });
+    }
+
+    function initChannelDataView(index, dataType) {
+        $.ajax({
+            url: '/fission/data/view/' + $("#acName").attr("ts-selected") + "/" + dataType,
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json;charset=UTF-8",
+            success: function (data) {
+                var result = data.result;
+                $("td[name='uniqueVisitor-channel']:eq(" + index + ")").text("0");
+                $("td[name='pageView-channel']:eq(" + index + ")").text("0");
+                $("td[name='shareCount-channel']:eq(" + index + ")").text("0");
+                $("td[name='sharePosterCount-channel']:eq(" + index + ")").text("0");
+                $("td[name='sharePageCount-channel']:eq(" + index + ")").text("0");
+
+                $("td[name='activityOrderCount-channel']:eq(" + index + ")").text("0");
+                $("td[name='activityProductUserCount-channel']:eq(" + index + ")").text("0");
+                $("td[name='liveProductCount-channel']:eq(" + index + ")").text("0");
+                $("td[name='liveProductUserCount-channel']:eq(" + index + ")").text("0");
+
+                $("td[name='subscribeUserCount-channel']:eq(" + index + ")").text("0");
+                $("td[name='liveUserCount-channel']:eq(" + index + ")").text("0");
+                $("td[name='subscribeLiveUserCount-channel']:eq(" + index + ")").text("0");
+
+                $("td[name='uniqueVisitor-channel-noShare']:eq(" + index + ")").text("0");
+                $("td[name='pageView-channel-noShare']:eq(" + index + ")").text("0");
+
+                $("td[name='activityOrderCount-channel-noShare']:eq(" + index + ")").text("0");
+                $("td[name='activityProductUserCount-channel-noShare']:eq(" + index + ")").text("0");
+                $("td[name='liveProductCount-channel-noShare']:eq(" + index + ")").text("0");
+                $("td[name='liveProductUserCount-channel-noShare']:eq(" + index + ")").text("0");
+
+                $("td[name='subscribeUserCount-channel-noShare']:eq(" + index + ")").text("0");
+                $("td[name='liveUserCount-channel-noShare']:eq(" + index + ")").text("0");
+                $("td[name='subscribeLiveUserCount-channel-noShare']:eq(" + index + ")").text("0");
+
+                if (result != null && result.length != 0) {
+                    for (var r in result) {
+                        var res = result[r];
+                        if (res.share) {
+                            $("td[name='uniqueVisitor-channel']:eq(" + index + ")").text(res.uniqueVisitor);
+                            $("td[name='pageView-channel']:eq(" + index + ")").text(res.pageView);
+                            $("td[name='shareCount-channel']:eq(" + index + ")").text(res.shareCount);
+                            $("td[name='sharePosterCount-channel']:eq(" + index + ")").text(res.sharePosterCount);
+                            $("td[name='sharePageCount-channel']:eq(" + index + ")").text(res.sharePageCount);
+
+                            $("td[name='activityOrderCount-channel']:eq(" + index + ")").text(res.activityOrderCount);
+                            $("td[name='activityProductUserCount-channel']:eq(" + index + ")").text(res.activityProductUserCount);
+                            $("td[name='liveProductCount-channel']:eq(" + index + ")").text(res.liveProductCount);
+                            $("td[name='liveProductUserCount-channel']:eq(" + index + ")").text(res.liveProductUserCount);
+
+                            $("td[name='subscribeUserCount-channel']:eq(" + index + ")").text(res.subscribeUserCount);
+                            $("td[name='liveUserCount-channel']:eq(" + index + ")").text(res.liveUserCount);
+                            $("td[name='subscribeLiveUserCount-channel']:eq(" + index + ")").text(res.subscribeLiveUserCount);
+                        } else {
+                            $("td[name='uniqueVisitor-channel-noShare']:eq(" + index + ")").text(res.uniqueVisitor);
+                            $("td[name='pageView-channel-noShare']:eq(" + index + ")").text(res.pageView);
+
+                            $("td[name='activityOrderCount-channel-noShare']:eq(" + index + ")").text(res.activityOrderCount);
+                            $("td[name='activityProductUserCount-channel-noShare']:eq(" + index + ")").text(res.activityProductUserCount);
+                            $("td[name='liveProductCount-channel-noShare']:eq(" + index + ")").text(res.liveProductCount);
+                            $("td[name='liveProductUserCount-channel-noShare']:eq(" + index + ")").text(res.liveProductUserCount);
+
+                            $("td[name='subscribeUserCount-channel-noShare']:eq(" + index + ")").text(res.subscribeUserCount);
+                            $("td[name='liveUserCount-channel-noShare']:eq(" + index + ")").text(res.liveUserCount);
+                            $("td[name='subscribeLiveUserCount-channel-noShare']:eq(" + index + ")").text(res.subscribeLiveUserCount);
+                        }
+                    }
+                }
+                $("#dataTab").show();
+            }
+        });
+    }
+
+    function initUserTable(tabIndex) {
+        var url = '/fission/data/view/user/reward/rank?id=' + $("#acName").attr("ts-selected");
+        switch (tabIndex) {
+            case 1:
+                url = url + '&channelId=1';
+                break;
+            case 2:
+                url = url + '&channelId=3';
+                break;
+            case 3:
+                url = url + '&channelId=2';
+                break;
+        }
+        $.ajax({
+            url: url,
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json;charset=UTF-8",
+            success: function (data) {
+                $("#userTable tr:gt(0)").remove();
+                if (data.result != null) {
+                    for (var d of data.result) {
+                        $("#userTable").append("<tr><td>" + d.rank + "</td><td>" + (d.nickName == null ? "匿名" : d.nickName) + "</td><td>" + d.inviteUserCount + "</td><td>" + d.inviteSubscribeCount + "</td><td>" + d.inviteUserBuyCount + "</td><td>" + d.realIncome + "</td></tr>");
+                    }
+                }
+                $("#userCard").show();
+            }
+        });
+    }
+</script>
+</body>
+</html>

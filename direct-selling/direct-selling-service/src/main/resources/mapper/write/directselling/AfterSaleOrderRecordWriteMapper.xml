@@ -1,0 +1,653 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.AfterSaleOrderRecordWriteMapper">
+    <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.AfterSaleOrderRecord" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="order_code" property="orderCode" jdbcType="VARCHAR" />
+        <result column="activity_id" property="activityId" jdbcType="INTEGER" />
+        <result column="dealer_id" property="dealerId" jdbcType="INTEGER" />
+        <result column="goods_id" property="goodsId" jdbcType="INTEGER" />
+        <result column="order_money" property="orderMoney" jdbcType="DECIMAL" />
+        <result column="order_type" property="orderType" jdbcType="TINYINT" />
+        <result column="order_status" property="orderStatus" jdbcType="TINYINT" />
+        <result column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="user_name" property="userName" jdbcType="VARCHAR" />
+        <result column="user_phone" property="userPhone" jdbcType="VARCHAR" />
+        <result column="city_id" property="cityId" jdbcType="INTEGER" />
+        <result column="licence_plate" property="licencePlate" jdbcType="VARCHAR" />
+        <result column="agent_wx_union_id" property="agentWxUnionId" jdbcType="VARCHAR" />
+        <result column="share_wx_union_id" property="shareWxUnionId" jdbcType="VARCHAR" />
+        <result column="user_wx_union_id" property="userWxUnionId" jdbcType="VARCHAR" />
+        <result column="user_wx_open_id" property="userWxOpenId" jdbcType="VARCHAR" />
+        <result column="page_url" property="pageUrl" jdbcType="VARCHAR" />
+        <result column="ip" property="ip" jdbcType="VARCHAR" />
+        <result column="channel" property="channel" jdbcType="TINYINT" />
+        <result column="keep_on_record_user" property="keepOnRecordUser" jdbcType="BIT" />
+        <result column="user_type" property="userType" jdbcType="INTEGER" />
+        <result column="finish_fission_task" property="finishFissionTask" jdbcType="BIT" />
+        <result column="fission_level" property="fissionLevel" jdbcType="INTEGER" />
+        <result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+        <result column="wx_transaction_id" property="wxTransactionId" jdbcType="VARCHAR" />
+        <result column="sub_account_status" property="subAccountStatus" jdbcType="INTEGER" />
+        <result column="sub_account_amount" property="subAccountAmount" jdbcType="DECIMAL" />
+        <result column="sub_account_time" property="subAccountTime" jdbcType="TIMESTAMP" />
+        <result column="sub_account_transaction_detail_id" property="subAccountTransactionDetailId" jdbcType="VARCHAR" />
+        <result column="sub_account_result_code" property="subAccountResultCode" jdbcType="VARCHAR" />
+        <result column="sub_account_receiver_result" property="subAccountReceiverResult" jdbcType="VARCHAR" />
+        <result column="sub_account_desc" property="subAccountDesc" jdbcType="VARCHAR" />
+        <result column="sub_account_return_no" property="subAccountReturnNo" jdbcType="VARCHAR" />
+        <result column="sub_account_return_time" property="subAccountReturnTime" jdbcType="TIMESTAMP" />
+        <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+        <result column="update_dt" property="updateDt" jdbcType="TIMESTAMP" />
+        <result column="delete_flag" property="deleteFlag" jdbcType="TINYINT" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id, order_code, activity_id, dealer_id, goods_id, order_money, order_type, order_status,
+        user_id, user_name, user_phone, city_id, licence_plate, agent_wx_union_id, share_wx_union_id,
+        user_wx_union_id, user_wx_open_id, cs_id, cb_id, page_url, ip, channel, keep_on_record_user,
+        user_type, finish_fission_task, fission_level, pay_time,wx_transaction_id, sub_account_status, sub_account_amount,
+        sub_account_time, sub_account_transaction_detail_id, sub_account_result_code, sub_account_receiver_result,
+        sub_account_desc, sub_account_return_no, sub_account_return_time, checked_sales_id,
+        checked_dealer_id, checked_date, create_dt, update_dt, delete_flag,wx_transaction_id
+    </sql>
+
+    <!-- 获取非备案的裂变总人数 -->
+    <select id="getNonFilingFissionTotal" resultType="int" parameterType="com.tuanche.directselling.model.AfterSaleOrderRecord">
+        SELECT COUNT(1)
+        FROM after_sale_order_record
+        WHERE activity_id = #{activityId}
+          <if test="agentWxUnionId != null">
+              AND agent_wx_union_id = #{agentWxUnionId}
+          </if>
+          <if test="shareWxUnionId != null">
+              AND share_wx_union_id = #{shareWxUnionId}
+          </if>
+          <if test="createDt != null">
+              AND create_dt > #{createDt}
+          </if>
+          AND order_status IN (3,4,11,12)
+          AND keep_on_record_user = 0
+          AND order_type = 1
+    </select>
+    <!-- 获取裂变人数 -->
+    <select id="getFissionTotal" resultType="int" parameterType="com.tuanche.directselling.model.AfterSaleOrderRecord">
+        SELECT COUNT(1)
+        FROM after_sale_order_record
+        WHERE activity_id = #{activityId}
+          <if test="agentWxUnionId != null">
+              AND agent_wx_union_id = #{agentWxUnionId}
+          </if>
+          <if test="shareWxUnionId != null">
+              AND share_wx_union_id = #{shareWxUnionId}
+          </if>
+          <if test="createDt != null">
+              AND create_dt > #{createDt}
+          </if>
+        <if test="payTime != null">
+            AND pay_time > #{payTime}
+        </if>
+          <if test="keepOnRecordUser != null and keepOnRecordUser">
+              AND (keep_on_record_user = 0 OR (keep_on_record_user=1 AND finish_fission_task=1))
+          </if>
+          AND order_status > 2
+          AND order_type = 1
+    </select>
+    <!-- 获取裂变人的裂变列表 -->
+    <select id="getFissionList" resultMap="BaseResultMap" parameterType="com.tuanche.directselling.model.AfterSaleOrderRecord">
+        SELECT *
+        FROM after_sale_order_record
+        WHERE activity_id = #{activityId}
+          <if test="agentWxUnionId != null">
+              AND agent_wx_union_id = #{agentWxUnionId}
+          </if>
+          <if test="shareWxUnionId != null">
+              AND share_wx_union_id = #{shareWxUnionId}
+          </if>
+        <if test="createDt != null">
+            AND create_dt > #{createDt}
+        </if>
+          <if test="payTime != null">
+              AND pay_time > #{payTime}
+          </if>
+          AND order_status > 2
+          AND order_type = 1
+    </select>
+    <!-- 获取非备案的裂变信息列表 -->
+    <select id="getNonFilingFissionList" resultMap="BaseResultMap" parameterType="com.tuanche.directselling.model.AfterSaleOrderRecord">
+        SELECT licence_plate,order_code,activity_id,share_wx_union_id
+        FROM after_sale_order_record
+        WHERE activity_id = #{activityId}
+          <if test="agentWxUnionId != null">
+              AND agent_wx_union_id = #{agentWxUnionId}
+          </if>
+          <if test="shareWxUnionId != null">
+              AND share_wx_union_id = #{shareWxUnionId}
+          </if>
+          <if test="createDt != null">
+              AND create_dt > #{createDt}
+          </if>
+          AND order_status IN (3,4,8,11,12)
+          AND keep_on_record_user = 0
+          AND order_type = 1
+    </select>
+    <!-- 获取购买人的订单信息-已支付以上状态 -->
+    <select id="getBuyerOrder" resultMap="BaseResultMap" >
+        SELECT <include refid="Base_Column_List"></include>
+        FROM after_sale_order_record
+        WHERE activity_id = #{activityId}
+          AND user_wx_union_id = #{userWxUnionId}
+         <if test="orderType != null">
+             AND order_type = #{orderType}
+         </if>
+        AND order_status > 2
+        ORDER BY id DESC LIMIT 1
+    </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from after_sale_order_record
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+    <insert id="insertSelective" parameterType="com.tuanche.directselling.model.AfterSaleOrderRecord" >
+        insert into after_sale_order_record
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="orderCode != null" >
+                order_code,
+            </if>
+            <if test="activityId != null" >
+                activity_id,
+            </if>
+            <if test="dealerId != null" >
+                dealer_id,
+            </if>
+            <if test="goodsId != null" >
+                goods_id,
+            </if>
+            <if test="orderMoney != null" >
+                order_money,
+            </if>
+            <if test="orderType != null" >
+                order_type,
+            </if>
+            <if test="orderStatus != null" >
+                order_status,
+            </if>
+            <if test="userId != null" >
+                user_id,
+            </if>
+            <if test="userName != null" >
+                user_name,
+            </if>
+            <if test="userPhone != null" >
+                user_phone,
+            </if>
+            <if test="cityId != null" >
+                city_id,
+            </if>
+            <if test="licencePlate != null" >
+                licence_plate,
+            </if>
+            <if test="agentWxUnionId != null and agentWxUnionId != ''">
+                agent_wx_union_id,
+            </if>
+            <if test="shareWxUnionId != null and shareWxUnionId != ''">
+                share_wx_union_id,
+            </if>
+            <if test="userWxUnionId != null and userWxUnionId != ''">
+                user_wx_union_id,
+            </if>
+            <if test="userWxOpenId != null" >
+                user_wx_open_id,
+            </if>
+            <if test="pageUrl != null" >
+                page_url,
+            </if>
+            <if test="ip != null" >
+                ip,
+            </if>
+            <if test="channel != null" >
+                channel,
+            </if>
+            <if test="keepOnRecordUser != null" >
+                keep_on_record_user,
+            </if>
+            <if test="userType != null" >
+                user_type,
+            </if>
+            <if test="finishFissionTask != null" >
+                finish_fission_task,
+            </if>
+            <if test="fissionLevel != null" >
+                fission_level,
+            </if>
+            <if test="payTime != null" >
+                pay_time,
+            </if>
+            <if test="checkedSalesId != null" >
+                checked_sales_id,
+            </if>
+            <if test="checkedDealerId != null" >
+                checked_dealer_id,
+            </if>
+            <if test="checkedDate != null" >
+                checked_date,
+            </if>
+            <if test="cbId != null" >
+                cb_id,
+            </if>
+            <if test="csId != null" >
+                cs_id,
+            </if>
+            <if test="subAccountStatus != null" >
+                sub_account_status,
+            </if>
+            <if test="subAccountAmount != null" >
+                sub_account_amount,
+            </if>
+            <if test="subAccountTime != null" >
+                sub_account_time,
+            </if>
+            <if test="subAccountTransactionDetailId != null" >
+                sub_account_transaction_detail_id,
+            </if>
+            <if test="subAccountResultCode != null" >
+                sub_account_result_code,
+            </if>
+            <if test="subAccountReceiverResult != null" >
+                sub_account_receiver_result,
+            </if>
+            <if test="subAccountDesc != null" >
+                sub_account_desc,
+            </if>
+            <if test="subAccountReturnNo != null" >
+                sub_account_return_no,
+            </if>
+            <if test="subAccountReturnTime != null" >
+                sub_account_return_time,
+            </if>
+            <if test="wxTransactionId != null" >
+                wx_transaction_id,
+            </if>
+            <if test="tcTransactionId != null" >
+                tc_transaction_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="orderCode != null" >
+                #{orderCode,jdbcType=VARCHAR},
+            </if>
+            <if test="activityId != null" >
+                #{activityId,jdbcType=INTEGER},
+            </if>
+            <if test="dealerId != null" >
+                #{dealerId,jdbcType=INTEGER},
+            </if>
+            <if test="goodsId != null" >
+                #{goodsId,jdbcType=INTEGER},
+            </if>
+            <if test="orderMoney != null" >
+                #{orderMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="orderType != null" >
+                #{orderType,jdbcType=TINYINT},
+            </if>
+            <if test="orderStatus != null" >
+                #{orderStatus,jdbcType=TINYINT},
+            </if>
+            <if test="userId != null" >
+                #{userId},
+            </if>
+            <if test="userName != null" >
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="userPhone != null" >
+                #{userPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="cityId != null" >
+                #{cityId,jdbcType=INTEGER},
+            </if>
+            <if test="licencePlate != null" >
+                #{licencePlate,jdbcType=VARCHAR},
+            </if>
+            <if test="agentWxUnionId != null and agentWxUnionId != ''">
+                #{agentWxUnionId,jdbcType=VARCHAR},
+            </if>
+            <if test="shareWxUnionId != null and shareWxUnionId != ''">
+                #{shareWxUnionId,jdbcType=VARCHAR},
+            </if>
+            <if test="userWxUnionId != null and userWxUnionId != ''">
+                #{userWxUnionId,jdbcType=VARCHAR},
+            </if>
+            <if test="userWxOpenId != null" >
+                #{userWxOpenId,jdbcType=VARCHAR},
+            </if>
+            <if test="pageUrl != null" >
+                #{pageUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="ip != null" >
+                #{ip,jdbcType=VARCHAR},
+            </if>
+            <if test="channel != null" >
+                #{channel,jdbcType=TINYINT},
+            </if>
+            <if test="keepOnRecordUser != null" >
+                #{keepOnRecordUser,jdbcType=BIT},
+            </if>
+            <if test="userType != null" >
+                #{userType,jdbcType=BIT},
+            </if>
+            <if test="finishFissionTask != null" >
+                #{finishFissionTask,jdbcType=BIT},
+            </if>
+            <if test="fissionLevel != null" >
+                #{fissionLevel,jdbcType=INTEGER},
+            </if>
+            <if test="payTime != null" >
+                #{payTime},
+            </if>
+            <if test="checkedSalesId != null" >
+                #{checkedSalesId,jdbcType=INTEGER},
+            </if>
+            <if test="checkedDealerId != null" >
+                #{checkedDealerId,jdbcType=INTEGER},
+            </if>
+            <if test="checkedDate != null" >
+                #{checkedDate},
+            </if>
+            <if test="cbId != null" >
+                #{cbId},
+            </if>
+            <if test="csId != null" >
+                #{csId},
+            </if>
+            <if test="subAccountStatus != null" >
+                #{subAccountStatus,jdbcType=INTEGER},
+            </if>
+            <if test="subAccountAmount != null" >
+                #{subAccountAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="subAccountTime != null" >
+                #{subAccountTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="subAccountTransactionDetailId != null" >
+                #{subAccountTransactionDetailId,jdbcType=VARCHAR},
+            </if>
+            <if test="subAccountResultCode != null" >
+                #{subAccountResultCode,jdbcType=VARCHAR},
+            </if>
+            <if test="subAccountReceiverResult != null" >
+                #{subAccountReceiverResult,jdbcType=VARCHAR},
+            </if>
+            <if test="subAccountDesc != null" >
+                #{subAccountDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="subAccountReturnNo != null" >
+                #{subAccountReturnNo,jdbcType=VARCHAR},
+            </if>
+            <if test="subAccountReturnTime != null" >
+                #{subAccountReturnTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="wxTransactionId != null" >
+                #{wxTransactionId,jdbcType=VARCHAR},
+            </if>
+            <if test="tcTransactionId != null" >
+                #{tcTransactionId,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.AfterSaleOrderRecord" >
+        update after_sale_order_record
+        <set >
+            <if test="orderCode != null" >
+                order_code = #{orderCode,jdbcType=VARCHAR},
+            </if>
+            <if test="activityId != null" >
+                activity_id = #{activityId,jdbcType=INTEGER},
+            </if>
+            <if test="dealerId != null" >
+                dealer_id = #{dealerId,jdbcType=INTEGER},
+            </if>
+            <if test="goodsId != null" >
+                goods_id = #{goodsId,jdbcType=INTEGER},
+            </if>
+            <if test="orderMoney != null" >
+                order_money = #{orderMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="orderType != null" >
+                order_type = #{orderType,jdbcType=TINYINT},
+            </if>
+            <if test="orderStatus != null" >
+                order_status = #{orderStatus,jdbcType=TINYINT},
+            </if>
+            <if test="userId != null" >
+                user_id = #{userId},
+            </if>
+            <if test="userName != null" >
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="userPhone != null" >
+                user_phone = #{userPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="cityId != null" >
+                city_id = #{cityId,jdbcType=INTEGER},
+            </if>
+            <if test="licencePlate != null" >
+                licence_plate = #{licencePlate,jdbcType=VARCHAR},
+            </if>
+            <if test="agentWxUnionId != null and agentWxUnionId != ''">
+                agent_wx_union_id = #{agentWxUnionId,jdbcType=VARCHAR},
+            </if>
+            <if test="shareWxUnionId != null and shareWxUnionId != ''">
+                share_wx_union_id = #{shareWxUnionId,jdbcType=VARCHAR},
+            </if>
+            <if test="userWxUnionId != null and userWxUnionId != ''">
+                user_wx_union_id = #{userWxUnionId,jdbcType=VARCHAR},
+            </if>
+            <if test="userWxOpenId != null" >
+                user_wx_open_id = #{userWxOpenId,jdbcType=VARCHAR},
+            </if>
+            <if test="pageUrl != null" >
+                page_url = #{pageUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="ip != null" >
+                ip = #{ip,jdbcType=VARCHAR},
+            </if>
+            <if test="channel != null" >
+                channel = #{channel,jdbcType=TINYINT},
+            </if>
+            <if test="keepOnRecordUser != null" >
+                keep_on_record_user = #{keepOnRecordUser,jdbcType=BIT},
+            </if>
+            <if test="userType != null" >
+                user_type = #{userType,jdbcType=INTEGER},
+            </if>
+            <if test="finishFissionTask != null" >
+                finish_fission_task = #{finishFissionTask,jdbcType=BIT},
+            </if>
+            <if test="fissionLevel != null" >
+                fission_level = #{fissionLevel,jdbcType=INTEGER},
+            </if>
+            <if test="payTime != null" >
+                pay_time = #{payTime},
+            </if>
+            <if test="checkedSalesId != null" >
+                checked_sales_id = #{checkedSalesId,jdbcType=INTEGER},
+            </if>
+            <if test="checkedDealerId != null" >
+                checked_dealer_id = #{checkedDealerId,jdbcType=INTEGER},
+            </if>
+            <if test="checkedDate != null" >
+                checked_date = #{checkedDate},
+            </if>
+            <if test="cbId != null" >
+                cb_id = #{cbId},
+            </if>
+            <if test="csId != null" >
+                cs_id = #{csId},
+            </if>
+            <if test="subAccountStatus != null" >
+                sub_account_status = #{subAccountStatus,jdbcType=INTEGER},
+            </if>
+            <if test="subAccountAmount != null" >
+                sub_account_amount = #{subAccountAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="subAccountTime != null" >
+                sub_account_time = #{subAccountTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="subAccountTransactionDetailId != null" >
+                sub_account_transaction_detail_id = #{subAccountTransactionDetailId,jdbcType=VARCHAR},
+            </if>
+            <if test="subAccountResultCode != null" >
+                sub_account_result_code = #{subAccountResultCode,jdbcType=VARCHAR},
+            </if>
+            <if test="subAccountReceiverResult != null" >
+                sub_account_receiver_result = #{subAccountReceiverResult,jdbcType=VARCHAR},
+            </if>
+            <if test="subAccountDesc != null" >
+                sub_account_desc = #{subAccountDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="subAccountReturnNo != null" >
+                sub_account_return_no = #{subAccountReturnNo,jdbcType=VARCHAR},
+            </if>
+            <if test="subAccountReturnTime != null" >
+                sub_account_return_time = #{subAccountReturnTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="wxTransactionId != null" >
+                wx_transaction_id = #{wxTransactionId,jdbcType=VARCHAR},
+            </if>
+            <if test="tcTransactionId != null" >
+                tc_transaction_id = #{tcTransactionId,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByOrderCode" parameterType="com.tuanche.directselling.model.AfterSaleOrderRecord" >
+        update after_sale_order_record
+        <set>
+            <if test="orderStatus != null" >
+                order_status = #{orderStatus,jdbcType=TINYINT},
+            </if>
+            <if test="licencePlate != null" >
+                licence_plate = #{licencePlate,jdbcType=VARCHAR},
+            </if>
+            <if test="checkedSalesId != null" >
+                checked_sales_id = #{checkedSalesId,jdbcType=INTEGER},
+            </if>
+            <if test="checkedDealerId != null" >
+                checked_dealer_id = #{checkedDealerId,jdbcType=INTEGER},
+            </if>
+            <if test="checkedDate != null" >
+                checked_date = #{checkedDate},
+            </if>
+            <if test="subAccountStatus != null" >
+                sub_account_status = #{subAccountStatus,jdbcType=INTEGER},
+            </if>
+            <if test="subAccountAmount != null" >
+                sub_account_amount = #{subAccountAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="subAccountTime != null" >
+                sub_account_time = #{subAccountTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="subAccountTransactionDetailId != null" >
+                sub_account_transaction_detail_id = #{subAccountTransactionDetailId,jdbcType=VARCHAR},
+            </if>
+            <if test="subAccountResultCode != null" >
+                sub_account_result_code = #{subAccountResultCode,jdbcType=VARCHAR},
+            </if>
+            <if test="subAccountReceiverResult != null" >
+                sub_account_receiver_result = #{subAccountReceiverResult,jdbcType=VARCHAR},
+            </if>
+            <if test="subAccountDesc != null" >
+                sub_account_desc = #{subAccountDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="subAccountReturnNo != null" >
+                sub_account_return_no = #{subAccountReturnNo,jdbcType=VARCHAR},
+            </if>
+            <if test="subAccountReturnTime != null" >
+                sub_account_return_time = #{subAccountReturnTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="wxTransactionId != null" >
+                wx_transaction_id = #{wxTransactionId,jdbcType=VARCHAR},
+            </if>
+            <if test="tcTransactionId != null" >
+                tc_transaction_id = #{tcTransactionId,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where order_code = #{orderCode} AND delete_flag=0
+    </update>
+    <!-- 获取购买人的订单信息 -->
+    <select id="getOrderByUserUnionId" resultMap="BaseResultMap" parameterType="com.tuanche.directselling.model.AfterSaleOrderRecord">
+        SELECT <include refid="Base_Column_List"></include>
+        FROM after_sale_order_record
+        WHERE activity_id = #{activityId}
+        AND user_wx_union_id = #{userWxUnionId}
+        <if test="orderType != null">
+            AND order_type = #{orderType}
+        </if>
+        <if test="goodsId != null" >
+           AND goods_id = #{goodsId,jdbcType=INTEGER}
+        </if>
+        order by id desc
+        LIMIT 1
+    </select>
+
+    <update id="updateLicencePlateByOrderCode">
+        update after_sale_order_record set licence_plate=#{licencePlate} where order_code in
+        <foreach collection="orderCodes" item="item" index="index" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </update>
+
+    <select id="getPlateCountByOrderCode" resultType="int">
+        select count(*) from after_sale_order_record where licence_plate=#{licencePlate} and activity_id in (select
+        activity_id from after_sale_order_record where order_code in
+        <foreach collection="orderCodes" item="item" index="index" open="(" close=")" separator=",">
+            #{item}
+        </foreach>)
+    </select>
+    <!-- 批量更新裂变活动销售的积分 -->
+    <update id="updateBatchByIds" parameterType="java.util.List" >
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            UPDATE after_sale_order_record
+            <set>
+                <if test="item.orderStatus != null" >
+                    order_status = #{item.orderStatus,jdbcType=TINYINT},
+                </if>
+                <if test="item.subAccountStatus != null" >
+                    sub_account_status = #{item.subAccountStatus,jdbcType=INTEGER},
+                </if>
+                <if test="item.subAccountAmount != null" >
+                    sub_account_amount = #{item.subAccountAmount,jdbcType=DECIMAL},
+                </if>
+                <if test="item.subAccountTime != null" >
+                    sub_account_time = #{item.subAccountTime,jdbcType=TIMESTAMP},
+                </if>
+                <if test="item.subAccountTransactionDetailId != null" >
+                    sub_account_transaction_detail_id = #{item.subAccountTransactionDetailId,jdbcType=VARCHAR},
+                </if>
+                <if test="item.subAccountResultCode != null" >
+                    sub_account_result_code = #{item.subAccountResultCode,jdbcType=VARCHAR},
+                </if>
+                <if test="item.subAccountReceiverResult != null" >
+                    sub_account_receiver_result = #{item.subAccountReceiverResult,jdbcType=VARCHAR},
+                </if>
+                <if test="item.subAccountDesc != null" >
+                    sub_account_desc = #{item.subAccountDesc,jdbcType=VARCHAR},
+                </if>
+                <if test="item.subAccountReturnNo != null" >
+                    sub_account_return_no = #{item.subAccountReturnNo,jdbcType=VARCHAR},
+                </if>
+                <if test="item.subAccountReturnTime != null" >
+                    sub_account_return_time = #{item.subAccountReturnTime,jdbcType=TIMESTAMP},
+                </if>
+            </set>
+            WHERE id=#{item.id}
+        </foreach>
+    </update>
+</mapper>

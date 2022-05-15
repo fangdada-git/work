@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>售后特卖订单卡券列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.js"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/magnify/css/jquery.magnify.css">
+    <style type="text/css">
+        .layui-table-header .layui-table tr {
+            height: auto;
+            line-height: 50px;
+        }
+        .layui-table tr{height: 65px}
+        .layui-input-block{
+            margin-left: 131px;
+            min-height: 36px;
+        }
+        .layui-input{
+            width: 180.44px;
+        }
+        .layui-select{
+            width: 180.44px;
+        }
+        .layui-input-block-p{
+            padding-top: 8px;
+        }
+        .layui-table-cell {
+            height:auto;
+            overflow:visible;
+            text-overflow:inherit;
+            white-space:normal;
+        }
+    </style>
+</head>
+<body class="childrenBody">
+<form class="layui-form" style="background-color: #ffffff;">
+    <blockquote class="layui-elem-quote quoteBox">
+        <div class="layui-row layui-col-space20">
+            <div class="layui-col-md2">
+                商品名称：[[${orderCouponDto.goodsName}]]
+            </div>
+            <div class="layui-col-md2">
+                价格：[[${orderCouponDto.orderMoney}]]
+            </div>
+            <div class="layui-col-md2">
+                商品类型：[[${orderCouponDto.orderTypeName}]]
+            </div>
+            <div class="layui-col-md2">
+                包含卡券：[[${orderCouponDto.couponCount}]]
+            </div>
+        </div>
+        <div class="layui-row layui-col-space20">
+            <div class="layui-col-md2 ">
+                订单状态：[[${orderCouponDto.orderStatusName}]]
+            </div>
+            <div th:if="${orderCouponDto.couponCount<=orderCouponDto.couponGiveOutCount}" class="layui-col-md2">
+                已发卡券：[[${orderCouponDto.couponGiveOutCount}]]
+            </div>
+            <div th:if="${orderCouponDto.couponCount>orderCouponDto.couponGiveOutCount}" class="layui-col-md2">
+                <p style="color: red;">已发卡券：[[${orderCouponDto.couponGiveOutCount}]]</p>
+            </div>
+            <div class="layui-col-md2">
+                已用卡券：[[${orderCouponDto.couponUseCount}]]
+            </div>
+            <div class="layui-col-md2">
+                <button type="button" th:if="${orderCouponDto.orderStatus==11 && orderCouponDto.couponCountSum!=0}" id="scanGetCoupon" class="layui-btn layui-btn-sm" style="width: 60px;">发券</button>
+                <button type="button" th:if="${orderCouponDto.couponCount>orderCouponDto.couponCountSum}" id="supplyAgainCoupon" class="layui-btn layui-btn-sm" style="width: 60px;">补发券</button>
+                <input type="hidden" id="backBtn">
+            </div>
+        </div>
+    </blockquote>
+    <table id="fissionGoodsOrderList" lay-filter="fissionActivityTool"></table>
+</form>
+
+<script type="text/javascript" src="/common/js/tools.js"></script>
+<!-- layui 初始化 -->
+<script type="text/javascript" th:inline="javascript">
+    layui.use(['form', 'layer', 'table', 'laydate'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            table = layui.table;
+
+        var orderCode = [[${orderCouponDto.orderCode}]];
+        var activityId = [[${orderCouponDto.activityId}]];
+        var couponCountSum = [[${orderCouponDto.couponCountSum}]];
+
+        // 裂变活动列表
+        var tableIns = table.render({
+            elem: '#fissionGoodsOrderList',
+            url : '/afterSale/coupon/getOrderCouponList?orderCode='+orderCode,
+            cellMinWidth : 100,
+            page : true,
+            height : "full",
+            limits : [10,20,50,100],
+            limit : 10,
+            id : "goodsOrderListTable",
+            cols: [
+                [
+                    {field: 'couponName', title: '抵用券名称', align : "center", minWidth: 160},
+                    {field: 'couponMoney', title: '价格（元）', align : "center",minWidth: 180},
+                    {field: '', title: '服务规格',align : "center", templet: function (d) {
+                            return "1次";
+                        }
+                    },
+                    {field: 'createDt', title: '发券时间',align : "center", minWidth: 180 },
+                    {field: 'checkedDate', title: '核销时间',align : "center", minWidth: 180},
+                    {field: 'checkedSaleName', title: '核销人',align : "center", minWidth: 180}
+                ]
+            ],
+        });
+
+        //核销待发券-发券
+        $("#scanGetCoupon").on("click", function () {
+            layer.confirm('是否确认发券?', {icon: 3, title:'提示'}, function(index){
+                $('#scanGetCoupon').attr('disabled', 'disabled');
+                var loadIndex = layer.load(1, {
+                    shade: [0.5, '#000']
+                })
+                $.ajax({
+                    type: "post",
+                    url: '/afterSale/coupon/scanGetCoupon',
+                    dataType:'json',
+                    data: {orderCode: orderCode},
+                    dataType: "json",
+                    success: function (s) {
+                        if (s.code!=200) {
+                            layer.msg(s.msg, {icon: 5});
+                        }
+                        $('#scanGetCoupon').removeAttr('disabled');
+                        layer.close(loadIndex);
+                        if (s.code==200) {
+                            layer.msg(s.msg, {
+                                icon: 6,
+                                time: 2000 //2秒关闭（如果不配置，默认是3秒）
+                            }, function(){
+                                $("#backBtn").click();
+                            });
+                        }
+                    },
+                    error: function (e) {
+                        $('#scanGetCoupon').removeAttr('disabled');
+                        layer.alert('网络繁忙', {icon: 5,title:'提示'});
+                    }
+                })
+                layer.close(index);
+            });
+        });
+        //补发券
+        $("#supplyAgainCoupon").on("click", function () {
+            layer.confirm('是否确认补发券?', {icon: 3, title:'提示'}, function(index){
+                $('#supplyAgainCoupon').attr('disabled', 'disabled');
+                var loadIndex = layer.load(1, {
+                    shade: [0.5, '#000']
+                })
+                $.ajax({
+                    type: "post",
+                    url: '/afterSale/coupon/supplyAgainCoupon',
+                    dataType:'json',
+                    data: {orderCode: orderCode, activityId:activityId, couponCountSum : couponCountSum},
+                    dataType: "json",
+                    success: function (s) {
+                        if (s.code!=200) {
+                            layer.msg(s.msg, {icon: 5});
+                        }
+                        $('#supplyAgainCoupon').removeAttr('disabled');
+                        layer.close(loadIndex);
+                        if (s.code==200) {
+                            layer.msg(s.msg, {
+                                icon: 6,
+                                time: 2000 //2秒关闭（如果不配置，默认是3秒）
+                            }, function(){
+                                $("#backBtn").click();
+                            });
+                        }
+                    },
+                    error: function (e) {
+                        $('#supplyAgainCoupon').removeAttr('disabled');
+                        layer.alert('网络繁忙', {icon: 5,title:'提示'});
+                    }
+                })
+                layer.close(index);
+            });
+        });
+
+        $("#backBtn").on("click", function () {
+            // window.parent.location.reload();
+            // var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+            // parent.layer.close(index);//关闭弹出的子页面窗口
+            window.location.reload();
+        })
+
+
+    });
+
+    // window.commOpen = function(title,url,width,height) {
+    //     layer.open({
+    //         title: title,
+    //         type: 2,
+    //         shadeClose: true,
+    //         content: url,
+    //         area: [width, height]
+    //     });
+    // }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.GiftRefuelingcardWriteMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.GiftRefuelingcard">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="refueling_code" jdbcType="VARCHAR" property="refuelingCode" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="delete_flag" jdbcType="BIT" property="deleteFlag" />
+    <result column="create_dt" jdbcType="TIMESTAMP" property="createDt" />
+    <result column="create_name" jdbcType="VARCHAR" property="createName" />
+    <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
+    <result column="update_name" jdbcType="VARCHAR" property="updateName" />
+  </resultMap>
+    <!-- 批量新增油卡信息 -->
+    <insert id="batchInsert" parameterType="java.util.List" >
+        INSERT INTO gift_refuelingcard (refueling_code, delete_flag,create_name)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.refuelingCode,jdbcType=VARCHAR},0,#{item.createName})
+        </foreach>
+    </insert>
+    <!-- 根据油卡卡号更新油卡状态 -->
+    <update id="updateStateByRefuelingCodes">
+        UPDATE gift_refuelingcard SET state = #{state}
+        WHERE refueling_code IN
+        <foreach collection="refuelingCodes" item="refuelingCode" open="(" separator="," close=")">
+            #{refuelingCode}
+        </foreach>
+    </update>
+    <update id="updateGiftRefuelingcard" parameterType="com.tuanche.directselling.model.GiftRefuelingcard" >
+        update gift_refuelingcard
+        <set >
+            <if test="refuelingCode != null" >
+                refueling_code = #{refuelingCode,jdbcType=VARCHAR},
+            </if>
+            <if test="state != null" >
+                state = #{state,jdbcType=INTEGER},
+            </if>
+            <if test="deleteFlag != null" >
+                delete_flag = #{deleteFlag,jdbcType=BIT},
+            </if>
+            <if test="createDt != null" >
+                create_dt = #{createDt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createName != null" >
+                create_name = #{createName,jdbcType=VARCHAR},
+            </if>
+            <if test="updateDt != null" >
+                update_dt = #{updateDt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateName != null" >
+                update_name = #{updateName,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

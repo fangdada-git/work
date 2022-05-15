@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.LiveSceneDealerBrandReadMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.LiveSceneDealerBrand">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="scene_id" jdbcType="INTEGER" property="sceneId" />
+    <result column="dealer_id" jdbcType="INTEGER" property="dealerId" />
+    <result column="dealer_name" jdbcType="VARCHAR" property="dealerName" />
+    <result column="brand_id" jdbcType="INTEGER" property="brandId" />
+    <result column="city_id" jdbcType="INTEGER" property="cityId" />
+    <result column="join_city_id" jdbcType="INTEGER" property="joinCityId" />
+    <result column="brand_name" jdbcType="VARCHAR" property="brandName" />
+    <result column="style_ids" jdbcType="VARCHAR" property="styleIds" />
+    <result column="create_user_id" jdbcType="INTEGER" property="createUserId" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="create_dt" jdbcType="TIMESTAMP" property="createDt" />
+    <result column="update_user_id" jdbcType="INTEGER" property="updateUserId" />
+    <result column="update_user_name" jdbcType="VARCHAR" property="updateUserName" />
+    <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
+    <result column="delete_state" jdbcType="BIT" property="deleteState" />
+  </resultMap>
+  <resultMap id="apiResultMap" type="com.tuanche.directselling.dto.LiveSceneDealerDto">
+    <result column="scene_id" jdbcType="INTEGER" property="sceneId" />
+    <result column="city_id" jdbcType="INTEGER" property="cityId" />
+    <result column="join_city_id" jdbcType="INTEGER" property="joinCityId" />
+    <result column="dealer_id" jdbcType="INTEGER" property="dealerId" />
+    <result column="dealer_name" jdbcType="VARCHAR" property="dealerName" />
+    <result column="brandIds" jdbcType="VARCHAR" property="brandIds" />
+    <result column="groupBrandStylesIds" jdbcType="VARCHAR" property="groupBrandStylesIds" />
+    <result column="ensureSize" jdbcType="INTEGER" property="ensureSize" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, scene_id, city_id ,join_city_id, dealer_id, dealer_name, brand_id, brand_name, style_ids,
+    create_user_id, create_user_name, create_dt, update_user_id, update_user_name, update_dt, 
+    delete_state
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from live_scene_dealer_brand
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectListSceneDealerBrandList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from live_scene_dealer_brand
+    where scene_id = #{sceneId,jdbcType=INTEGER} and delete_state = 0
+  </select>
+
+  <select id="selectListSceneDealerBrandListByVo" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from live_scene_dealer_brand
+    where scene_id = #{sceneId,jdbcType=INTEGER}
+    and dealer_id = #{dealerId,jdbcType=INTEGER}
+    <if test="brandId != null">
+      and brand_id = #{brandId,jdbcType=INTEGER}
+    </if>
+    and delete_state = 0
+  </select>
+
+  <select id="selectBrandByDealerAndScene" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from live_scene_dealer_brand
+    where dealer_id = #{dealerId,jdbcType=INTEGER}
+    and scene_id = #{sceneId,jdbcType=INTEGER}
+    and delete_state = 0
+  </select>
+
+  <select id="queryList" parameterType="com.tuanche.directselling.model.LiveSceneDealerBrand" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from live_scene_dealer_brand a
+    left join live_scene_dealer_brand b on a.id = b.dealer_brand_id
+    where b.program_id = #{id,jdbcType=INTEGER}
+  </select>
+   <select id="searchBrands" parameterType="com.tuanche.directselling.model.LiveSceneDealerBrand" resultMap="BaseResultMap">
+    select 
+    a.brand_name,
+    a.brand_id
+    from live_scene_dealer_brand a
+    <if test="id != null">
+    	left join live_program_dealer_brand b on a.id = b.dealer_brand_id
+    </if>
+    where a.delete_state=0
+    	<if test="id != null">
+    	    and b.program_id = #{id,jdbcType=INTEGER}
+    	    and b.delete_state = 0
+    	</if>
+    	<if test="sceneId != null">
+        	and a.scene_id = #{sceneId,jdbcType=INTEGER}
+     	</if>
+    group by a.brand_id,a.brand_name 
+  </select>
+  <select id="searchDealers" parameterType="com.tuanche.directselling.model.LiveSceneDealerBrand" resultMap="BaseResultMap">
+    select 
+    a.dealer_id,
+    a.dealer_name
+    from live_scene_dealer_brand a
+    <if test="id != null">
+	    left join live_program_dealer_brand b on a.id = b.dealer_brand_id
+    </if>
+    where a.delete_state=0 
+   		<if test="id != null">
+    	    and b.program_id = #{id,jdbcType=INTEGER}
+    	    and b.delete_state=0
+    	</if>
+    	<if test="sceneId != null">
+        	and a.scene_id = #{sceneId,jdbcType=INTEGER}
+     	</if>
+     	<if test="brandId != null">
+        	and a.brand_id = #{brandId,jdbcType=INTEGER}
+     	</if>
+    group by a.dealer_id,a.dealer_name
+  </select>
+  <select id="searchDealerBrands" parameterType="com.tuanche.directselling.model.LiveSceneDealerBrand" resultMap="BaseResultMap">
+    select 
+    a.dealer_name,
+    a.brand_name,
+    a.dealer_id,
+    a.brand_id
+    from live_scene_dealer_brand a
+    left join live_program_dealer_brand b on a.id = b.dealer_brand_id 
+    where b.program_id = #{id,jdbcType=INTEGER}
+    and a.delete_state=0 and b.delete_state=0
+  </select>
+  <select id="searchDealerBrand" parameterType="com.tuanche.directselling.model.LiveSceneDealerBrand" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" /> 
+    from live_scene_dealer_brand 
+    where scene_id = #{sceneId,jdbcType=INTEGER}
+    and dealer_id = #{dealerId,jdbcType=INTEGER}
+    and brand_id = #{brandId,jdbcType=INTEGER}
+    and delete_state=0
+  </select>
+
+  <!--  1.4修改 去掉live_scene表的city_id-->
+  <select id="findDealerBySceneVo" parameterType="com.tuanche.directselling.dto.LiveSceneDealerDto" resultMap="apiResultMap">
+    select b.scene_id,b.dealer_id,b.city_id,b.join_city_id,b.dealer_name,GROUP_CONCAT(b.brand_id) as brandIds,
+    GROUP_CONCAT(b.style_ids SEPARATOR '#') as groupBrandStylesIds,
+    (select ensure_size from live_scene_dealer_config where delete_state=0 and dealer_id = b.dealer_id and scene_id=s.id) as ensureSize
+    from live_scene_dealer_brand b LEFT JOIN live_scene s ON b.scene_id = s.id
+    where b.delete_state=0
+    <if test="periodsId != null and periodsId != '' ">
+      AND s.periods_id = #{periodsId}
+    </if>
+    <if test="sceneIdList != null and sceneIdList.size() > 0">
+      AND b.scene_id in
+      <foreach collection="sceneIdList" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    <if test="brandIdList != null and brandIdList.size() > 0">
+      AND b.brand_id in
+      <foreach collection="brandIdList" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    <if test="cityIdList != null and cityIdList.size() != 0">
+      AND b.city_id in
+      <foreach collection="cityIdList" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    <if test="joinCityId != null and joinCityId != '' ">
+      AND (b.join_city_id=#{joinCityId} or ( b.city_id=#{joinCityId} and join_city_id is null))
+    </if>
+    <if test="sceneState == 0">
+      AND s.begin_time &gt; SYSDATE()
+    </if>
+    <if test="sceneState == 1">
+      AND s.begin_time &lt;= SYSDATE() and s.end_time &gt;= SYSDATE()
+    </if>
+    <if test="sceneState == 2">
+      AND s.end_time &lt; SYSDATE()
+    </if>
+    group by b.dealer_id
+  </select>
+
+  <!--  1.4修改 去掉live_scene表的city_id-->
+  <select id="getBrandListByPeriodsIdAndCityId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+    select t1.brand_id
+    from live_scene_dealer_brand t1 left join live_scene t2 on t1.scene_id=t2.id
+    where t1.delete_state=0 and t2.delete_state=0 and t2.periods_id=#{periodsId} and t1.city_id=#{cityId}
+    group by t1.brand_id
+  </select>
+
+  <select id="getBrandListByPeriodsId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+    select t1.brand_id
+    from live_scene_dealer_brand t1 left join live_scene t2 on t1.scene_id=t2.id
+    where t1.delete_state=0 and t2.delete_state=0 and t2.periods_id=#{periodsId}
+    group by t1.brand_id
+  </select>
+
+  <select id="getLiveSceneDealerBrandListByPeriodsIdDealerIdBrandId" resultMap="BaseResultMap" >
+    SELECT
+	  t1.*
+    FROM
+        live_scene_dealer_brand t1
+    LEFT JOIN live_scene t2 ON t1.scene_id = t2.id
+    WHERE
+        t1.delete_state = 0
+    AND t2.delete_state = 0
+    AND t2.periods_id = #{periodsId}
+    AND t1.dealer_id = #{dealerId}
+    AND t1.brand_id = #{brandId}
+    ORDER BY t1.create_dt DESC
+  </select>
+
+  <!--  1.4修改 去掉live_scene表的city_id-->
+  <select id="getBrandList" resultMap="BaseResultMap">
+    select t1.brand_id, t1.style_ids
+    from live_scene_dealer_brand t1 left join live_scene t2 on t1.scene_id=t2.id
+    where t1.delete_state=0 and t2.delete_state=0 and t2.periods_id=#{periodsId} and t1.city_id=#{cityId}
+    <if test="brandIds != null and brandIds.size() > 0">
+      AND t1.brand_id in
+      <foreach collection="brandIds" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    group by t1.brand_id
+  </select>
+
+  <!--  1.4修改 去掉live_scene表的city_id-->
+  <select id="getRandomBrandList" resultMap="BaseResultMap">
+    select b.brand_id,b.brand_name
+    from live_scene_dealer_brand b
+    LEFT JOIN live_scene s on b.scene_id = s.id
+    where s.periods_id = #{periodsId} and b.city_id = #{cityId} and b.brand_id != #{excludeBrandId}
+    GROUP BY b.brand_name  ORDER BY RAND() limit #{size}
+  </select>
+
+</mapper>

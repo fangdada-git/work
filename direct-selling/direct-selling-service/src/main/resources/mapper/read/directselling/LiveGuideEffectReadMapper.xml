@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.LiveGuideEffectReadMapper" >
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.LiveGuideEffect" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="guide_name" property="guideName" jdbcType="VARCHAR" />
+    <result column="guide_tb_nick" property="guideTbNick" jdbcType="VARCHAR" />
+    <result column="total_fans" property="totalFans" jdbcType="INTEGER" />
+    <result column="feed_count" property="feedCount" jdbcType="INTEGER" />
+    <result column="total_time_lenth" property="totalTimeLenth" jdbcType="DOUBLE" />
+    <result column="alipay_amt" property="alipayAmt" jdbcType="DECIMAL" />
+    <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+    <result column="update_dt" property="updateDt" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, guide_name, guide_tb_nick, total_fans, feed_count, total_time_lenth, alipay_amt, 
+    create_dt, update_dt
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from live_guide_effect
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+
+</mapper>

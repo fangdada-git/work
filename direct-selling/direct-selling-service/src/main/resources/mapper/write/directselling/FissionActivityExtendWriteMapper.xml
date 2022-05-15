@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.FissionActivityExtendWriteMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FissionActivityExtend">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="fission_id" jdbcType="INTEGER" property="fissionId" />
+    <result column="data_type" jdbcType="TINYINT" property="dataType" />
+    <result column="data_id" jdbcType="INTEGER" property="dataId" />
+    <result column="rel_status" jdbcType="TINYINT" property="relStatus" />
+    <result column="rel_time" jdbcType="TIMESTAMP" property="relTime" />
+    <result column="operate_user" jdbcType="INTEGER" property="operateUser" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, fission_id, data_type, data_id, rel_status, rel_time, operate_user
+  </sql>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from fission_activity_extend
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tuanche.directselling.model.FissionActivityExtend">
+    insert into fission_activity_extend (id, fission_id, data_type, 
+      data_id, rel_status, rel_time, 
+      operate_user)
+    values (#{id,jdbcType=INTEGER}, #{fissionId,jdbcType=INTEGER}, #{dataType,jdbcType=TINYINT}, 
+      #{dataId,jdbcType=INTEGER}, #{relStatus,jdbcType=TINYINT}, #{relTime,jdbcType=TIMESTAMP}, 
+      #{operateUser,jdbcType=INTEGER})
+  </insert>
+  <insert id="batchInsert">
+    insert into fission_activity_extend (fission_id, data_type,
+      data_id, rel_status, rel_time,
+      operate_user)
+    values
+    <foreach collection="extendList" item="item" index="index" separator=",">
+    ( #{item.fissionId,jdbcType=INTEGER}, #{item.dataType,jdbcType=TINYINT},
+      #{item.dataId,jdbcType=INTEGER}, #{item.relStatus,jdbcType=TINYINT}, #{item.relTime,jdbcType=TIMESTAMP},
+      #{item.operateUser,jdbcType=INTEGER})
+    </foreach>
+  </insert>
+  <insert id="insertSelective" parameterType="com.tuanche.directselling.model.FissionActivityExtend">
+    insert into fission_activity_extend
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="fissionId != null">
+        fission_id,
+      </if>
+      <if test="dataType != null">
+        data_type,
+      </if>
+      <if test="dataId != null">
+        data_id,
+      </if>
+      <if test="relStatus != null">
+        rel_status,
+      </if>
+      <if test="relTime != null">
+        rel_time,
+      </if>
+      <if test="operateUser != null">
+        operate_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="fissionId != null">
+        #{fissionId,jdbcType=INTEGER},
+      </if>
+      <if test="dataType != null">
+        #{dataType,jdbcType=TINYINT},
+      </if>
+      <if test="dataId != null">
+        #{dataId,jdbcType=INTEGER},
+      </if>
+      <if test="relStatus != null">
+        #{relStatus,jdbcType=TINYINT},
+      </if>
+      <if test="relTime != null">
+        #{relTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operateUser != null">
+        #{operateUser,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.FissionActivityExtend">
+    update fission_activity_extend
+    <set>
+      <if test="fissionId != null">
+        fission_id = #{fissionId,jdbcType=INTEGER},
+      </if>
+      <if test="dataType != null">
+        data_type = #{dataType,jdbcType=TINYINT},
+      </if>
+      <if test="dataId != null">
+        data_id = #{dataId,jdbcType=INTEGER},
+      </if>
+      <if test="relStatus != null">
+        rel_status = #{relStatus,jdbcType=TINYINT},
+      </if>
+      <if test="relTime != null">
+        rel_time = #{relTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operateUser != null">
+        operate_user = #{operateUser,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tuanche.directselling.model.FissionActivityExtend">
+    update fission_activity_extend
+    set fission_id = #{fissionId,jdbcType=INTEGER},
+      data_type = #{dataType,jdbcType=TINYINT},
+      data_id = #{dataId,jdbcType=INTEGER},
+      rel_status = #{relStatus,jdbcType=TINYINT},
+      rel_time = #{relTime,jdbcType=TIMESTAMP},
+      operate_user = #{operateUser,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByFissionIdAndType" parameterType="com.tuanche.directselling.model.FissionActivityExtend">
+    update fission_activity_extend
+    set
+      rel_status = 2,
+      rel_time = now(),
+      operate_user = #{operateUser,jdbcType=INTEGER}
+    where fission_id = #{fissionId,jdbcType=INTEGER} and data_type = #{dataType,jdbcType=TINYINT}
+  </update>
+
+</mapper>

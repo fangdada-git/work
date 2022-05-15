@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.LiveProgramWriteMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.LiveProgram">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="scene_id" jdbcType="INTEGER" property="sceneId" />
+    <result column="program_title" jdbcType="VARCHAR" property="programTitle" />
+    <result column="begin_time" jdbcType="TIMESTAMP" property="beginTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="live_address" jdbcType="VARCHAR" property="liveAddress" />
+    <result column="live_qrcode_pic" jdbcType="VARCHAR" property="liveQrcodePic" />
+    <result column="create_user_id" jdbcType="INTEGER" property="createUserId" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="create_dt" jdbcType="TIMESTAMP" property="createDt" />
+    <result column="update_user_id" jdbcType="INTEGER" property="updateUserId" />
+    <result column="update_user_name" jdbcType="VARCHAR" property="updateUserName" />
+    <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
+    <result column="delete_state" jdbcType="BIT" property="deleteState" />
+    <result column="program_type" jdbcType="BIT" property="programType" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, scene_id, program_title, begin_time, end_time, live_address, live_qrcode_pic, 
+    create_user_id, create_user_name, create_dt, update_user_id, update_user_name, update_dt, 
+    delete_state,program_type
+  </sql>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from live_program
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insertSelective" parameterType="com.tuanche.directselling.model.LiveProgram" useGeneratedKeys="true" keyProperty="id">
+    insert into live_program
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="sceneId != null">
+        scene_id,
+      </if>
+      <if test="programTitle != null">
+        program_title,
+      </if>
+      <if test="beginTime != null">
+        begin_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+      <if test="liveAddress != null">
+        live_address,
+      </if>
+      <if test="liveQrcodePic != null">
+        live_qrcode_pic,
+      </if>
+      <if test="createUserId != null">
+        create_user_id,
+      </if>
+      <if test="createUserName != null">
+        create_user_name,
+      </if>
+      <if test="createDt != null">
+        create_dt,
+      </if>
+      <if test="updateUserId != null">
+        update_user_id,
+      </if>
+      <if test="updateUserName != null">
+        update_user_name,
+      </if>
+      <if test="updateDt != null">
+        update_dt,
+      </if>
+      <if test="deleteState != null">
+        delete_state,
+      </if>
+      <if test="programType != null">
+        program_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="sceneId != null">
+        #{sceneId,jdbcType=INTEGER},
+      </if>
+      <if test="programTitle != null">
+        #{programTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="beginTime != null">
+        #{beginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="liveAddress != null">
+        #{liveAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="liveQrcodePic != null">
+        #{liveQrcodePic,jdbcType=VARCHAR},
+      </if>
+      <if test="createUserId != null">
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="createUserName != null">
+        #{createUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="createDt != null">
+        #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null">
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateUserName != null">
+        #{updateUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDt != null">
+        #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteState != null">
+        #{deleteState,jdbcType=BIT},
+      </if>
+      <if test="programType != null">
+        #{programType,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.LiveProgram">
+    update live_program
+    <set>
+      <if test="sceneId != null">
+        scene_id = #{sceneId,jdbcType=INTEGER},
+      </if>
+      <if test="programTitle != null">
+        program_title = #{programTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="beginTime != null">
+        begin_time = #{beginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="liveAddress != null">
+        live_address = #{liveAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="liveQrcodePic != null">
+        live_qrcode_pic = #{liveQrcodePic,jdbcType=VARCHAR},
+      </if>
+      <if test="createUserId != null">
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="createUserName != null">
+        create_user_name = #{createUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="createDt != null">
+        create_dt = #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null">
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateUserName != null">
+        update_user_name = #{updateUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDt != null">
+        update_dt = #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteState != null">
+        delete_state = #{deleteState,jdbcType=BIT},
+      </if>
+      <if test="programType != null">
+        program_type = #{programType,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

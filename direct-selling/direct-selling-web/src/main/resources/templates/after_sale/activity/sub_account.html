@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>售后特卖-分账设置</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.js"></script>
+    <script src="/layui/js/formSelects-v4.js"></script>
+    <script src="/common/js/tools.js"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/layui/css/formSelects-v4.css" media="all">
+    <style>
+        .label-close-icon {
+            vertical-align: bottom;
+            margin-left: -8px;
+            font-size: 18px;
+            position: absolute;
+            top: -8px;
+            cursor: pointer;
+            z-index: 100;
+        }
+
+        .layui-input {
+            width: 300px;
+        }
+        .layui-form-label {
+            width: 100px;
+        }
+
+        .layui-input-block {
+            margin-left: 138px;
+        }
+    </style>
+</head>
+<body class="childrenBody">
+<form class="layui-form" style="background-color:#ffffff" lay-filter="ActivityAccountForm">
+    <div class="layui-form-item" style="width: 700px;">
+        <label class="layui-form-label">经销商：</label>
+        <div class="layui-inline">
+            <input type="text" id="dealerName" th:value="${dealerName}" readonly class="layui-input" style="width: 300px;border-style:none;">
+            <input type="text" id="id" th:value="${account.id}"   style="display: none">
+            <input type="text" id="dealerId" th:value="${dealerId}"   style="display: none">
+            <input type="text" id="activityId" th:value="${activityId}"   style="display: none">
+        </div>
+    </div>
+    <div class="layui-form-item" style="width: 600px;">
+        <label class="layui-form-label">车商商户号：</label>
+        <div class="layui-inline">
+            <input type="text" id="mchId"
+                   th:value="${account.mchId}" style="width: 300px;" maxlength="50" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item" style="width: 600px;">
+        <label class="layui-form-label">车商号主体：</label>
+        <div class="layui-inline">
+            <input type="text" id="mchName"
+                   th:value="${account.mchName}" style="width: 300px;" maxlength="100" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item" style="width: 600px;">
+        <div class="layui-input-inline">
+            <label class="layui-form-label">团车：</label>
+            <input type="number" id="subAccountRatio"
+                   th:value="${account.subAccountRatio}" onchange="tcAccountRatio()" th:max="100" th:min="0" placeholder="0-100"
+                   style="width: 60px;"  autocomplete="off" class="layui-input">
+        </div>
+        <div class="layui-form-mid layui-word-aux" >%</div>
+        <div class="layui-input-inline">
+            <label class="layui-form-label">车商：</label>
+                <input type="number" id="dealerRatio" th:value="${account.dealerSubAccountRatio}" readonly style="width: 60px;" class="layui-input">
+        </div>
+        <div class="layui-form-mid layui-word-aux" >%</div>
+    </div>
+
+    <div class="layui-form-item" style="width: 100%;">
+        <label class="layui-form-label">认证资料</label>
+        <input name="approveMaterials1" id="approveMaterials1" th:value="${account.approveMaterials1}" style="display: none">
+        <input name="approveMaterials2" id="approveMaterials2" th:value="${account.approveMaterials2}"  style="display: none">
+        <input name="approveMaterials3" id="approveMaterials3" th:value="${account.approveMaterials3}" style="display: none">
+        <input name="approveMaterials4" id="approveMaterials4" th:value="${account.approveMaterials4}" style="display: none">
+        <input name="approveMaterials5" id="approveMaterials5" th:value="${account.approveMaterials5}" style="display: none">
+        <div class="layui-upload-drag" id="detailPic1" style="max-width: 100px;max-height: 100px;">
+            <div th:if="${account.approveMaterials1 != null && account.approveMaterials1 != ''}">
+                <div id="detailPicView1">
+                    <hr>
+                    <img th:src="${account.approveMaterials1}" alt="上传成功后渲染"  style="max-width: 100px;max-height: 100px;">
+                    <p id="tipText"></p>
+                </div>
+            </div>
+            <div th:if="${account.approveMaterials1 == null || account.approveMaterials1 == '' }">
+                <i class="layui-icon"></i>
+                <div  class="layui-hide" id="detailPicView1">
+                    <hr>
+                    <img  alt="上传成功后渲染"   style="max-width: 100px;max-height: 100px;">
+                    <p id="tipText"></p>
+                </div>
+            </div>
+        </div>
+        <i th:if="${account.approveMaterials1 != null && account.approveMaterials1 != ''}"
+           onclick='removePic(1)' id="remPic1" class="layui-icon layui-icon-delete" style="font-size: 30px"
+           data-idx=""></i>
+        <div class="layui-upload-drag"  id="detailPic2" style="max-width: 100px;max-height: 100px;">
+            <div th:if="${account.approveMaterials2 != null && account.approveMaterials2 != ''}">
+                <div id="detailPicView2">
+                    <hr>
+                    <img th:src="${account.approveMaterials2}" alt="上传成功后渲染"   style="max-width: 100px;max-height: 100px;">
+                    <p id="tipText"></p>
+                </div>
+            </div>
+            <div th:if="${account.approveMaterials2 == null || account.approveMaterials2 == '' }">
+                <i class="layui-icon"></i>
+                <div  class="layui-hide" id="detailPicView2">
+                    <hr>
+                    <img  alt="上传成功后渲染" style="max-width: 100px;max-height: 100px;">
+                    <p id="tipText"></p>
+                </div>
+            </div>
+        </div>
+        <i th:if="${account.approveMaterials2 != null && account.approveMaterials2 != ''}"
+           onclick='removePic(2)' id="remPic2" class="layui-icon layui-icon-delete" style="font-size: 30px"
+           data-idx=""></i>
+        <div class="layui-upload-drag" id="detailPic3" style="max-width: 100px;max-height: 100px;">
+            <div th:if="${account.approveMaterials3 != null && account.approveMaterials3 != ''}">
+                <div id="detailPicView3">
+                    <hr>
+                    <img th:src="${account.approveMaterials3}" alt="上传成功后渲染"   style="max-width: 100px;max-height: 100px;">
+                    <p id="tipText"></p>
+                </div>
+            </div>
+            <div th:if="${account.approveMaterials3 == null || account.approveMaterials3 == ''}">
+                <i class="layui-icon"></i>
+                <div  class="layui-hide" id="detailPicView3">
+                    <hr>
+                    <img  alt="上传成功后渲染"   style="max-width: 100px;max-height: 100px;">
+                    <p id="tipText"></p>
+                </div>
+            </div>
+        </div>
+        <i th:if="${account.approveMaterials3 != null && account.approveMaterials3 != ''}"
+           onclick='removePic(3)' id="remPic3" class="layui-icon layui-icon-delete" style="font-size: 30px"
+           data-idx=""></i>
+        <div class="layui-upload-drag" id="detailPic4" style="max-width: 100px;max-height: 100px;">
+            <div th:if="${account.approveMaterials4 != null && account.approveMaterials4 != ''}">
+                <div id="detailPicView4">
+                    <hr>
+                    <img th:src="${account.approveMaterials4}" alt="上传成功后渲染"   style="max-width: 100px;max-height: 100px;">
+                    <p id="tipText"></p>
+                </div>
+            </div>
+            <div th:if="${account.approveMaterials4 == null || account.approveMaterials4 == ''}">
+                <i class="layui-icon"></i>
+                <div  class="layui-hide" id="detailPicView4">
+                    <hr>
+                    <img  alt="上传成功后渲染"   style="max-width: 100px;max-height: 100px;">
+                    <p id="tipText"></p>
+                </div>
+            </div>
+        </div>
+        <i th:if="${account.approveMaterials4 != null && account.approveMaterials4 != ''}"
+           onclick='removePic(4)' id="remPic4" class="layui-icon layui-icon-delete" style="font-size: 30px"
+           data-idx=""></i>
+        <div class="layui-upload-drag" id="detailPic5" style="max-width: 100px;max-height: 100px;">
+            <div th:if="${account.approveMaterials5 != null && account.approveMaterials5 != ''}">
+                <div id="detailPicView5">
+                    <hr>
+                    <img th:src="${account.approveMaterials5}" alt="上传成功后渲染"   style="max-width: 100px;max-height: 100px;">
+                    <p id="tipText"></p>
+                </div>
+            </div>
+            <div th:if="${account.approveMaterials5 == null || account.approveMaterials5 == ''}">
+                <i class="layui-icon"></i>
+                <div  class="layui-hide" id="detailPicView5">
+                    <hr>
+                    <img  alt="上传成功后渲染"   style="max-width: 100px;max-height: 100px;">
+                    <p id="tipText"></p>
+                </div>
+            </div>
+        </div>
+        <i th:if="${account.approveMaterials5 != null && account.approveMaterials5 != ''}"
+           onclick='removePic(5)' id="remPic5" class="layui-icon layui-icon-delete" style="font-size: 30px"
+           data-idx=""></i>
+    </div>
+
+
+    <div class="layui-form-item" style="margin-bottom: 225px;">
+        <div class="layui-input-block">
+            <button type="button" class="layui-btn layui-btn-normal" id="backBtn"><i class="layui-icon layui-icon-close-fill"></i>返回</button>
+            <button type="submit" class="layui-btn layui-btn-normal" id="submitBtn" lay-submit lay-filter="submitBtn">
+                <i class="layui-icon layui-icon-ok-circle"></i>立即提交
+            </button>
+            <button type="button" class="layui-btn layui-btn-normal" id="verfiyBtn"><i class="layui-icon layui-icon-close-fill"></i>去验证</button>
+        </div>
+    </div>
+</form>
+
+<!-- layui 初始化 -->
+<script type="text/javascript" th:inline="javascript">
+    layui.use(['form', 'layer', 'table','upload', 'element'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            util = layui.util,
+            upload = layui.upload,
+            formSelects = layui.formSelects,
+            element = layui.element;
+        element.init();
+
+        // 监听提交
+        form.on('submit(submitBtn)', function(data){
+            var dealerId = $("#dealerId").val();
+            var activityId = $("#activityId").val();
+            var mchId = $("#mchId").val();
+            var mchName = $("#mchName").val();
+
+            var approveMaterials1 = $("#approveMaterials1").val();
+            var approveMaterials2 = $("#approveMaterials2").val();
+            var approveMaterials3 = $("#approveMaterials3").val();
+            var approveMaterials4 = $("#approveMaterials4").val();
+            var approveMaterials5 = $("#approveMaterials5").val();
+            if (mchId == '') {
+                layer.msg("请输入车商商户号", {icon: 5});
+                return false;
+            }
+            if (mchName == '') {
+                layer.msg("请输入车商号主体", {icon: 5});
+                return false;
+            }
+            if($("#subAccountRatio").val() == '' || $("#subAccountRatio").val() <0 || $("#subAccountRatio").val()>100){
+                layer.msg("分账比例 0~100之间的数值", {icon: 5});
+                $("#subAccountRatio").val();
+                $("#dealerRatio").val();
+                return false;
+            }
+            $('#submitBtn').attr('disabled','disabled');
+            var loadIndex = layer.load(1,{
+                shade: [0.5,'#000']
+            })
+            $.ajax({
+                type: 'POST',
+                url: '/afterSale/activity/saveSubAccount',
+                contentType: "application/json",
+                data: JSON.stringify({
+                    "id": $("#id").val(),
+                    "dealerId": dealerId,
+                    "activityId": activityId,
+                    "subAccountRatio": $("#subAccountRatio").val(),
+                    "mchId": mchId,
+                    "mchName": mchName,
+                    "approveMaterials1": approveMaterials1,
+                    "approveMaterials2": approveMaterials2,
+                    "approveMaterials3": approveMaterials3,
+                    "approveMaterials4": approveMaterials4,
+                    "approveMaterials5": approveMaterials5
+                }),
+                success :function(data){
+                    if (data.code == 200) {
+                        $("#id").val(data.result);
+                        layer.msg("保存成功", {icon: 6});
+                        $('#submitBtn').attr('disabled', false);
+                    } else {
+                        layer.alert(data.result == null ? "有一丝丝问题，请联系管理员" : data.result, {icon: 5});
+                        $('#submitBtn').removeAttr('disabled');
+                    }
+                    layer.close(loadIndex);
+                },
+                error :function(e){
+                    console.log(e);
+                    layer.close(loadIndex);
+                    layer.msg("有一丝丝问题，请联系管理员", {icon: 5});
+                    $('#submitBtn').removeAttr('disabled');
+                    return false;
+                }
+            });
+            return false;
+        });
+
+        //认证图上传
+        upload.render({
+            elem: '#detailPic1'
+            ,url: '/upload/image?type=zhuanti'
+            ,size: 10240
+            ,exts: 'img|jpg|png|jpeg' //只允许上传图片
+            ,done: function(res){
+                layer.msg('上传成功');
+                $("#approveMaterials1").val(res.location);
+                layui.$('#detailPicView1').removeClass('layui-hide').find('img').attr('src', res.location);
+                layui.$('#detailPic1').find('i').remove();
+            }
+            ,error: function(res){
+                layer.alert('上传失败', {icon: 5});
+            }
+        });
+        upload.render({
+            elem: '#detailPic2'
+            ,url: '/upload/image?type=zhuanti'
+            ,size: 10240
+            ,exts: 'img|jpg|png|jpeg' //只允许上传图片
+            ,done: function(res){
+                layer.msg('上传成功');
+                $("#approveMaterials2").val(res.location);
+                layui.$('#detailPicView2').removeClass('layui-hide').find('img').attr('src', res.location);
+                layui.$('#detailPic2').find('i').remove();
+            }
+            ,error: function(res){
+                layer.alert('上传失败', {icon: 5});
+            }
+        });
+        upload.render({
+            elem: '#detailPic3'
+            ,url: '/upload/image?type=zhuanti'
+            ,size: 10240
+            ,exts: 'img|jpg|png|jpeg' //只允许上传图片
+            ,done: function(res){
+                layer.msg('上传成功');
+                $("#approveMaterials3").val(res.location);
+                layui.$('#detailPicView3').removeClass('layui-hide').find('img').attr('src', res.location);
+                layui.$('#detailPic3').find('i').remove();
+            }
+            ,error: function(res){
+                layer.alert('上传失败', {icon: 5});
+            }
+        });
+        upload.render({
+            elem: '#detailPic4'
+            ,url: '/upload/image?type=zhuanti'
+            ,size: 10240
+            ,exts: 'img|jpg|png|jpeg' //只允许上传图片
+            ,done: function(res){
+                layer.msg('上传成功');
+                $("#approveMaterials4").val(res.location);
+                layui.$('#detailPicView4').removeClass('layui-hide').find('img').attr('src', res.location);
+                layui.$('#detailPic4').find('i').remove();
+            }
+            ,error: function(res){
+                layer.alert('上传失败', {icon: 5});
+            }
+        });
+        upload.render({
+            elem: '#detailPic5'
+            ,url: '/upload/image?type=zhuanti'
+            ,size: 10240
+            ,exts: 'img|jpg|png|jpeg' //只允许上传图片
+            ,done: function(res){
+                layer.msg('上传成功');
+                $("#approveMaterials5").val(res.location);
+                layui.$('#detailPicView5').removeClass('layui-hide').find('img').attr('src', res.location);
+                layui.$('#detailPic5').find('i').remove();
+            }
+            ,error: function(res){
+                layer.alert('上传失败', {icon: 5});
+            }
+        });
+
+
+        $("#backBtn").on("click", function () {
+            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+            parent.layer.close(index);//关闭弹出的子页面窗口
+        })
+
+        window.tcAccountRatio = function(obj){
+            if($("#subAccountRatio").val() <0 || $("#subAccountRatio").val()>100){
+                layer.msg("0~100之间的数值", {icon: 5});
+                $("#subAccountRatio").val(0);
+                $("#dealerRatio").val();
+                return;
+            }
+            $("#dealerRatio").val(100-$("#subAccountRatio").val());
+        }
+
+        $("#verfiyBtn").on("click", function () {
+            var accountId = $("#id").val();
+            if(accountId == ""|| accountId == null){
+                layer.msg('请先提交分账信息', {icon: 5});
+                return false;
+            }
+            var index = layer.open({
+                title: ['验证账户', 'font-size:18px;'],
+                type: 2,
+                shadeClose: true,
+                content: "/afterSale/activity/toVerfiyPage?accountId="+ accountId + "&dealerName=" + $("#dealerName").val(),
+                area: ['100%', '100%'],
+                maxmin: true
+            });
+            layer.full(index);
+        })
+    });
+    //删除图片
+    function removePic(i) {
+        layui.$("#approveMaterials"+i).val("");
+        layui.$("#remPic" + i).remove();
+        layui.$('#detailPic'+ i).append("<i class=\"layui-icon\"></i>")
+        layui.$('#detailPicView' + i).addClass('layui-hide').find('img').attr('src', "");
+    }
+
+</script>
+</body>
+</html>

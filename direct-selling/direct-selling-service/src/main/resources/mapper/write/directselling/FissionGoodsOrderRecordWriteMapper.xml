@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.FissionGoodsOrderRecordWriteMapper" >
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from fission_goods_order_record
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.tuanche.directselling.model.FissionGoodsOrderRecord" >
+    insert into fission_goods_order_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="peroidsId != null" >
+        peroids_id,
+      </if>
+      <if test="fissionId != null" >
+        fission_id,
+      </if>
+      <if test="goodsId != null" >
+        goods_id,
+      </if>
+      <if test="dealerId != null" >
+        dealer_id,
+      </if>
+      <if test="saleId != null" >
+        sale_id,
+      </if>
+      <if test="orderNo != null" >
+        order_no,
+      </if>
+      <if test="orderStatus != null" >
+        order_status,
+      </if>
+      <if test="cancelDealerId != null" >
+        cancel_dealer_id,
+      </if>
+      <if test="cancelSale != null" >
+        cancel_sale,
+      </if>
+      <if test="userSource != null" >
+        user_source,
+      </if>
+      <if test="pageSource != null" >
+        page_source,
+      </if>
+      <if test="userWxUnionId != null" >
+        user_wx_union_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag,
+      </if>
+      <if test="optUserId != null" >
+        opt_user_id,
+      </if>
+      <if test="orderAmount != null" >
+        order_amount,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="peroidsId != null" >
+        #{peroidsId,jdbcType=INTEGER},
+      </if>
+      <if test="fissionId != null" >
+        #{fissionId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsId != null" >
+        #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="dealerId != null" >
+        #{dealerId,jdbcType=INTEGER},
+      </if>
+      <if test="saleId != null" >
+        #{saleId,jdbcType=INTEGER},
+      </if>
+      <if test="orderNo != null" >
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="orderStatus != null" >
+        #{orderStatus,jdbcType=TINYINT},
+      </if>
+      <if test="cancelDealerId != null" >
+        #{cancelDealerId,jdbcType=INTEGER},
+      </if>
+      <if test="cancelSale != null" >
+        #{cancelSale,jdbcType=INTEGER},
+      </if>
+      <if test="userSource != null" >
+        #{userSource,jdbcType=BIT},
+      </if>
+      <if test="pageSource != null" >
+        #{pageSource,jdbcType=TINYINT},
+      </if>
+      <if test="userWxUnionId != null" >
+        #{userWxUnionId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="deleteFlag != null" >
+        #{deleteFlag,jdbcType=BIT},
+      </if>
+      <if test="optUserId != null" >
+        #{optUserId},
+      </if>
+      <if test="orderAmount != null" >
+        #{orderAmount},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.FissionGoodsOrderRecord" >
+    update fission_goods_order_record
+    <set >
+      <if test="peroidsId != null" >
+        peroids_id = #{peroidsId,jdbcType=INTEGER},
+      </if>
+      <if test="fissionId != null" >
+        fission_id = #{fissionId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsId != null" >
+        goods_id = #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="dealerId != null" >
+        dealer_id = #{dealerId,jdbcType=INTEGER},
+      </if>
+      <if test="saleId != null" >
+        sale_id = #{saleId,jdbcType=INTEGER},
+      </if>
+      <if test="orderNo != null" >
+        order_no = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="orderStatus != null" >
+        order_status = #{orderStatus,jdbcType=TINYINT},
+      </if>
+      <if test="cancelDealerId != null" >
+        cancel_dealer_id = #{cancelDealerId,jdbcType=INTEGER},
+      </if>
+      <if test="cancelSale != null" >
+        cancel_sale = #{cancelSale,jdbcType=INTEGER},
+      </if>
+      <if test="userSource != null" >
+        user_source = #{userSource,jdbcType=BIT},
+      </if>
+      <if test="pageSource != null" >
+        page_source = #{pageSource,jdbcType=TINYINT},
+      </if>
+      <if test="userWxUnionId != null" >
+        user_wx_union_id = #{userWxUnionId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="optUserId != null" >
+        opt_user_id = #{optUserId,jdbcType=BIT},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateFissionGoodsOrderRecordByOrderNo" parameterType="com.tuanche.directselling.model.FissionGoodsOrderRecord" >
+    update fission_goods_order_record
+    <set >
+      <if test="peroidsId != null" >
+        peroids_id = #{peroidsId,jdbcType=INTEGER},
+      </if>
+      <if test="fissionId != null" >
+        fission_id = #{fissionId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsId != null" >
+        goods_id = #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="dealerId != null" >
+        dealer_id = #{dealerId,jdbcType=INTEGER},
+      </if>
+      <if test="saleId != null" >
+        sale_id = #{saleId,jdbcType=INTEGER},
+      </if>
+      <if test="orderStatus != null" >
+        order_status = #{orderStatus,jdbcType=TINYINT},
+      </if>
+      <if test="cancelDealerId != null" >
+        cancel_dealer_id = #{cancelDealerId,jdbcType=INTEGER},
+      </if>
+      <if test="cancelSale != null" >
+        cancel_sale = #{cancelSale,jdbcType=INTEGER},
+      </if>
+      <if test="userSource != null" >
+        user_source = #{userSource,jdbcType=BIT},
+      </if>
+      <if test="pageSource != null" >
+        page_source = #{pageSource,jdbcType=TINYINT},
+      </if>
+      <if test="userWxUnionId != null" >
+        user_wx_union_id = #{userWxUnionId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="optUserId != null" >
+        opt_user_id = #{optUserId,jdbcType=BIT},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=BIT},
+      </if>
+    </set>
+    where order_no = #{orderNo}
+  </update>
+</mapper>

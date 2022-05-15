@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>团车直卖-裂变经销商配置</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.js"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/magnify/css/jquery.magnify.css">
+    <script src="/layui/js/formSelects-v4.js"></script>
+    <script src="/common/js/xm-select.js"></script>
+    <link rel="stylesheet" href="/layui/css/formSelects-v4.css" media="all">
+    <style type="text/css">
+        .layui-table-header .layui-table tr {
+            height: auto;
+            line-height: 50px;
+        }
+
+        .layui-table-cell {
+            height: auto;
+        }
+
+        .layui-table-col-special {
+            height: auto;
+        }
+
+        .layui-table tr {
+            height: 65px
+        }
+
+        .layui-form-label {
+            width: 120px;
+        }
+
+        .layui-input {
+            width: 200px;
+        }
+    </style>
+</head>
+<body class="childrenBody">
+<div class="layui-card-header">活动名称：[[${afterSaleActivity.activityName}]]
+</div>
+<form class="layui-form" style="background-color: #ffffff;">
+    <blockquote class="layui-elem-quote quoteBox">
+        <form class="layui-form">
+            <div class="layui-inline" id="nameInput">
+                <label class="layui-form-label">姓名/手机号/车牌：</label>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input userName" id="userName" placeholder="输入姓名/手机号/车牌"/>
+                </div>
+            </div>
+            <!--            <div class="layui-inline" id="phoneInput">-->
+            <!--                <label class="layui-form-label">手机号：</label>-->
+            <!--                <div class="layui-input-inline">-->
+            <!--                    <input type="text" class="layui-input userPhone" id="userPhone" placeholder="手机号"/>-->
+            <!--                </div>-->
+            <!--            </div>-->
+            <!--            <div class="layui-inline" id="licencePlateInput">-->
+            <!--                <label class="layui-form-label">车牌：</label>-->
+            <!--                <div class="layui-input-inline">-->
+            <!--                    <input type="text" class="layui-input licencePlate" id="licencePlate" placeholder="车牌"/>-->
+            <!--                </div>-->
+            <!--            </div>-->
+            <div class="layui-inline" id="statusSelect">
+                <div class="layui-input-inline">
+                    <select id="matchingStatus" name="matchingStatus">
+                        <option value="">请选择匹配状态</option>
+                        <option value="0">全部</option>
+                        <option value="1">品牌未匹配</option>
+                        <option value="2">车系未匹配</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <div class="layui-input-block" style="margin-left: 10px;">
+                    <a class="layui-btn layui-btn add_btn" id="search" href="javascript:;"><i
+                            class="layui-icon layui-icon-search"></i>搜索</a>
+                </div>
+            </div>
+            <div class="layui-inline" id="importButton">
+                <a class="layui-btn layui-btn- add_btn" href="javascript:;" id="importData">
+                    <i class="layui-icon layui-icon-add-1"></i>导入</a>
+            </div>
+            <div class="layui-inline" id="deleteButton">
+                <a class="layui-btn layui-btn-danger" href="javascript:;" id="deleteBtn">删除所有用户</a>
+            </div>
+            <div class="layui-inline" id="downloadButton" onclick="downloadTemplate()">
+                <a class="layui-btn search_btn">导入模板下载</a>
+            </div>
+
+            <div class="layui-inline" id="syncData">
+                <a class="layui-btn search_btn">同步数据</a>
+            </div>
+            <div class="layui-inline" id="export">
+                <a class="layui-btn layui-btn add_btn" href="javascript:;"><i
+                        class="layui-icon layui-icon-release"></i>导出</a>
+            </div>
+        </form>
+    </blockquote>
+    <div class="layui-tab layui-tab-card" lay-filter="tabChange">
+        <ul class="layui-tab-title">
+            <li class="layui-this">备案用户</li>
+            <li>流失用户</li>
+            <li>品牌车系匹配</li>
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <table id="afterSaleActivityCouponList1" lay-filter="afterSaleActivityDealerTool1"></table>
+            </div>
+            <div class="layui-tab-item">
+                <table id="afterSaleActivityCouponList2" lay-filter="afterSaleActivityDealerTool2"></table>
+            </div>
+            <div class="layui-tab-item">
+                <table id="afterSaleActivityCouponList3" lay-filter="afterSaleActivityDealerTool3"></table>
+            </div>
+        </div>
+    </div>
+
+</form>
+<!-- 表格操作列按钮 -->
+<script type="text/html" id="barBtn0">
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"> <i
+            class="layui-icon layui-icon-edit">编辑</i></a>
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="delete"> <i
+            class="layui-icon layui-icon-delete">删除</i></a>
+</script>
+<script type="text/html" id="barBtn1">
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"> <i
+            class="layui-icon layui-icon-edit">编辑</i></a>
+</script>
+<div class="row col-sm-12" style="display:none;" id="show_div">
+    <form class="layui-form" style="background-color:#ffffff;margin-top: 30px;" lay-filter="fissionActivityForm">
+        <input type="hidden" id="updateId">
+        <div id="nameDiv">
+            <div class="layui-form-item">
+                <label class="layui-form-label required">姓名：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="userName" id="formUserName" maxlength="15" autocomplete="off"
+                           class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">手机：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="userPhone" id="formUserPhone" maxlength="11" autocomplete="off"
+                           class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">车牌：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="licencePlate" id="formLicencePlate" maxlength="10" autocomplete="off"
+                           class="layui-input">
+                </div>
+            </div>
+        </div>
+        <div id="brandSelectDiv">
+            <div class="layui-form-item">
+                <label class="layui-form-label">原品牌：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="originalBrandName" style="width: 200px;margin-left:30px" readonly
+                           maxlength="15" autocomplete="off"
+                           class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">团车品牌：</label>
+                <div class="layui-input-block">
+                    <div id="brandId" name="brandId" style="width: 200px;margin-left:40px"></div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">原车系：</label>
+                <div class="layui-input-block">
+                    <input type="text" name="originalCarSeriesName" style="width: 200px;margin-left:30px" readonly
+                           maxlength="15" autocomplete="off"
+                           class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"> 团车车系：</label>
+                <div class="layui-input-block">
+                    <div id="carSeriesId" name="carSeriesId" style="width: 200px;margin-left:40px"></div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block" style="margin-left: 150px">
+                <button type="submit" class="layui-btn layui-btn-normal" id="submitBtn" lay-submit
+                        lay-filter="submitBtn">
+                    <i class="layui-icon layui-icon-ok-circle"></i>保存
+                </button>
+                <button type="button" class="layui-btn layui-btn-normal" id="closeForm"><i
+                        class="layui-icon layui-icon-close-fill"></i>关闭
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript" src="/common/js/tools.js"></script>
+<!-- layui 初始化 -->
+<script type="text/javascript" th:inline="javascript">
+    layui.use(['form', 'layer', 'table', 'laydate', 'upload', 'element'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            table = layui.table,
+            upload = layui.upload,
+            element = layui.element,
+            laydate = layui.laydate;
+        var activityId = [[${afterSaleActivity.id}]];
+        var onOpen = [[${afterSaleActivity.onState}]];
+        var goodsId = [[${afterSaleActivity.goodsId}]];
+        var formWindow = -1;
+        // 售后特卖卡券列表
+        $("#syncData").hide();
+        $("#export").hide();
+        $("#statusSelect").hide();
+        var tableIns = table.render({
+            elem: '#afterSaleActivityCouponList1',
+            url: '/afterSale/keepOnRecord/list?userType=0&activityId=' + activityId,
+            cellMinWidth: 60,
+            page: true,
+            height: "full-125",
+            limits: [10, 20, 50, 100],
+            limit: 10,
+            id: "afterSaleCouponListTable1",
+            cols: [
+                [
+                    {
+                        field: 'userName', title: '姓名', align: "center", templet: function (d) {
+                            return d.userName == null || d.userName == '' ? '-' : d.userName;
+                        }
+                    },
+                    {
+                        field: 'userPhone', title: '手机号', align: "center", templet: function (d) {
+                            return d.userPhone == null || d.userPhone == '' ? '-' : d.userPhone;
+                        }
+                    },
+                    {
+                        field: 'licencePlate', title: '车牌号', align: "center", templet: function (d) {
+                            return d.licencePlate == null || d.licencePlate == '' ? '-' : d.licencePlate;
+                        }
+                    },
+                    {field: 'originalBrandName', title: '原品牌', align: "center"},
+                    {field: 'originalCarSeriesName', title: '原车系', align: "center"},
+                    {field: 'brandName', title: '团车品牌', align: "center"},
+                    {field: 'carSeriesName', title: '团车车系', align: "center"},
+                    {field: 'buyCarTime', title: '购车时间', align: "center"},
+                    {field: 'latestEnterTime', title: '最后进店时间', align: "center"},
+                    {field: 'createDt', title: '导入时间', align: "center"},
+                    {fixed: 'right', title: '操作', align: 'center', minWidth: 160, toolbar: '#barBtn0'}
+                ]
+            ]
+        });
+
+        table.render({
+            elem: '#afterSaleActivityCouponList2',
+            url: '/afterSale/keepOnRecord/list?userType=1&activityId=' + activityId,
+            cellMinWidth: 60,
+            page: true,
+            height: "full-125",
+            limits: [10, 20, 50, 100],
+            limit: 10,
+            id: "afterSaleCouponListTable2",
+            cols: [
+                [
+                    {
+                        field: 'userName', title: '姓名', align: "center", templet: function (d) {
+                            return d.userName == null || d.userName == '' ? '-' : d.userName;
+                        }
+                    },
+                    {
+                        field: 'userPhone', title: '手机号', align: "center", templet: function (d) {
+                            return d.userPhone == null || d.userPhone == '' ? '-' : d.userPhone;
+                        }
+                    },
+                    {
+                        field: 'licencePlate', title: '车牌号', align: "center", templet: function (d) {
+                            return d.licencePlate == null || d.licencePlate == '' ? '-' : d.licencePlate;
+                        }
+                    },
+                    {field: 'originalBrandName', title: '原品牌', align: "center"},
+                    {field: 'originalCarSeriesName', title: '原车系', align: "center"},
+                    {field: 'brandName', title: '团车品牌', align: "center"},
+                    {field: 'carSeriesName', title: '团车车系', align: "center"},
+                    {field: 'buyCarTime', title: '购车时间', align: "center"},
+                    {field: 'latestEnterTime', title: '最后进店时间', align: "center"},
+                    {
+                        field: 'syncStatus', title: '同步状态', align: "center", templet: function (d) {
+                            if (d.syncStatus == null) {
+                                return "";
+                            }
+                            return d.syncStatus == 0 ? "未同步" : "已同步";
+                        }
+                    },
+                    {field: 'syncTime', title: '同步时间', align: "center"},
+                    {field: 'dataSource', title: '数据源', align: "center", templet: function (d) {
+                            return d.dataSource == null  ? '' : (d.dataSource==0?"本店":"他店");
+                        }},
+                    {fixed: 'right', title: '操作', minWidth: 160, align: 'center', toolbar: '#barBtn0'}
+                ]
+            ]
+        });
+
+        table.render({
+            elem: '#afterSaleActivityCouponList3',
+            url: '/afterSale/keepOnRecord/brandCarSeriesList?activityId=' + activityId,
+            cellMinWidth: 60,
+            page: true,
+            height: "full-125",
+            limits: [10, 20, 50, 100],
+            limit: 10,
+            id: "afterSaleCouponListTable3",
+            cols: [
+                [
+
+                    {field: 'originalBrandName', title: '原品牌', align: "center"},
+                    {field: 'brandName', title: '团车品牌', align: "center"},
+                    {field: 'originalCarSeriesName', title: '原车系', align: "center"},
+                    {field: 'carSeriesName', title: '团车车系', align: "center"},
+                    {field: 'matchingTime', title: '匹配时间', align: "center"},
+                    {fixed: 'right', title: '操作', minWidth: 160, align: 'center', toolbar: '#barBtn1'}
+                ]
+            ]
+        });
+
+        // 操作事件
+        table.on('tool(afterSaleActivityDealerTool1)', function (obj) {
+
+            if (onOpen == 1) {
+                layer.msg("活动开启中，不允许此操作", {icon: 5});
+                return false;
+            }
+
+            var data = obj.data;
+            if (obj.event == 'edit') {
+                $("#updateId").val(data.id);
+                $("#formLicencePlate").val(data.licencePlate);
+                $("#formUserName").val(data.userName);
+                $("#formUserPhone").val(data.userPhone);
+
+                $("#brandSelectDiv").hide();
+                $("#nameDiv").show();
+
+                /* 如果是页面层 */
+                formWindow = layer.open({
+                    type: 1,  //可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                    title: '修改信息',//数组第二项可以写任意css样式；如果你不想显示标题栏，你可以title: false
+                    area: '500px',
+                    shadeClose: true,
+                    content: $('#show_div')
+                });
+            } else if (obj.event == 'delete') {
+                layer.confirm('确定删除该' + $("li[class='layui-this']").text() + '吗?', {
+                    icon: 3,
+                    title: '提示'
+                }, function (index) {
+                    $.ajax({
+                        type: 'post',
+                        url: '/afterSale/keepOnRecord/deleteById',
+                        dataType: 'json',
+                        data: {id: data.id},
+                        success: function (s) {
+                            var icon = 0;
+                            if (s.responseHeader.status == 200) {
+                                icon = 6;
+                            } else {
+                                icon = 5;
+                            }
+                            layer.alert(s.responseHeader.message, {icon: icon, title: '提示'}, function (i) {
+                                //关闭弹窗
+                                layer.close(i);
+                                reloadData();
+                            });
+
+                        },
+                        error: function (e) {
+                            layer.alert('网络繁忙', {icon: 5, title: '提示'});
+                        }
+                    })
+                    layer.close(index);
+                })
+            }
+        });
+        table.on('tool(afterSaleActivityDealerTool2)', function (obj) {
+            var data = obj.data;
+            if (data.syncStatus == 1) {
+                layer.msg("数据已同步，不允许此操作", {icon: 5});
+                return false;
+            }
+
+            if (obj.event == 'edit') {
+                $("#updateId").val(data.id);
+                $("#formLicencePlate").val(data.licencePlate);
+                $("#formUserName").val(data.userName);
+                $("#formUserPhone").val(data.userPhone);
+                $("#brandSelectDiv").hide();
+                $("#nameDiv").show();
+
+                /* 如果是页面层 */
+                formWindow = layer.open({
+                    type: 1,  //可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                    title: '修改信息',//数组第二项可以写任意css样式；如果你不想显示标题栏，你可以title: false
+                    area: '500px',
+                    shadeClose: true,
+                    content: $('#show_div')
+                });
+            } else if (obj.event == 'delete') {
+                layer.confirm('确定删除该' + $("li[class='layui-this']").text() + '吗?', {
+                    icon: 3,
+                    title: '提示'
+                }, function (index) {
+                    $.ajax({
+                        type: 'post',
+                        url: '/afterSale/keepOnRecord/deleteById',
+                        dataType: 'json',
+                        data: {id: data.id},
+                        success: function (s) {
+                            var icon = 0;
+                            if (s.responseHeader.status == 200) {
+                                icon = 6;
+                            } else {
+                                icon = 5;
+                            }
+                            layer.alert(s.responseHeader.message, {icon: icon, title: '提示'}, function (i) {
+                                //关闭弹窗
+                                layer.close(i);
+                                reloadData();
+                            });
+
+                        },
+                        error: function (e) {
+                            layer.alert('网络繁忙', {icon: 5, title: '提示'});
+                        }
+                    })
+                    layer.close(index);
+                })
+            }
+        });
+        var brandSelect;
+        var carSeriesSelect;
+        table.on('tool(afterSaleActivityDealerTool3)', function (obj) {
+            var userType = $("li[class='layui-this']").text() == "备案用户" ? 0 : ($("li[class='layui-this']").text() == "流失用户" ? 1 : 2);
+
+            var data = obj.data;
+            if (data.syncStatus == 1) {
+                layer.msg("数据已同步，不允许此操作", {icon: 5});
+                return false;
+            }
+            if (obj.event == 'edit') {
+                $("#updateId").val(data.id);
+
+
+                if (userType == 2) {
+                    $("#brandSelectDiv").show();
+                    $("#nameDiv").hide();
+
+                    $("#brandSelectDiv input[name='originalBrandName']").val(data.originalBrandName);
+                    $("#brandSelectDiv input[name='originalCarSeriesName']").val(data.originalCarSeriesName);
+                    brandSelect = xmSelect.render({
+                        el: '#brandId',
+                        filterable: true,
+                        tips: '请选择品牌',
+                        radio: true,
+                        toolbar: {show: true},
+                        prop: {
+                            name: 'name',
+                            value: 'id',
+                        },
+                        data: [],
+                        on: function (selected) {
+                            if (selected.arr.length > 0) {
+                                $.ajax({
+                                    type: "get",
+                                    url: "/common/getAllCarStyles?cbId=" + selected.arr[0].id,
+                                    success: function (data) {
+                                        carSeriesSelect.update({
+                                            data: data.result
+                                        })
+                                    }
+                                })
+                            }
+
+                        }
+                    })
+
+                    carSeriesSelect = xmSelect.render({
+                        el: '#carSeriesId',
+                        filterable: true,
+                        tips: '请选择车系',
+                        radio: true,
+                        direction: 'down',
+                        toolbar: {show: true},
+                        prop: {
+                            name: 'name',
+                            value: 'id',
+                        },
+                        data: []
+                    })
+
+                    $.ajax({
+                        type: "get",
+                        url: "/common/getAllBrand",
+                        success: function (data) {
+                            brandSelect.update({
+                                data: data.result
+                            })
+                            if (obj.data.brandId != null) {
+                                brandSelect.setValue([obj.data.brandId]);
+                                $.ajax({
+                                    type: "get",
+                                    url: "/common/getAllCarStyles?cbId=" + obj.data.brandId,
+                                    success: function (data) {
+                                        carSeriesSelect.update({
+                                            data: data.result
+                                        })
+                                        carSeriesSelect.setValue([obj.data.carSeriesId]);
+                                    }
+                                })
+                            }
+                        }
+                    })
+                } else {
+                    $("#brandSelectDiv").hide();
+                    $("#nameDiv").show();
+                }
+
+                /* 如果是页面层 */
+                formWindow = layer.open({
+                    type: 1,  //可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                    title: '修改信息',//数组第二项可以写任意css样式；如果你不想显示标题栏，你可以title: false
+                    area: '500px',
+                    shadeClose: true,
+                    content: $('#show_div')
+                });
+            } else if (obj.event == 'delete') {
+                layer.confirm('确定删除该' + $("li[class='layui-this']").text() + '吗?', {
+                    icon: 3,
+                    title: '提示'
+                }, function (index) {
+                    $.ajax({
+                        type: 'post',
+                        url: '/afterSale/keepOnRecord/deleteById',
+                        dataType: 'json',
+                        data: {id: data.id},
+                        success: function (s) {
+                            var icon = 0;
+                            if (s.responseHeader.status == 200) {
+                                icon = 6;
+                            } else {
+                                icon = 5;
+                            }
+                            layer.alert(s.responseHeader.message, {icon: icon, title: '提示'}, function (i) {
+                                //关闭弹窗
+                                layer.close(i);
+                                reloadData();
+                            });
+
+                        },
+                        error: function (e) {
+                            layer.alert('网络繁忙', {icon: 5, title: '提示'});
+                        }
+                    })
+                    layer.close(index);
+                })
+            }
+        });
+        // 监听提交
+        $("#submitBtn").click(function () {
+            var formLicencePlate = $("#formLicencePlate").val();
+            var formUserName = $("#formUserName").val();
+            var formUserPhone = $("#formUserPhone").val();
+
+            //$('#submitBtn').attr('disabled', 'disabled');
+            // var loadIndex = layer.load(1, {
+            //     shade: [0.5, '#000']
+            // })
+            var userType = $("li[class='layui-this']").text() == "备案用户" ? 0 : ($("li[class='layui-this']").text() == "流失用户" ? 1 : 2);
+            if (userType == 2) {
+                var brandId = null;
+                var brandName = null;
+                if (brandSelect && brandSelect.getValue().length > 0) {
+                    brandId = brandSelect.getValue()[0].id;
+                    brandName = brandSelect.getValue()[0].name;
+                }
+                var carSeriesId = null;
+                var carSeriesName = null;
+                if (carSeriesSelect && carSeriesSelect.getValue().length > 0) {
+                    carSeriesId = carSeriesSelect.getValue()[0].id;
+                    carSeriesName = carSeriesSelect.getValue()[0].name;
+                }
+
+                if (brandSelect && brandSelect.getValue().length == 0) {
+                    layer.msg("请选择品牌", {icon: 5, time: 1000});
+                    return false;
+                }
+
+                if (carSeriesSelect && carSeriesSelect.getValue().length == 0) {
+                    layer.msg("请选择车系", {icon: 5, time: 1000});
+                    return false;
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: '/afterSale/keepOnRecord/updateBrandCarSeriesById',
+                    data: {
+                        "id": $("#updateId").val(),
+                        "brandId": brandId,
+                        "brandName": brandName,
+                        "carSeriesId": carSeriesId,
+                        "carSeriesName": carSeriesName,
+                        "originalBrandName": $("#brandSelectDiv input[name='originalBrandName']").val(),
+                        "originalCarSeriesName": $("#brandSelectDiv input[name='originalCarSeriesName']").val()
+                    },
+                    success: function (data) {
+                        $('#submitBtn').removeAttr('disabled');
+                        if (data.responseHeader.status == 200) {
+                            layer.msg("保存成功", {
+                                icon: 6, time: 1000, end: function () {
+                                    reloadData();
+                                }
+                            });
+
+                            layer.close(formWindow);
+                        } else {
+                            layer.alert(data.responseHeader.message == null ? "有一丝丝问题，请联系管理员" : data.responseHeader.message, {icon: 5});
+                        }
+                        layer.close(layer.index);
+                    },
+                    error: function (e) {
+                        console.log(e);
+                        layer.close(formWindow);
+                        layer.msg("有一丝丝问题，请联系管理员", {icon: 5});
+                        $('#submitBtn').removeAttr('disabled');
+                        return false;
+                    }
+                });
+            } else {
+                var phoneReg = /(^1[3|4|5|7|8|9]\d{9}$)|(^09\d{8}$)/;
+                var nameReg = /^[\u4E00-\u9FA5]{2,5}$/;
+                var licencePlateReg = /^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-HJ-NP-Z0-9]{4,5}[A-HJ-NP-Z0-9挂学警港澳]{1}$/;
+                if (userType == 0) {
+
+                    if (formUserName != "" && !nameReg.test(formUserName)) {
+                        layer.msg("姓名格式不正确,请输入2-5个汉字", {icon: 5, time: 3000});
+                        return false;
+                    }
+
+                    if (formUserPhone == "" && formLicencePlate == "") {
+                        layer.msg("手机号或车牌号必填其一", {icon: 5, time: 3000});
+                        return false;
+                    }
+                    if (formUserPhone != "" && !phoneReg.test(formUserPhone)) {
+                        layer.msg("手机号格式不正确", {icon: 5, time: 3000});
+                        return false;
+                    }
+                    if (formLicencePlate != "" && !licencePlateReg.test(formLicencePlate)) {
+                        layer.msg("车牌号格式不正确", {icon: 5, time: 3000});
+                        return false;
+                    }
+                } else if (userType == 1) {
+                    if (!nameReg.test(formUserName)) {
+                        layer.msg("姓名格式不正确,请输入2-5个汉字", {icon: 5, time: 3000});
+                        return false;
+                    }
+                    if (!phoneReg.test(formUserPhone)) {
+                        layer.msg("手机号格式不正确", {icon: 5, time: 3000});
+                        return false;
+                    }
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: '/afterSale/keepOnRecord/updateById',
+                    data: {
+                        "id": $("#updateId").val(),
+                        "activityId": activityId,
+                        "userName": formUserName,
+                        "licencePlate": formLicencePlate,
+                        "userPhone": formUserPhone
+                    },
+                    success: function (data) {
+                        $('#submitBtn').removeAttr('disabled');
+                        if (data.responseHeader.status == 200) {
+                            layer.msg("保存成功", {
+                                icon: 6, time: 1000, end: function () {
+                                    reloadData();
+                                }
+                            });
+
+                            layer.close(formWindow);
+                        } else {
+                            layer.alert(data.responseHeader.message == null ? "有一丝丝问题，请联系管理员" : data.responseHeader.message, {icon: 5});
+                        }
+                        layer.close(layer.index);
+                    },
+                    error: function (e) {
+                        console.log(e);
+                        layer.close(formWindow);
+                        layer.msg("有一丝丝问题，请联系管理员", {icon: 5});
+                        $('#submitBtn').removeAttr('disabled');
+                        return false;
+                    }
+                });
+            }
+
+            return false;
+        });
+
+        $("#deleteBtn").click(function(){
+            deleteAll();
+        })
+        function deleteAll() {
+            layer.confirm('确定删除所有的' + $("li[class='layui-this']").text() + '吗?', {
+                icon: 3,
+                title: '提示'
+            }, function (index) {
+                var userType = $("li[class='layui-this']").text() == "备案用户" ? 0 : ($("li[class='layui-this']").text() == "流失用户" ? 1 : 2);
+                $.ajax({
+                    type: 'post',
+                    url: '/afterSale/keepOnRecord/deleteAll',
+                    dataType: 'json',
+                    data: {activityId: activityId, userType: userType},
+                    success: function (s) {
+                        var icon = 0;
+                        if (s.responseHeader.status == 200) {
+                            icon = 6;
+                        } else {
+                            icon = 5;
+                        }
+                        layer.alert(s.responseHeader.message, {icon: icon, title: '提示'}, function (i) {
+                            //关闭弹窗
+                            layer.close(i);
+                            reloadData();
+                        });
+
+                    },
+                    error: function (e) {
+                        layer.alert('网络繁忙', {icon: 5, title: '提示'});
+                    }
+                })
+                layer.close(index);
+            })
+        }
+        //执行实例
+        var uploadInst = upload.render({
+            elem: '#importData' //绑定元素
+            , url: '/afterSale/keepOnRecord/keepOnRecordUpload' //上传接口
+            , accept: 'file'
+            , acceptMime: '.xls,.xlsx'
+            , before: function () {
+                this.data = {
+                    activityId: activityId,
+                    userType: $("li[class='layui-this']").text() == "备案用户" ? 0 : 1
+                }
+                var loadMsg = "上传中，请稍后";
+                layer.msg(loadMsg, {
+                    time: 0,
+                });
+            }
+            , size: 2048//限制大小为2M
+            , done: function (res) {
+                layui.use('layer', function () {
+                    layer.close();
+                    layer.msg(res.responseHeader.message, {
+                        time: 0, //6s后自动关闭
+                        icon: 1,
+                        btn: ['关闭']
+                    });
+                    table.reload("afterSaleCouponListTable1", {});
+                    table.reload("afterSaleCouponListTable2", {});
+                });
+            }
+            , error: function () {
+                //请求异常回调
+            }
+        });
+        window.commOpen = function (title, url, width, height) {
+            layer.open({
+                title: title,
+                type: 2,
+                shadeClose: true,
+                content: url,
+                area: [width, height]
+            });
+        }
+
+        //搜索
+        $("#search").on("click", function () {
+            reloadData();
+        });
+        $("#closeForm").on("click", function () {
+            layer.close(formWindow);
+        });
+        function reloadData(){
+            var userPhone = $("#userName").val();
+            var userName = $("#userName").val();
+            var licencePlate = $("#userName").val();
+            var matchingStatus = $("#matchingStatus").val();
+            table.reload("afterSaleCouponListTable1", {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: {
+                    "activityId": activityId,
+                    "userName": userName,
+                    "licencePlate": licencePlate,
+                    "userPhone": userPhone,
+                    "userType": 0
+                }
+            })
+            table.reload("afterSaleCouponListTable2", {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: {
+                    "activityId": activityId,
+                    "userName": userName,
+                    "licencePlate": licencePlate,
+                    "userPhone": userPhone,
+                    "userType": 1
+                }
+            })
+            table.reload("afterSaleCouponListTable3", {
+                where: {
+                    "activityId": activityId,
+                    "status": matchingStatus
+                }
+            })
+        }
+
+        $("#syncData").on("click", function () {
+            if ($("#syncData a").text() == "同步中(点击刷新同步状态)") {
+                getSyncDataStatus();
+                reloadData();
+                return;
+            }
+            $.ajax({
+                type: 'post',
+                url: '/afterSale/keepOnRecord/getUnmatchedData',
+                dataType: 'json',
+                data: {activityId: activityId},
+                success: function (ss) {
+                    if (ss.responseHeader.status != 200) {
+                        return;
+                    }
+                    if (ss.response.result.length == 0) {
+
+                        $("#syncData a").text("同步中(点击刷新同步状态)");
+                        $.ajax({
+                            type: 'post',
+                            url: '/afterSale/keepOnRecord/syncData',
+                            dataType: 'json',
+                            data: {activityId: activityId},
+                            success: function (s) {
+                                layer.alert("同步数据中，预计需要3－5分钟完成", {icon: 6, title: '提示'}, function (i) {
+                                    //关闭弹窗
+                                    layer.close(i);
+                                });
+                            },
+                            error: function (e) {
+                                layer.alert('网络繁忙', {icon: 5, title: '提示'});
+                                $("#syncData a").text("同步数据");
+                            }
+                        })
+                    } else {
+                        layer.confirm('您有车系未匹配，确定同步么', {
+                            icon: 3,
+                            title: '提示'
+                        }, function (index) {
+                            $("#syncData a").text("同步中(点击刷新同步状态)");
+                            $.ajax({
+                                type: 'post',
+                                url: '/afterSale/keepOnRecord/syncData',
+                                dataType: 'json',
+                                data: {activityId: activityId},
+                                success: function (s) {
+                                    layer.alert("同步数据中，预计需要3－5分钟完成", {icon: 6, title: '提示'}, function (i) {
+                                        //关闭弹窗
+                                        layer.close(i);
+                                    });
+                                },
+                                error: function (e) {
+                                    layer.alert('网络繁忙', {icon: 5, title: '提示'});
+                                    $("#syncData a").text("同步数据");
+                                }
+                            })
+                        })
+                    }
+
+                },
+                error: function (e) {
+                    layer.alert('网络繁忙', {icon: 5, title: '提示'});
+                    $("#syncData a").text("同步数据");
+                }
+            })
+        });
+        $("#export").on("click", function () {
+            var userPhone = $("#userName").val();
+            var userName = $("#userName").val();
+            var licencePlate = $("#userName").val();
+            window.open("/afterSale/keepOnRecord/export?activityId=" + activityId + "&userName=" + userName + "&licencePlate=" + licencePlate + "&userPhone=" + userPhone + "&userType=1");
+
+        });
+        element.on('tab(tabChange)', function (data) {
+            var userPhone = $("#userName").val();
+            var userName = $("#userName").val();
+            var licencePlate = $("#userName").val();
+            var matchingStatus = $("#matchingStatus").val();
+            $("#syncData").hide();
+            $("#export").hide();
+            if (data.index == 0) {
+                $("#statusSelect").hide();
+                $("#deleteBtn").show();
+                $("#nameInput").show();
+                // $("#phoneInput").show();
+                // $("#licencePlateInput").show();
+                $("#importButton").show();
+                $("#deleteButton").show();
+                $("#downloadButton").show();
+                table.reload("afterSaleCouponListTable1", {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    },
+                    where: {
+                        "activityId": activityId,
+                        "userName": userName,
+                        "licencePlate": licencePlate,
+                        "userPhone": userPhone,
+                        "userType": 0
+                    }
+                })
+            } else if (data.index == 1) {
+                getSyncDataStatus();
+                $("#syncData").show();
+                $("#export").show();
+                $("#statusSelect").hide();
+                $("#deleteBtn").show();
+                $("#nameInput").show();
+                // $("#phoneInput").show();
+                // $("#licencePlateInput").show();
+                $("#importButton").show();
+                $("#deleteButton").show();
+                $("#downloadButton").show();
+                table.reload("afterSaleCouponListTable2", {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    },
+                    where: {
+                        "activityId": activityId,
+                        "userName": userName,
+                        "licencePlate": licencePlate,
+                        "userPhone": userPhone,
+                        "userType": 1
+                    }
+                })
+            } else {
+                $("#statusSelect").show();
+
+                $("#deleteBtn").hide();
+                $("#nameInput").hide();
+                // $("#phoneInput").hide();
+                // $("#licencePlateInput").hide();
+                $("#importButton").hide();
+                $("#deleteButton").hide();
+                $("#downloadButton").hide();
+                table.reload("afterSaleCouponListTable3", {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    },
+                    where: {
+                        "activityId": activityId,
+                        "status": matchingStatus
+                    }
+                })
+            }
+        });
+    })
+    //模板下载
+    function downloadTemplate() {
+        var userType = layui.jquery("li[class='layui-this']").text() == "备案用户" ? 0 : (layui.jquery("li[class='layui-this']").text() == "流失用户" ? 1 : 2);
+        var fileName = "bei_an";
+        if (userType == 1) {
+            fileName = "liu_shi"
+        }
+        window.open("/common/download?fileName=" + fileName + ".xlsx&contentType=application/vnd.ms-excel;charset=UTF-8");
+    }
+    function getSyncDataStatus(){
+        layui.jquery.ajax({
+            type: 'post',
+            async:false,
+            data: {activityId: [[${afterSaleActivity.id}]]},
+            url: '/afterSale/keepOnRecord/getSyncDataStatus',
+            dataType: 'json',
+            success: function (ss) {
+                if (ss.responseHeader.status != 200) {
+                    return;
+                }
+                if (ss.response.result) {
+                    layui.jquery("#syncData a").text("同步中(点击刷新同步状态)");
+                }else{
+                    layui.jquery("#syncData a").text("同步数据");
+                }
+            }
+        });
+
+    }
+</script>
+</body>
+</html>

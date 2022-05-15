@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.FashionCarMarkeWinNumReadMapper">
+    <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FashionCarMarkeWinNum">
+        <!--@mbg.generated-->
+        <!--@Table fashion_car_marke_win_num-->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="periods_id" jdbcType="INTEGER" property="periodsId"/>
+        <result column="car_fashion_id" jdbcType="INTEGER" property="carFashionId"/>
+        <result column="activity_date" jdbcType="TIMESTAMP" property="activityDate"/>
+        <result column="brand_id" jdbcType="INTEGER" property="brandId"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="help_user_id" jdbcType="INTEGER" property="helpUserId"/>
+        <result column="win_num" jdbcType="INTEGER" property="winNum"/>
+        <result column="is_win" jdbcType="TINYINT" property="isWin"/>
+        <result column="create_dt" jdbcType="TIMESTAMP" property="createDt"/>
+        <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt"/>
+        <result column="delete_flag" jdbcType="BOOLEAN" property="deleteFlag"/>
+    </resultMap>
+    <resultMap id="winnerResultMap" type="com.tuanche.directselling.dto.FashionCarMarkeWinNumDto">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="nick_name" jdbcType="VARCHAR" property="nickName"/>
+        <result column="user_phone" jdbcType="VARCHAR" property="userPhone"/>
+        <result column="win_num" jdbcType="INTEGER" property="winNum"/>
+        <result column="brand_id" jdbcType="INTEGER" property="brandId"/>
+        <result column="activity_date" jdbcType="TIMESTAMP" property="activityDate"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, user_id,car_fashion_id,activity_date, brand_id,help_user_id, win_num, is_win, create_dt, update_dt,
+        delete_flag
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from fashion_car_marke_win_num
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectByActivityIdAndUserId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from fashion_car_marke_win_num where periods_id=#{periodsId} and user_id=#{userId} and delete_flag=0
+    </select>
+
+    <select id="selectCountByActivityIdAndUserId" resultType="java.lang.Integer">
+        select
+        count(id)
+        from fashion_car_marke_win_num where user_id=#{userId} and delete_flag=0
+        <if test="periodsId!=null">
+            and periods_id=#{periodsId}
+        </if>
+    </select>
+
+    <select id="getFashionCarMarkeWinNumList" resultMap="BaseResultMap"
+            parameterType="com.tuanche.directselling.model.FashionCarMarkeWinNum">
+        select
+        <include refid="Base_Column_List"/>
+        from fashion_car_marke_win_num
+        where delete_flag=0
+        <if test="periodsId != null">
+            and periods_id = #{periodsId}
+        </if>
+        <if test="carFashionId != null">
+            and car_fashion_id = #{carFashionId}
+        </if>
+        <if test="userId != null">
+            and user_id = #{userId,jdbcType=INTEGER}
+        </if>
+        <if test="activityDate != null">
+            and activity_date = #{activityDate,jdbcType=DATE}
+        </if>
+        <if test="brandId != null">
+            and brand_id = #{brandId,jdbcType=INTEGER}
+        </if>
+        <if test="helpUserId != null">
+            and help_user_id = #{helpUserId,jdbcType=INTEGER}
+        </if>
+        <if test="winNum != null">
+            and win_num = #{winNum,jdbcType=INTEGER}
+        </if>
+        <if test="isWin != null">
+            and is_win = #{isWin,jdbcType=TINYINT}
+        </if>
+        <if test="userType != null">
+            and user_type = #{userType}
+        </if>
+    </select>
+
+    <select id="selectChooseWinNum" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM fashion_car_marke_win_num where periods_id=#{periodsId} and is_win=0 and create_dt&lt;#{createTime} and
+        user_id not in (
+        select user_id from fashion_car_marke_win_num where periods_id=#{periodsId} and is_win=1
+        ) and delete_flag=0
+        ORDER BY ABS(win_num - #{winNum}) asc, win_num desc
+        LIMIT 1
+    </select>
+
+    <select id="selectNearestWinNum" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM fashion_car_marke_win_num where periods_id=#{periodsId} and delete_flag=0
+        ORDER BY ABS(win_num - #{winNum}) asc, win_num desc
+        LIMIT 1
+    </select>
+
+    <select id="selectCurrentDayWinNum" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM fashion_car_marke_win_num
+        where is_win = 1 and delete_flag = 0
+        and periods_id = #{periodsId}
+        and activity_date = #{activityDate}
+        LIMIT 1
+    </select>
+
+    <select id="selectFashionCarMarkeWinnerList" parameterType="com.tuanche.directselling.dto.FashionCarMarkeWinNumDto" resultMap="winnerResultMap">
+        SELECT
+            win.id id,
+            win.user_id,
+        cuser.nick_name,
+        insert(cuser.user_phone,4,4,'****') as user_phone,
+        win.win_num,
+        win.brand_id,
+        win.activity_date
+        FROM
+        fashion_car_marke_win_num win
+        LEFT JOIN fashion_car_marke_user cuser ON win.user_id = cuser.user_id
+        WHERE
+        win.delete_flag = 0
+        and win.is_win = 1
+        and win.periods_id = #{periodsId}
+        <if test="nickName != null and nickName != ''">
+            and cuser.nick_name LIKE CONCAT("%",#{nickName},"%")
+        </if>
+        <if test="userPhone != null  and userPhone != ''">
+            and cuser.user_phone = #{userPhone,jdbcType=VARCHAR}
+        </if>
+        GROUP BY win.id
+    </select>
+
+    <select id="selectWinNum" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM fashion_car_marke_win_num
+        where delete_flag = 0
+        and periods_id = #{periodsId} and win_num=#{winNum}
+        LIMIT 1
+    </select>
+</mapper>

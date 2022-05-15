@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.FissionAwardRuleWriteMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FissionAwardRule">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="fission_id" jdbcType="INTEGER" property="fissionId" />
+    <result column="rule_type" jdbcType="SMALLINT" property="ruleType" />
+    <result column="prize_pool" jdbcType="DECIMAL" property="prizePool" />
+    <result column="person_money" jdbcType="DECIMAL" property="personMoney" />
+    <result column="task_code" jdbcType="VARCHAR" property="taskCode" />
+    <result column="award" jdbcType="DECIMAL" property="award" />
+    <result column="award_rule" jdbcType="DECIMAL" property="awardRule" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, fission_id, rule_type, prize_pool, person_money, task_code, award, award_rule
+  </sql>
+  <delete id="deleteByFissionId" >
+    delete from fission_award_rule
+    where fission_id = #{fissionId,jdbcType=INTEGER} and rule_type = #{ruleType,jdbcType=SMALLINT}
+  </delete>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from fission_award_rule
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tuanche.directselling.model.FissionAwardRule">
+    insert into fission_award_rule (id, fission_id, rule_type,
+      prize_pool, person_money, task_code,
+      award, award_rule)
+    values (#{id,jdbcType=INTEGER}, #{fissionId,jdbcType=INTEGER}, #{ruleType,jdbcType=SMALLINT},
+      #{prizePool,jdbcType=DECIMAL}, #{personMoney,jdbcType=DECIMAL}, #{taskCode,jdbcType=VARCHAR},
+      #{award,jdbcType=DECIMAL}, #{awardRule,jdbcType=DECIMAL})
+  </insert>
+  <insert id="batchInsert">
+    insert into fission_award_rule (fission_id, rule_type,
+    prize_pool, person_money, task_code,
+    award, award_rule)
+    values
+    <foreach collection="awardRuleList" item="item" index="index" separator=",">
+      (  #{item.fissionId,jdbcType=INTEGER}, #{item.ruleType,jdbcType=SMALLINT},
+      #{item.prizePool,jdbcType=DECIMAL}, #{item.personMoney,jdbcType=DECIMAL}, #{item.taskCode,jdbcType=VARCHAR},
+      #{item.award,jdbcType=DECIMAL}, #{item.awardRule,jdbcType=DECIMAL})
+    </foreach>
+  </insert>
+  <insert id="insertSelective" parameterType="com.tuanche.directselling.model.FissionAwardRule">
+    insert into fission_award_rule
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="fissionId != null">
+        fission_id,
+      </if>
+      <if test="ruleType != null">
+        rule_type,
+      </if>
+      <if test="prizePool != null">
+        prize_pool,
+      </if>
+      <if test="personMoney != null">
+        person_money,
+      </if>
+      <if test="taskCode != null">
+        task_code,
+      </if>
+      <if test="award != null">
+        award,
+      </if>
+      <if test="awardRule != null">
+        award_rule,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="fissionId != null">
+        #{fissionId,jdbcType=INTEGER},
+      </if>
+      <if test="ruleType != null">
+        #{ruleType,jdbcType=SMALLINT},
+      </if>
+      <if test="prizePool != null">
+        #{prizePool,jdbcType=DECIMAL},
+      </if>
+      <if test="personMoney != null">
+        #{personMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="taskCode != null">
+        #{taskCode,jdbcType=VARCHAR},
+      </if>
+      <if test="award != null">
+        #{award,jdbcType=DECIMAL},
+      </if>
+      <if test="awardRule != null">
+        #{awardRule,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.FissionAwardRule">
+    update fission_award_rule
+    <set>
+      <if test="fissionId != null">
+        fission_id = #{fissionId,jdbcType=INTEGER},
+      </if>
+      <if test="ruleType != null">
+        rule_type = #{ruleType,jdbcType=SMALLINT},
+      </if>
+      <if test="prizePool != null">
+        prize_pool = #{prizePool,jdbcType=DECIMAL},
+      </if>
+      <if test="personMoney != null">
+        person_money = #{personMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="taskCode != null">
+        task_code = #{taskCode,jdbcType=VARCHAR},
+      </if>
+      <if test="award != null">
+        award = #{award,jdbcType=DECIMAL},
+      </if>
+      <if test="awardRule != null">
+        award_rule = #{awardRule,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tuanche.directselling.model.FissionAwardRule">
+    update fission_award_rule
+    set fission_id = #{fissionId,jdbcType=INTEGER},
+      rule_type = #{ruleType,jdbcType=SMALLINT},
+      prize_pool = #{prizePool,jdbcType=DECIMAL},
+      person_money = #{personMoney,jdbcType=DECIMAL},
+      task_code = #{taskCode,jdbcType=VARCHAR},
+      award = #{award,jdbcType=DECIMAL},
+      award_rule = #{awardRule,jdbcType=DECIMAL}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

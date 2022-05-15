@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.AfterSaleShareStatDetailReadMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.AfterSaleShareStatDetail">
+    <!--@mbg.generated-->
+    <!--@Table after_sale_share_stat_detail-->
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="activity_id" jdbcType="INTEGER" property="activityId" />
+    <result column="date_time" jdbcType="TIMESTAMP" property="dateTime" />
+    <result column="share_count" jdbcType="INTEGER" property="shareCount" />
+    <result column="unique_visit_count" jdbcType="INTEGER" property="uniqueVisitCount" />
+    <result column="sale_card_count" jdbcType="INTEGER" property="saleCardCount" />
+    <result column="create_dt" jdbcType="TIMESTAMP" property="createDt" />
+    <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, activity_id, date_time, share_count, unique_visit_count, sale_card_count, create_dt, 
+    update_dt
+  </sql>
+
+  <select id="selectByActivityIdAndDate" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" /> from after_sale_share_stat_detail where activity_id=#{activityId} and date_time=#{dateTime}
+  </select>
+
+  <select id="selectByActivityIdAndBetweenDate" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" /> from after_sale_share_stat_detail where activity_id=#{activityId} and date_time&gt;=#{startDateTime} and date_time&lt;=#{endDateTime} order by date_time asc
+    </select>
+</mapper>

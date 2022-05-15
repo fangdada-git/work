@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.AfterSaleUserRewardStatisticsWriteMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.AfterSaleUserRewardStatistics">
+    <id column="id" property="id" jdbcType="INTEGER"/>
+    <result column="activity_id" property="activityId" jdbcType="INTEGER"/>
+    <result column="user_wx_union_id" property="userWxUnionId" jdbcType="VARCHAR"/>
+    <result column="user_nick_name" property="userNickName" jdbcType="VARCHAR"/>
+    <result column="user_type" property="userType" jdbcType="TINYINT"/>
+    <result column="agent_wx_union_id" property="agentWxUnionId" jdbcType="VARCHAR"/>
+    <result column="agent_nick_name" property="agentNickName" jdbcType="VARCHAR"/>
+    <result column="share_wx_union_id" property="shareWxUnionId" jdbcType="VARCHAR"/>
+    <result column="share_nick_name" property="shareNickName" jdbcType="VARCHAR"/>
+    <result column="purchase_reward" property="purchaseReward" jdbcType="DECIMAL" />
+    <result column="share_reward" property="shareReward" jdbcType="DECIMAL" />
+    <result column="extra_reward" property="extraReward" jdbcType="DECIMAL" />
+    <result column="have_gift_certificates" property="haveGiftCertificates" jdbcType="BIT" />
+    <result column="invitees_num" property="inviteesNum" jdbcType="INTEGER" />
+    <result column="payment_successful_amount" property="paymentSuccessfulAmount" jdbcType="DECIMAL" />
+    <result column="payment_failure_amount" property="paymentFailureAmount" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, activity_id, user_wx_union_id, user_nick_name, user_type, agent_wx_union_id,
+    agent_nick_name, share_wx_union_id, share_nick_name, purchase_reward, share_reward,
+    extra_reward, have_gift_certificates, invitees_num, payment_successful_amount, payment_failure_amount
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from after_sale_user_reward_statistics
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from after_sale_user_reward_statistics
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tuanche.directselling.model.AfterSaleUserRewardStatistics" >
+    insert into after_sale_user_reward_statistics (id, activity_id, user_wx_union_id,
+      user_nick_name, user_type, agent_wx_union_id,
+      agent_nick_name, share_wx_union_id, share_nick_name,
+      purchase_reward, share_reward, extra_reward,
+      have_gift_certificates, invitees_num, payment_successful_amount,
+      payment_failure_amount)
+    values (#{id,jdbcType=INTEGER}, #{activityId,jdbcType=INTEGER}, #{userWxUnionId,jdbcType=VARCHAR},
+      #{userNickName,jdbcType=VARCHAR}, #{userType,jdbcType=TINYINT}, #{agentWxUnionId,jdbcType=VARCHAR},
+      #{agentNickName,jdbcType=VARCHAR}, #{shareWxUnionId,jdbcType=VARCHAR}, #{shareNickName,jdbcType=VARCHAR},
+      #{purchaseReward,jdbcType=DECIMAL}, #{shareReward,jdbcType=DECIMAL}, #{extraReward,jdbcType=DECIMAL},
+      #{haveGiftCertificates,jdbcType=BIT}, #{inviteesNum,jdbcType=INTEGER}, #{paymentSuccessfulAmount,jdbcType=DECIMAL},
+      #{paymentFailureAmount,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.tuanche.directselling.model.AfterSaleUserRewardStatistics" >
+    insert into after_sale_user_reward_statistics
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="activityId != null" >
+        activity_id,
+      </if>
+      <if test="userWxUnionId != null" >
+        user_wx_union_id,
+      </if>
+      <if test="userNickName != null" >
+        user_nick_name,
+      </if>
+      <if test="userType != null" >
+        user_type,
+      </if>
+      <if test="agentWxUnionId != null" >
+        agent_wx_union_id,
+      </if>
+      <if test="agentNickName != null" >
+        agent_nick_name,
+      </if>
+      <if test="shareWxUnionId != null" >
+        share_wx_union_id,
+      </if>
+      <if test="shareNickName != null" >
+        share_nick_name,
+      </if>
+      <if test="purchaseReward != null" >
+        purchase_reward,
+      </if>
+      <if test="shareReward != null" >
+        share_reward,
+      </if>
+      <if test="extraReward != null" >
+        extra_reward,
+      </if>
+      <if test="haveGiftCertificates != null" >
+        have_gift_certificates,
+      </if>
+      <if test="inviteesNum != null" >
+        invitees_num,
+      </if>
+      <if test="paymentSuccessfulAmount != null" >
+        payment_successful_amount,
+      </if>
+      <if test="paymentFailureAmount != null" >
+        payment_failure_amount,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="activityId != null" >
+        #{activityId,jdbcType=INTEGER},
+      </if>
+      <if test="userWxUnionId != null" >
+        #{userWxUnionId,jdbcType=VARCHAR},
+      </if>
+      <if test="userNickName != null" >
+        #{userNickName,jdbcType=VARCHAR},
+      </if>
+      <if test="userType != null" >
+        #{userType,jdbcType=TINYINT},
+      </if>
+      <if test="agentWxUnionId != null" >
+        #{agentWxUnionId,jdbcType=VARCHAR},
+      </if>
+      <if test="agentNickName != null" >
+        #{agentNickName,jdbcType=VARCHAR},
+      </if>
+      <if test="shareWxUnionId != null" >
+        #{shareWxUnionId,jdbcType=VARCHAR},
+      </if>
+      <if test="shareNickName != null" >
+        #{shareNickName,jdbcType=VARCHAR},
+      </if>
+      <if test="purchaseReward != null" >
+        #{purchaseReward,jdbcType=DECIMAL},
+      </if>
+      <if test="shareReward != null" >
+        #{shareReward,jdbcType=DECIMAL},
+      </if>
+      <if test="extraReward != null" >
+        #{extraReward,jdbcType=DECIMAL},
+      </if>
+      <if test="haveGiftCertificates != null" >
+        #{haveGiftCertificates,jdbcType=BIT},
+      </if>
+      <if test="inviteesNum != null" >
+        #{inviteesNum,jdbcType=INTEGER},
+      </if>
+      <if test="paymentSuccessfulAmount != null" >
+        #{paymentSuccessfulAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="paymentFailureAmount != null" >
+        #{paymentFailureAmount,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.AfterSaleUserRewardStatistics" >
+    update after_sale_user_reward_statistics
+    <set >
+      <if test="activityId != null" >
+        activity_id = #{activityId,jdbcType=INTEGER},
+      </if>
+      <if test="userWxUnionId != null" >
+        user_wx_union_id = #{userWxUnionId,jdbcType=VARCHAR},
+      </if>
+      <if test="userNickName != null" >
+        user_nick_name = #{userNickName,jdbcType=VARCHAR},
+      </if>
+      <if test="userType != null" >
+        user_type = #{userType,jdbcType=TINYINT},
+      </if>
+      <if test="agentWxUnionId != null" >
+        agent_wx_union_id = #{agentWxUnionId,jdbcType=VARCHAR},
+      </if>
+      <if test="agentNickName != null" >
+        agent_nick_name = #{agentNickName,jdbcType=VARCHAR},
+      </if>
+      <if test="shareWxUnionId != null" >
+        share_wx_union_id = #{shareWxUnionId,jdbcType=VARCHAR},
+      </if>
+      <if test="shareNickName != null" >
+        share_nick_name = #{shareNickName,jdbcType=VARCHAR},
+      </if>
+      <if test="purchaseReward != null" >
+        purchase_reward = #{purchaseReward,jdbcType=DECIMAL},
+      </if>
+      <if test="shareReward != null" >
+        share_reward = #{shareReward,jdbcType=DECIMAL},
+      </if>
+      <if test="extraReward != null" >
+        extra_reward = #{extraReward,jdbcType=DECIMAL},
+      </if>
+      <if test="haveGiftCertificates != null" >
+        have_gift_certificates = #{haveGiftCertificates,jdbcType=BIT},
+      </if>
+      <if test="inviteesNum != null" >
+        invitees_num = #{inviteesNum,jdbcType=INTEGER},
+      </if>
+      <if test="paymentSuccessfulAmount != null" >
+        payment_successful_amount = #{paymentSuccessfulAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="paymentFailureAmount != null" >
+        payment_failure_amount = #{paymentFailureAmount,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tuanche.directselling.model.AfterSaleUserRewardStatistics" >
+    update after_sale_user_reward_statistics
+    set activity_id = #{activityId,jdbcType=INTEGER},
+      user_wx_union_id = #{userWxUnionId,jdbcType=VARCHAR},
+      user_nick_name = #{userNickName,jdbcType=VARCHAR},
+      user_type = #{userType,jdbcType=TINYINT},
+      agent_wx_union_id = #{agentWxUnionId,jdbcType=VARCHAR},
+      agent_nick_name = #{agentNickName,jdbcType=VARCHAR},
+      share_wx_union_id = #{shareWxUnionId,jdbcType=VARCHAR},
+      share_nick_name = #{shareNickName,jdbcType=VARCHAR},
+      purchase_reward = #{purchaseReward,jdbcType=DECIMAL},
+      share_reward = #{shareReward,jdbcType=DECIMAL},
+      extra_reward = #{extraReward,jdbcType=DECIMAL},
+      write_off_gift_certificates_total = #{writeOffGiftCertificatesTotal,jdbcType=INTEGER},
+      invitees_num = #{inviteesNum,jdbcType=INTEGER},
+      payment_successful_amount = #{paymentSuccessfulAmount,jdbcType=DECIMAL},
+      payment_failure_amount = #{paymentFailureAmount,jdbcType=DECIMAL}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+    <insert id="batchInsert"  >
+        insert into after_sale_user_reward_statistics (activity_id,dealer_id, user_wx_union_id,
+             user_type, purchase_reward,
+            share_reward, extra_reward, write_off_gift_certificates_total,
+            invitees_num, payment_successful_amount, payment_failure_amount)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.activityId,jdbcType=INTEGER},#{item.dealerId,jdbcType=INTEGER}, #{item.userWxUnionId,jdbcType=VARCHAR},
+             #{item.userType,jdbcType=TINYINT}, #{item.purchaseReward,jdbcType=DECIMAL},
+            #{item.shareReward,jdbcType=DECIMAL}, #{item.extraReward,jdbcType=DECIMAL}, #{item.writeOffGiftCertificatesTotal,jdbcType=INTEGER},
+            #{item.inviteesNum,jdbcType=INTEGER}, #{item.paymentSuccessfulAmount,jdbcType=DECIMAL}, #{item.paymentFailureAmount,jdbcType=DECIMAL})
+        </foreach>
+    </insert>
+
+    <update id="batchupdate"  >
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update after_sale_user_reward_statistics
+            <set>
+                user_type = #{item.userType,jdbcType=TINYINT},
+                purchase_reward = #{item.purchaseReward,jdbcType=DECIMAL},
+                share_reward = #{item.shareReward,jdbcType=DECIMAL},
+                extra_reward = #{item.extraReward,jdbcType=DECIMAL},
+                write_off_gift_certificates_total = #{item.writeOffGiftCertificatesTotal,jdbcType=INTEGER},
+                invitees_num = #{item.inviteesNum,jdbcType=INTEGER},
+                payment_successful_amount = #{item.paymentSuccessfulAmount,jdbcType=DECIMAL},
+                payment_failure_amount = #{item.paymentFailureAmount,jdbcType=DECIMAL}
+            </set>
+            where id = ${item.id}
+        </foreach>
+    </update>
+</mapper>

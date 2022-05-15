@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.FissionSalesOrderWriteMapper" >
+  <resultMap id="BaseResultMapDto" type="com.tuanche.directselling.dto.FissionSalesOrderDto" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+    <result column="periods_id" property="periodsId" jdbcType="INTEGER" />
+    <result column="periods_name" property="periodsName" jdbcType="VARCHAR" />
+    <result column="fission_id" property="fissionId" jdbcType="INTEGER" />
+    <result column="activity_name" property="activityName" jdbcType="VARCHAR" />
+    <result column="activityBeginDate" property="activityBeginDate" jdbcType="TIMESTAMP" />
+    <result column="activityEndDate" property="activityEndDate" jdbcType="TIMESTAMP" />
+    <result column="dealer_id" property="dealerId" jdbcType="INTEGER" />
+    <result column="sale_id" property="saleId" jdbcType="INTEGER" />
+    <result column="order_status" property="orderStatus" jdbcType="TINYINT" />
+    <result column="order_type" property="orderType" jdbcType="BIT" />
+    <result column="order_amount" property="orderAmount" jdbcType="DECIMAL" />
+    <result column="pay_type" property="payType" jdbcType="TINYINT" />
+    <result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    t1.id, t1.order_no, t1.periods_id, t1.fission_id, t1.dealer_id, t1.sale_id, t1.order_status, t1.order_type,
+    t1.order_amount, t1.pay_type, t1.pay_time, t1.create_dt, t1.update_dt, t1.update_user_id, t1.delete_flag
+  </sql>
+
+  <sql id="query_list_sql" >
+    select
+    <include refid="Base_Column_List" />
+    , t2.periods_name
+    , t2.activity_name
+    , t2.start_time as activityBeginDate
+    , t2.end_time as activityEndDate
+    from fission_sales_order t1
+    left join fission_activity t2 on t1.fission_id=t2.id
+    where t1.delete_flag = 0 and t2.delete_flag=0
+    <choose>
+      <when test="id !=null">
+        and t1.id = #{id}
+      </when>
+      <otherwise>
+        <if test="orderNo !=null and orderNo!=''">
+          and t1.order_no = #{orderNo}
+        </if>
+        <if test="periodsId !=null">
+          and t1.periods_id = #{periodsId}
+        </if>
+        <if test="fissionId !=null">
+          and t1.fission_id = #{fissionId}
+        </if>
+        <if test="dealerId !=null">
+          and t1.dealer_id = #{dealerId}
+        </if>
+        <if test="saleId !=null">
+          and t1.sale_id = #{saleId}
+        </if>
+        <if test="saleIdList !=null and saleIdList.size>0">
+          and t1.sale_id in
+          <foreach collection="saleIdList" item="saleId" open="(" separator="," close="）">
+            #{saleId}
+          </foreach>
+        </if>
+        <if test="orderStatus !=null">
+          and t1.order_status = #{orderStatus}
+        </if>
+        <if test="orderType !=null">
+          and t1.order_type = #{orderType}
+        </if>
+      </otherwise>
+    </choose>
+    ORDER BY create_dt DESC
+  </sql>
+
+  <select id="getFissionSalesOrderListByWrite" resultMap="BaseResultMapDto" parameterType="com.tuanche.directselling.model.FissionSalesOrder" >
+    <include refid="query_list_sql" />
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from fission_sales_order
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.tuanche.directselling.model.FissionSalesOrder" useGeneratedKeys="true" keyProperty="id">
+    insert into fission_sales_order
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="orderNo != null" >
+        order_no,
+      </if>
+      <if test="periodsId != null" >
+        periods_id,
+      </if>
+      <if test="fissionId != null" >
+        fission_id,
+      </if>
+      <if test="dealerId != null" >
+        dealer_id,
+      </if>
+      <if test="saleId != null" >
+        sale_id,
+      </if>
+      <if test="orderStatus != null" >
+        order_status,
+      </if>
+      <if test="orderType != null" >
+        order_type,
+      </if>
+      <if test="orderAmount != null" >
+        order_amount,
+      </if>
+      <if test="payType != null" >
+        pay_type,
+      </if>
+      <if test="payTime != null" >
+        pay_time,
+      </if>
+      <if test="createDt != null" >
+        create_dt,
+      </if>
+      <if test="updateDt != null" >
+        update_dt,
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id,
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="orderNo != null" >
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="periodsId != null" >
+        #{periodsId,jdbcType=INTEGER},
+      </if>
+      <if test="fissionId != null" >
+        #{fissionId,jdbcType=INTEGER},
+      </if>
+      <if test="dealerId != null" >
+        #{dealerId,jdbcType=INTEGER},
+      </if>
+      <if test="saleId != null" >
+        #{saleId,jdbcType=INTEGER},
+      </if>
+      <if test="orderStatus != null" >
+        #{orderStatus,jdbcType=TINYINT},
+      </if>
+      <if test="orderType != null" >
+        #{orderType,jdbcType=BIT},
+      </if>
+      <if test="orderAmount != null" >
+        #{orderAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="payType != null" >
+        #{payType,jdbcType=TINYINT},
+      </if>
+      <if test="payTime != null" >
+        #{payTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createDt != null" >
+        #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDt != null" >
+        #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="deleteFlag != null" >
+        #{deleteFlag,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.FissionSalesOrder" >
+    update fission_sales_order
+    <set >
+      <if test="orderNo != null" >
+        order_no = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="periodsId != null" >
+        periods_id = #{periodsId,jdbcType=INTEGER},
+      </if>
+      <if test="fissionId != null" >
+        fission_id = #{fissionId,jdbcType=INTEGER},
+      </if>
+      <if test="dealerId != null" >
+        dealer_id = #{dealerId,jdbcType=INTEGER},
+      </if>
+      <if test="saleId != null" >
+        sale_id = #{saleId,jdbcType=INTEGER},
+      </if>
+      <if test="orderStatus != null" >
+        order_status = #{orderStatus,jdbcType=TINYINT},
+      </if>
+      <if test="orderType != null" >
+        order_type = #{orderType,jdbcType=BIT},
+      </if>
+      <if test="orderAmount != null" >
+        order_amount = #{orderAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="payType != null" >
+        pay_type = #{payType,jdbcType=TINYINT},
+      </if>
+      <if test="payTime != null" >
+        pay_time = #{payTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createDt != null" >
+        create_dt = #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDt != null" >
+        update_dt = #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null" >
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=BIT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.LiveProgramDealerBrandWriteMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.LiveProgramDealerBrand">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="scene_id" jdbcType="INTEGER" property="sceneId" />
+    <result column="program_id" jdbcType="INTEGER" property="programId" />
+    <result column="broadcast_id" jdbcType="INTEGER" property="broadcastId" />
+    <result column="dealer_brand_id" jdbcType="INTEGER" property="dealerBrandId" />
+    <result column="create_user_id" jdbcType="INTEGER" property="createUserId" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="create_dt" jdbcType="TIMESTAMP" property="createDt" />
+    <result column="update_user_id" jdbcType="INTEGER" property="updateUserId" />
+    <result column="update_user_name" jdbcType="VARCHAR" property="updateUserName" />
+    <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
+    <result column="delete_state" jdbcType="INTEGER" property="deleteState" />
+    <result column="program_type" jdbcType="INTEGER" property="programType" />
+    
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, scene_id, program_id,broadcast_id, dealer_brand_id, create_user_id, create_user_name, create_dt, 
+    update_user_id, update_user_name, update_dt, delete_state,program_type
+  </sql>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from live_program_dealer_brand
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <update id="deleteByBusiness" parameterType="java.lang.Integer">
+    update from live_program_dealer_brand set delete_state=1
+    where program_id = #{id,jdbcType=INTEGER}
+  </update>
+  <insert id="insertSelective" parameterType="com.tuanche.directselling.model.LiveProgramDealerBrand" useGeneratedKeys="true" keyProperty="id">
+    insert into live_program_dealer_brand
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="sceneId != null">
+        scene_id,
+      </if>
+      <if test="programId != null">
+        program_id,
+      </if>
+      <if test="broadcastId != null">
+        broadcast_id,
+      </if>
+      <if test="dealerBrandId != null">
+        dealer_brand_id,
+      </if>
+      <if test="createUserId != null">
+        create_user_id,
+      </if>
+      <if test="createUserName != null">
+        create_user_name,
+      </if>
+      <if test="createDt != null">
+        create_dt,
+      </if>
+      <if test="updateUserId != null">
+        update_user_id,
+      </if>
+      <if test="updateUserName != null">
+        update_user_name,
+      </if>
+      <if test="updateDt != null">
+        update_dt,
+      </if>
+      <if test="deleteState != null">
+        delete_state,
+      </if>
+      <if test="programType != null">
+        program_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="sceneId != null">
+        #{sceneId,jdbcType=INTEGER},
+      </if>
+      <if test="programId != null">
+        #{programId,jdbcType=INTEGER},
+      </if>
+      <if test="broadcastId != null">
+        #{broadcastId,jdbcType=INTEGER},
+      </if>
+      <if test="dealerBrandId != null">
+        #{dealerBrandId,jdbcType=INTEGER},
+      </if>
+      <if test="createUserId != null">
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="createUserName != null">
+        #{createUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="createDt != null">
+        #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null">
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateUserName != null">
+        #{updateUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDt != null">
+        #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteState != null">
+        #{deleteState,jdbcType=INTEGER},
+      </if>
+      <if test="programType != null">
+        #{programType,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.LiveProgramDealerBrand">
+    update live_program_dealer_brand
+    <set>
+      <if test="sceneId != null">
+        scene_id = #{sceneId,jdbcType=INTEGER},
+      </if>
+      <if test="programId != null">
+        program_id = #{programId,jdbcType=INTEGER},
+      </if>
+      <if test="broadcastId != null">
+        broadcast_id = #{broadcastId,jdbcType=INTEGER},
+      </if>
+      <if test="dealerBrandId != null">
+        dealer_brand_id = #{dealerBrandId,jdbcType=INTEGER},
+      </if>
+      <if test="createUserId != null">
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="createUserName != null">
+        create_user_name = #{createUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="createDt != null">
+        create_dt = #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null">
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateUserName != null">
+        update_user_name = #{updateUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDt != null">
+        update_dt = #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteState != null">
+        delete_state = #{deleteState,jdbcType=INTEGER},
+      </if>
+      <if test="programType != null">
+        program_type = #{programType,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

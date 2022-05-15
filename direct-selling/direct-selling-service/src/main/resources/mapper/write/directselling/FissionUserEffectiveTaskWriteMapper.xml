@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.FissionUserEffectiveTaskWriteMapper" >
+    <!-- 用户是否完成了某一些任务-主从同步有延时，所以从写库查 -->
+    <select id="taskIsCompletedInFission" resultType="integer" >
+        SELECT
+        1
+        FROM fission_user_effective_task
+        WHERE user_wx_union_id = #{userWxUnionId}
+        AND fission_id = #{fissionId}
+        <if test="taskIds != null">
+            AND task_id IN
+            <foreach collection="taskIds" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        AND delete_flag = 0
+        LIMIT 1
+    </select>
+    <!-- 统计销售的每一项任务的总积分-主从同步有延时，所以从写库查 -->
+    <select id="statisticsSaleTaskIntegrals" parameterType="list" resultType="com.tuanche.directselling.model.FissionSaleTaskStatistics">
+        SELECT
+        t1.fission_id AS fissionId,
+        t1.sale_wx_union_id AS saleWxUnionId,
+        t1.task_id AS taskId,
+        t1.finish_task_total AS finishTaskTotal,
+        t1.finish_task_total*t2.award AS taskIntegral,
+        t1.finish_task_total >=t2.award_rule  AS whetherCompleteTask
+        FROM (
+        SELECT
+        t.fission_id,
+        t.sale_wx_union_id,
+        COUNT(t.task_id) AS finish_task_total,
+        t.task_id
+        FROM
+        `fission_user_effective_task` t
+        WHERE  t.delete_flag = 0
+        <if test="fissionIds != null">
+            AND t.fission_id IN
+            <foreach collection="fissionIds" index="index" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        GROUP BY
+        t.fission_id,
+        t.sale_wx_union_id,
+        t.task_id
+        ) t1
+        LEFT JOIN fission_award_rule t2 ON t2.fission_id = t1.fission_id AND t2.task_code = t1.task_id AND t2.rule_type = 1
+        WHERE t1.sale_wx_union_id IS NOT NULL
+    </select>
+  <insert id="insertFissionUserEffectiveTask" parameterType="com.tuanche.directselling.model.FissionUserEffectiveTask" >
+      insert into fission_user_effective_task
+      <trim prefix="(" suffix=")" suffixOverrides="," >
+          <if test="id != null" >
+              id,
+          </if>
+          <if test="fissionId != null" >
+              fission_id,
+          </if>
+          <if test="saleWxUnionId != null" >
+              sale_wx_union_id,
+          </if>
+          <if test="shareWxUnionId != null" >
+              share_wx_union_id,
+          </if>
+          <if test="userWxUnionId != null" >
+              user_wx_union_id,
+          </if>
+          <if test="taskId != null" >
+              task_id,
+          </if>
+          <if test="sharerIsSale != null" >
+              sharer_is_sale,
+          </if>
+          <if test="taskRecordId != null" >
+              task_record_id,
+          </if>
+          <if test="deleteFlag != null" >
+              delete_flag,
+          </if>
+          <if test="createDt != null" >
+              create_dt,
+          </if>
+          <if test="updateDt != null" >
+              update_dt,
+          </if>
+      </trim>
+      <trim prefix="values (" suffix=")" suffixOverrides="," >
+          <if test="id != null" >
+              #{id,jdbcType=BIGINT},
+          </if>
+          <if test="fissionId != null" >
+              #{fissionId,jdbcType=INTEGER},
+          </if>
+          <if test="saleWxUnionId != null" >
+              #{saleWxUnionId,jdbcType=CHAR},
+          </if>
+          <if test="shareWxUnionId != null" >
+              #{shareWxUnionId,jdbcType=CHAR},
+          </if>
+          <if test="userWxUnionId != null" >
+              #{userWxUnionId,jdbcType=CHAR},
+          </if>
+          <if test="taskId != null" >
+              #{taskId,jdbcType=INTEGER},
+          </if>
+          <if test="sharerIsSale != null" >
+              #{sharerIsSale,jdbcType=BIT},
+          </if>
+          <if test="taskRecordId != null" >
+              #{taskRecordId,jdbcType=BIGINT},
+          </if>
+          <if test="deleteFlag != null" >
+              #{deleteFlag,jdbcType=BIT},
+          </if>
+          <if test="createDt != null" >
+              #{createDt,jdbcType=TIMESTAMP},
+          </if>
+          <if test="updateDt != null" >
+              #{updateDt,jdbcType=TIMESTAMP},
+          </if>
+      </trim>
+  </insert>
+  <update id="updateFissionUserEffectiveTask" parameterType="com.tuanche.directselling.model.FissionUserEffectiveTask" >
+      update fission_user_effective_task
+      <set >
+          <if test="fissionId != null" >
+              fission_id = #{fissionId,jdbcType=INTEGER},
+          </if>
+          <if test="saleWxUnionId != null" >
+              sale_wx_union_id = #{saleWxUnionId,jdbcType=CHAR},
+          </if>
+          <if test="shareWxUnionId != null" >
+              share_wx_union_id = #{shareWxUnionId,jdbcType=CHAR},
+          </if>
+          <if test="userWxUnionId != null" >
+              user_wx_union_id = #{userWxUnionId,jdbcType=CHAR},
+          </if>
+          <if test="taskId != null" >
+              task_id = #{taskId,jdbcType=INTEGER},
+          </if>
+          <if test="sharerIsSale != null" >
+              sharer_is_sale = #{sharerIsSale,jdbcType=BIT},
+          </if>
+          <if test="taskRecordId != null" >
+              task_record_id = #{taskRecordId,jdbcType=BIGINT},
+          </if>
+          <if test="deleteFlag != null" >
+              delete_flag = #{deleteFlag,jdbcType=BIT},
+          </if>
+          <if test="createDt != null" >
+              create_dt = #{createDt,jdbcType=TIMESTAMP},
+          </if>
+          <if test="updateDt != null" >
+              update_dt = #{updateDt,jdbcType=TIMESTAMP},
+          </if>
+      </set>
+      where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

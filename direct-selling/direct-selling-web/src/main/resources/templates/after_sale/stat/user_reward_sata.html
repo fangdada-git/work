@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>团车直卖-C端用户奖励对账</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.js"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/magnify/css/jquery.magnify.css">
+    <script src="/layui/js/formSelects-v4.js"></script>
+    <link rel="stylesheet" href="/layui/css/formSelects-v4.css" media="all">
+    <style type="text/css">
+        .layui-table-header .layui-table tr {
+            height: auto;
+            line-height: 50px;
+        }
+        .layui-table tr{height: 65px}
+        .layui-form-label{width: 100px}
+        .layui-input-block{
+            margin-left: 131px;
+            min-height: 36px;
+        }
+        .layui-input{
+            width: 180px;
+        }
+        .layui-input-block-p{
+            padding-top: 8px;
+        }
+        .layui-table-cell {
+            height:auto;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:normal;
+        }
+    </style>
+</head>
+<body class="childrenBody">
+<form class="layui-form" id="form" style="background-color: #ffffff;" action="">
+    <blockquote class="layui-elem-quote quoteBox">
+        <div class="layui-form-item" >
+            <div class="layui-inline">
+                <!--                    <label class="layui-form-label">订单状态筛选：</label>-->
+                <div class="layui-input-block" style="margin-left: 10px;width: 400px;">
+                    <select id="dealerId" name="dealerId" xm-select="dealerSelect" xm-select-search="" xm-select-search-type="dl"
+                            xm-select-radio="" >
+                        <option value="">请选择经销商</option>
+<!--                        <option th:each="dealer : ${dealerSimpleInfos}" th:value="${dealer.id}" th:text="${dealer.companyName}"></option>-->
+                    </select>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <div class="layui-input-block" style="margin-left: 10px;width: 400px;">
+                    <select id="activityId" name="activityId" xm-select="activitySelect" xm-select-search="" xm-select-search-type="dl"
+                            xm-select-radio="">
+                        <option value="">请选择活动</option>
+<!--                        <option th:each="activity : ${afterSaleActivities}" th:value="${activity.id}" th:text="${activity.activityName}"></option>-->
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item" >
+            <div style="float: left; margin-left: 10px;">用户总数：<div style="float: right;" id="userPaySum"></div></div>
+            <div style="float: left; margin-left: 20px;">购买奖励：<div style="float: right;" id="purchaseRewardSum"></div></div>
+            <div style="float: left; margin-left: 20px;">邀请人数：<div style="float: right;" id="inviteesNumSum"></div></div>
+            <div style="float: left; margin-left: 20px;">邀请奖励：<div style="float: right;" id="shareRewardSum"></div></div>
+            <div style="float: left; margin-left: 20px;">额外奖励：<div style="float: right;" id="extraReward"></div></div>
+            <div style="float: left; margin-left: 20px;">累计奖励：<div style="float: right;" id="rewardSun"></div></div>
+            <div style="float: left; margin-left: 20px;">核销礼品券：<div style="float: right;" id="writeOffGiftCertificatesTotalSum"></div></div>
+            <div style="float: left; margin-left: 20px;">已转账金额：<div style="float: right;" id="paymentSuccessfulAmountSum"></div></div>
+            <div style="float: left; margin-left: 20px;">未转账金额：<div style="float: right;" id="paymentFailureAmountSum"></div></div>
+        </div>
+        <div class="layui-form-item" >
+            <div class="layui-inline">
+                <!--                    <label class="layui-form-label">订单状态筛选：</label>-->
+                <div class="layui-input-block" style="margin-left: 10px;">
+                    <select id="userType" name="userType">
+                        <option value="">请选择身份</option>
+                        <option th:each="usetType : ${usetTypeList}" th:value="${usetType.code}" th:text="${usetType.key}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <div class="layui-input-block" style="margin-left: 10px;">
+                    <input type="text" name="userPhone" id="userPhone" placeholder="请输入手机号" class="layui-input"/>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <div class="layui-input-block" style="margin-left: 10px;">
+                    <input type="text" name="licencePlate" id="licencePlate" placeholder="请输入车牌" class="layui-input"/>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <div class="layui-input-block" style="margin-left: 10px;">
+                    <input type="text" name="payTimeStart" id="payTimeStart" placeholder="请选择购买开始时间" class="layui-input"/>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <div class="layui-input-block" style="margin-left: 10px;">
+                    <input type="text" name="payTimeEnd" id="payTimeEnd" placeholder="请选择购买结束时间" class="layui-input"/>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <div class="layui-input-block" style="margin-left: 10px;">
+                    <a class="layui-btn layui-btn-radius add_btn" id="search" href="javascript:;"><i class="layui-icon layui-icon-search"></i>搜索</a>
+                    <a class="layui-btn layui-btn-radius add_btn" id="orderexport" href="javascript:;"><i class="layui-icon layui-icon-search"></i>导出</a>
+                </div>
+            </div>
+        </div>
+    </blockquote>
+    <table id="afterSaleOrderList" lay-filter="fissionActivityTool"></table>
+</form>
+
+<!-- 表格操作列按钮 -->
+<script type="text/html" id="barBtn">
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="refund"><i class="layui-icon layui-icon-edit">明细</i></a>
+</script>
+
+<script type="text/javascript" src="/common/js/tools.js"></script>
+<!-- layui 初始化 -->
+<script type="text/javascript" th:inline="javascript">
+    layui.use(['form', 'layer', 'table', 'laydate'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            table = layui.table,
+            formSelects = layui.formSelects,
+            laydate = layui.laydate;
+
+        getStatisticsCount();
+        // 裂变活动列表
+        var tableIns = table.render({
+            elem: '#afterSaleOrderList',
+            url: '/afterSale/user/reward/getStatisticsList',
+            cellMinWidth: 100,
+            page: true,
+            height: "full",
+            limits: [10, 20, 50, 100],
+            limit: 10,
+            id: "goodsOrderListTable",
+            width: "100%",
+            height: 600,
+            even:true,
+            cols: [
+                [
+                    {field: 'activityName', title: '活动名称', minWidth: 180, align: "left"},
+                    {field: 'dealerName', title: '所属经销商', minWidth: 220, align: "c"},
+                    {field: 'userWxUnionId', title: '用户微信id', align: "center", minWidth: 150},
+                    {field: 'userNickName', title: '用户微信昵称', align: "center", minWidth: 130},
+                    {field: 'userPhone', title: '手机号', align: "center", width: 120},
+                    {field: 'userTypeName', title: '身份', align: "center"},
+                    {
+                        field: 'purchaseReward',
+                        title: '购买奖励&nbsp;<i class="layui-icon alone-tips" lay-tips="用户购买推广卡支付成功时直接获得现金红包奖励金">&#xe60b;</i>',
+                        align: "center",
+                        width: 110
+                    },
+                    {field: 'payTime', title: '购买时间', align: "center", width: 110},
+                    {field: 'tradeNo', title: '购买交易流水号', align: "center", minWidth: 240},
+                    {
+                        field: 'inviteesNum',
+                        title: '邀请人数&nbsp;<i class="layui-icon alone-tips" lay-tips="该用户购买后邀请其他用户购买并支付成功的人数（备案用户需完成裂变才计算）">&#xe60b;</i>',
+                        align: "center",
+                        width: 110
+                    },
+                    {
+                        field: 'shareReward',
+                        title: '邀请奖励&nbsp;<i class="layui-icon alone-tips" lay-tips="邀请他人购买成功获得的邀请奖励金（备案用户完成裂变才会给邀请人奖励）">&#xe60b;</i>',
+                        align: "center",
+                        width: 110
+                    },
+                    {
+                        field: 'extraReward',
+                        title: '额外奖励&nbsp;<i class="layui-icon alone-tips" lay-tips="根据裂变设置没裂变N人额外获得的奖励金">&#xe60b;</i>',
+                        align: "center",
+                        width: 110
+                    },
+                    {field: 'rewardSun', title: '累计奖励', align: "center", width: 110},
+                    {
+                        field: 'writeOffGiftCertificatesTotalName',
+                        title: '礼品券状态&nbsp;<i class="layui-icon alone-tips" lay-tips="用户是否获得礼品券，是否核销礼品券">&#xe60b;</i>',
+                        align: "center",
+                        width: 120
+                    },
+                    {
+                        field: 'paymentSuccessfulAmount',
+                        title: '已转账金额&nbsp;<i class="layui-icon alone-tips" lay-tips="所获得的每笔奖励成功转账给用户的金额">&#xe60b;</i>',
+                        align: "center",
+                        width: 120
+                    },
+                    {
+                        field: 'paymentFailureAmount',
+                        title: '未转账金额&nbsp;<i class="layui-icon alone-tips" lay-tips="因对方公众号未认证或我司账户余额不足导致的未转账成功的金额数">&#xe60b;</i>',
+                        align: "center",
+                        width: 120
+                    },
+                    { title: '操作', align: 'center', toolbar: '#barBtn', fixed: 'right'},
+                ]
+            ],
+            done: function (res, curr, count) {
+                $('*[lay-tips]').on('mouseenter', function () {
+                    let content = $(this).attr('lay-tips');
+                    this.index = layer.tips('<div style="padding: 10px; font-size: 14px; color: #eee;">' + content + '</div>', this, {
+                        time: -1
+                        , maxWidth: 280
+                        , tips: [3, '#3A3D49']
+                    });
+                }).on('mouseleave', function () {
+                    layer.close(this.index);
+                });
+                //解决因固定操作栏导致和表格错位的问题
+                $(".layui-table-main tr").each(function (index, val) {
+                    $($(".layui-table-fixed-r .layui-table-body tbody tr")[index]).height($(val).height()-1);
+                });
+            }
+        });
+        $.ajax({
+            url: "/afterSale/stat/dealer",
+            success: function (res) {
+                var array = [];
+                for (var i = 0; i < res.length; i++) {
+                    array.push({"name": res[i].dealerName, "value": res[i].id})
+                }
+                layui.formSelects.data('dealerSelect', 'local', {
+                    arr: array
+                });
+            }
+        });
+
+        $.ajax({
+            url: "/afterSale/stat/activity",
+            success: function (res) {
+                var array = [];
+                for (var i = 0; i < res.length; i++) {
+                    array.push({"name": res[i].activityName, "value": res[i].id})
+                }
+                layui.formSelects.data('activitySelect', 'local', {
+                    arr: array
+                });
+            }
+        });
+        layui.formSelects.on('dealerSelect', function (id, vals, val, isAdd, isDisabled) {
+            var url;
+            if (isAdd) {
+                url = "/afterSale/stat/activity?dealerId=" + val.value;
+            } else {
+                url = "/afterSale/stat/activity"
+            }
+            $.ajax({
+                url: url,
+                success: function (res) {
+                    var array = [];
+                    for (var i = 0; i < res.length; i++) {
+                        array.push({"name": res[i].activityName, "value": res[i].id})
+                    }
+                    layui.formSelects.data('activitySelect', 'local', {
+                        arr: array
+                    });
+                }
+            });
+
+        });
+
+
+        function getStatisticsCount () {
+            var data = getData();
+            $.ajax({
+                type: "post",
+                url: "/afterSale/user/reward/getStatisticsCount",
+                dataType:'json',
+                data: data,
+                dataType: "json",
+                success: function (s) {
+                    $("#userPaySum").html(s.code == 200 && s.result.userPaySum ? s.result.userPaySum : 0);
+                    $("#inviteesNumSum").html(s.code == 200 && s.result.inviteesNumSum ? s.result.inviteesNumSum : 0);
+                    $("#extraReward").html(s.code == 200 && s.result.extraReward ?  s.result.extraReward : 0);
+                    $("#writeOffGiftCertificatesTotalSum").html(s.code == 200 && s.result.writeOffGiftCertificatesTotalSum ? s.result.writeOffGiftCertificatesTotalSum : 0);
+                    $("#purchaseRewardSum").html(s.code == 200 && s.result.purchaseRewardSum ? s.result.purchaseRewardSum : 0);
+                    $("#shareRewardSum").html(s.code == 200 && s.result.shareRewardSum ? s.result.shareRewardSum : 0);
+                    $("#paymentSuccessfulAmountSum").html(s.code == 200 && s.result.paymentSuccessfulAmountSum ? s.result.paymentSuccessfulAmountSum : 0);
+                    $("#paymentFailureAmountSum").html(s.code == 200 && s.result.paymentFailureAmountSum ? s.result.paymentFailureAmountSum : 0);
+                    $("#rewardSun").html(s.code == 200 && s.result.rewardSun ? s.result.rewardSun : 0);
+                },
+                error: function (e) {
+                    layer.alert('网络繁忙', {icon: 5,title:'提示'});
+                }
+            });
+        }
+
+        // 操作事件
+        table.on('tool(fissionActivityTool)', function(obj){
+            var data = obj.data;
+            commOpen("查看明细","/afterSale/user/reward/toUserRewardDetailListByPage?userTypeName="+data.userTypeName+"&userPhone="+data.userPhone+"&licencePlate="+data.licencePlate+"&activityId="+data.activityId+"&activityName="+data.activityName+"&userWxUnionId="+data.userWxUnionId+"&userNickName="+data.userNickName+"&inviteesNum="+data.inviteesNum+"&shareReward="+data.shareReward+"&extraReward="+data.extraReward+"&dealerName="+data.dealerName,'100%', '100%');
+        });
+
+        //搜索
+        $("#search").on("click",function(){
+            table.reload("goodsOrderListTable",{
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: getData()
+            })
+            getStatisticsCount();
+        });
+        //导出
+        $("#orderexport").on("click",function(){
+            $("#form").attr("action","/afterSale/user/reward/rewardExport");
+            $("#form").submit();
+            $("#form").attr("action","/afterSale/user/reward/toStatisticsList");
+        });
+        //重新加载
+        function refresh (){
+            table.reload("goodsOrderListTable",{
+                where: getData()
+            })
+        }
+        function getData (){
+            var dealerId = formSelects.value("dealerSelect", "val");
+            var activityId = formSelects.value("activitySelect", "val");
+            var userType = $("#userType").val();
+            var userPhone = $("#userPhone").val();
+            var licencePlate = $("#licencePlate").val();
+            var payTimeStart = $("#payTimeStart").val();
+            var payTimeEnd = $("#payTimeEnd").val();
+            var data = {
+                "activityId": activityId != "" ? parseInt(activityId) : null
+                ,"dealerId": dealerId != "" ? parseInt(dealerId) : null
+                ,"userPhone": userPhone
+                ,"userType": userType
+                ,"licencePlate": licencePlate
+                , "payTimeStart": payTimeStart
+                , "payTimeEnd": payTimeEnd
+            };
+            return data;
+        }
+
+        window.commOpen = function(title,url,width,height) {
+            layer.open({
+                title: title,
+                type: 2,
+                shadeClose: true,
+                content: url,
+                area: [width, height]
+            });
+        }
+        var payTimeStart = laydate.render({
+            elem: '#payTimeStart',
+            type : 'datetime',
+            trigger: 'click',
+            done: function(value, date) {
+                if (date.year!=undefined) {
+                    payTimeEnd.config.min = {
+                        year : date.year,
+                        month : date.month - 1,
+                        date : date.date,
+                        hours : date.hours,
+                        minutes : date.minutes,
+                        seconds : date.seconds
+                    };
+                }
+            }
+        });
+        var payTimeEnd = laydate.render({
+            elem: '#payTimeEnd',
+            type : 'datetime',
+            trigger: 'click',
+            done: function(value, date) {
+                if (date.year!=undefined) {
+                    payTimeStart.config.max = {
+                        year : date.year,
+                        month : date.month - 1,
+                        date : date.date,
+                        hours : date.hours,
+                        minutes : date.minutes,
+                        seconds : date.seconds
+                    };
+                }
+            }
+        });
+
+    });
+</script>
+
+</body>
+</html>

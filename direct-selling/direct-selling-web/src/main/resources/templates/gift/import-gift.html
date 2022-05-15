@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>团车直卖-油卡导入</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.js"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/magnify/css/jquery.magnify.css">
+    <style type="text/css">
+        .layui-table-header .layui-table tr {
+            height: auto;
+            line-height: 50px;
+        }
+
+        .layui-table-cell {
+            height: auto;
+        }
+
+        .layui-table-col-special {
+            height: auto;
+        }
+
+        .layui-table tr {
+            height: 65px
+        }
+    </style>
+</head>
+<body class="childrenBody">
+<blockquote class="layui-elem-quote quoteBox">
+    <div class="layui-inline">
+        <button class="layui-btn" onclick="downloadTemplate();">油卡模板下载</button>
+        <button id="importData" class="layui-btn">上传油卡</button>
+        <span>目前还有<span th:text="${unUsed}" id="unUsed">0</span>张油卡可用，总共上传过<span th:text="${total}" id="total">0</span>张油卡</span>
+    </div>
+</blockquote>
+<table id="giftList" lay-filter="giftList"></table>
+
+<script type="text/javascript" src="/common/js/tools.js"></script>
+<!-- layui 初始化 -->
+<script type="text/javascript" th:inline="javascript">
+    layui.use(['form', 'layer', 'table', 'laydate', 'upload'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            table = layui.table,
+            upload = layui.upload,
+            cardTotal = '${total}',
+            laydate = layui.laydate;
+        //执行实例
+        var uploadInst = upload.render({
+            elem: '#importData' //绑定元素
+            //, url: '/gift/importGift' //上传接口
+            , url: '/gift/refuelcardupload' //上传接口
+            , accept: 'file'
+            ,acceptMime:'.xls,.xlsx'
+            ,before:function(){
+                var loadMsg = "上传中，请稍后，可能要几秒或几十秒";
+                if(cardTotal > 50000){
+                    loadMsg = "上传中，请稍后，数据库数量较多，请耐心等候"
+                }
+                layer.msg(loadMsg, {
+                    time: 0,
+                });
+            }
+            ,size:1024 //限制大小为1M
+            , done: function (res) {
+                layui.use('layer', function () {
+                    layer.close();
+                    layer.msg(res.responseHeader.message, {
+                        time: 0, //6s后自动关闭
+                        icon: 1,
+                        btn: ['关闭']
+                    });
+                    refuelCardUsedStatistics();
+                });
+            }
+            , error: function () {
+                //请求异常回调
+            }
+        });
+        //获取油卡使用统计
+        function refuelCardUsedStatistics(){
+            $.ajax({
+                type: 'POST',
+                url: '/gift/refuelCardUsedStatistics',
+                contentType: "application/json",
+                success :function(data){
+                    $("#total").html(data.total);
+                    $("#unUsed").html(data.unUsed);
+                },
+                error :function(e){
+                    console.log(e);
+                    layer.close(loadIndex);
+                    layer.msg("有一丝丝问题，请联系管理员", {icon: 5});
+                    $('#submitBtn').removeAttr('disabled');
+                    return false;
+                }
+            });
+        }
+
+    });
+
+    //模板下载
+    function downloadTemplate() {
+        window.open("/gift/downloadTemplate");
+    }
+
+</script>
+</body>
+</html>

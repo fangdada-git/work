@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property name="LOG_HOME" value="/opt/logs"/>
+    <property name="LOG_NAME" value="direct-selling-web"/>
+    <property name="PATTERN" value="%d{yyyy-MM-dd HH:mm:ss} [%-5level] [%X{host}] [%X{uri}] [%X{ip}] [%X{uuid}] [%X{logid}] [%X{loginedUser}] method:%logger{50} -- %msg%n"/>
+    <!-- 输出到控制台 -->
+    <appender name="INFO" class="ch.qos.logback.core.ConsoleAppender" >
+        <!-- 输出的格式 -->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/${LOG_NAME}/stdout_${LOG_NAME}-seek.log</file>
+        <!-- 配置滚动的策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 日志名称的格式 -->
+            <fileNamePattern>${LOG_HOME}/${LOG_NAME}/stdout_${LOG_NAME}-seek_%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 保存的最长时间：天数 -->
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/${LOG_NAME}/error/${LOG_NAME}_error.log</file>
+        <!-- 配置滚动的策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 日志名称的格式 -->
+            <fileNamePattern>${LOG_HOME}/${LOG_NAME}/error/${LOG_NAME}_error_%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 保存的最长时间：天数 -->
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>  <!-- 如果命中就使用这条日志 -->
+            <onMismatch>DENY</onMismatch>  <!-- 如果没有命中就禁止这条规则 -->
+        </filter>
+    </appender>
+
+    <appender name="interf" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/interf/${LOG_NAME}/${LOG_NAME}-interf.log</file>
+        <!-- 配置滚动的策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 日志名称的格式 -->
+            <fileNamePattern>${LOG_HOME}/interf/${LOG_NAME}/${LOG_NAME}-interf_%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 保存的最长时间：天数 -->
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 相当于logger元素，只是name值已经确定为root了 -->
+    <root level="INFO">
+        <appender-ref ref="INFO" />
+        <appender-ref ref="FILE" />
+        <appender-ref ref="ERROR" />
+    </root>
+
+    <logger name="com.tuanche.arch.dubbo.filter.DubboFilter" level="warn" additivity="false">
+        <appender-ref ref="interf"/>
+    </logger>
+    <logger name="com.tuanche.arch.web.interceptor.log.LogInterceptor" level="warn" additivity="false">
+        <appender-ref ref="interf"/>
+    </logger>
+
+</configuration>

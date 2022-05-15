@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.FashionHalfPriceCarWriteMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FashionHalfPriceCar">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="periods_id" jdbcType="INTEGER" property="periodsId" />
+    <result column="car_fashion_id" jdbcType="INTEGER" property="carFashionId" />
+    <result column="activity_start" jdbcType="DATE" property="activityStart" />
+    <result column="activity_end" jdbcType="DATE" property="activityEnd" />
+    <result column="activity_date" jdbcType="DATE" property="activityDate" />
+    <result column="brand_id" jdbcType="INTEGER" property="brandId" />
+    <result column="winning_number" jdbcType="INTEGER" property="winningNumber" />
+    <result column="creat_by" jdbcType="INTEGER" property="creatBy" />
+    <result column="creat_dt" jdbcType="TIMESTAMP" property="creatDt" />
+    <result column="update_by" jdbcType="INTEGER" property="updateBy" />
+    <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
+    <result column="delete_flag" jdbcType="INTEGER" property="deleteFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, periods_id, car_fashion_id,activity_start, activity_end,  activity_date, brand_id, winning_number, creat_by, creat_dt,
+    update_by, update_dt, delete_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from fashion_half_price_car
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from fashion_half_price_car
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tuanche.directselling.model.FashionHalfPriceCar">
+    insert into fashion_half_price_car (id,periods_id, car_fashion_id, activity_start, activity_end, activity_date,
+      brand_id, winning_number, creat_by, 
+      creat_dt, update_by, update_dt, 
+      delete_flag)
+    values (#{id,jdbcType=INTEGER}, #{periodsId,jdbcType=INTEGER},#{carFashionId,jdbcType=INTEGER},
+      #{activityStart,jdbcType=DATE}, #{activityEnd,jdbcType=DATE}, #{activityDate,jdbcType=DATE},
+      #{brandId,jdbcType=INTEGER}, #{winningNumber,jdbcType=INTEGER}, #{creatBy,jdbcType=INTEGER}, 
+      #{creatDt,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=INTEGER}, #{updateDt,jdbcType=TIMESTAMP}, 
+      #{deleteFlag,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.tuanche.directselling.model.FashionHalfPriceCar">
+    insert into fashion_half_price_car
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="periodsId != null">
+        periods_id,
+      </if>
+      <if test="carFashionId != null">
+        car_fashion_id,
+      </if>
+      <if test="activityStart != null">
+        activity_start,
+      </if>
+      <if test="activityEnd != null">
+        activity_end,
+      </if>
+      <if test="activityDate != null">
+        activity_date,
+      </if>
+      <if test="brandId != null">
+        brand_id,
+      </if>
+      <if test="winningNumber != null">
+        winning_number,
+      </if>
+      <if test="creatBy != null">
+        creat_by,
+      </if>
+      <if test="creatDt != null">
+        creat_dt,
+      </if>
+      <if test="updateBy != null">
+        update_by,
+      </if>
+      <if test="updateDt != null">
+        update_dt,
+      </if>
+      <if test="deleteFlag != null">
+        delete_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="periodsId != null">
+        #{periodsId,jdbcType=INTEGER},
+      </if>
+      <if test="carFashionId != null">
+        #{carFashionId,jdbcType=INTEGER},
+      </if>
+      <if test="activityStart != null">
+        #{activityStart,jdbcType=DATE},
+      </if>
+      <if test="activityEnd != null">
+        #{activityEnd,jdbcType=DATE},
+      </if>
+      <if test="activityDate != null">
+        #{activityDate,jdbcType=DATE},
+      </if>
+      <if test="brandId != null">
+        #{brandId,jdbcType=INTEGER},
+      </if>
+      <if test="winningNumber != null">
+        #{winningNumber,jdbcType=INTEGER},
+      </if>
+      <if test="creatBy != null">
+        #{creatBy,jdbcType=INTEGER},
+      </if>
+      <if test="creatDt != null">
+        #{creatDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateDt != null">
+        #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteFlag != null">
+        #{deleteFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.FashionHalfPriceCar">
+    update fashion_half_price_car
+    <set>
+      <if test="periodsId != null">
+        periods_id = #{periodsId,jdbcType=INTEGER},
+      </if>
+      <if test="carFashionId != null">
+        car_fashion_id = #{carFashionId,jdbcType=INTEGER},
+      </if>
+      <if test="activityStart != null">
+        activity_start = #{activityStart,jdbcType=DATE},
+      </if>
+      <if test="activityEnd != null">
+        activity_end = #{activityEnd,jdbcType=DATE},
+      </if>
+      <if test="activityDate != null">
+        activity_date = #{activityDate,jdbcType=DATE},
+      </if>
+      <if test="brandId != null">
+        brand_id = #{brandId,jdbcType=INTEGER},
+      </if>
+      <if test="winningNumber != null">
+        winning_number = #{winningNumber,jdbcType=INTEGER},
+      </if>
+      <if test="creatBy != null">
+        creat_by = #{creatBy,jdbcType=INTEGER},
+      </if>
+      <if test="creatDt != null">
+        creat_dt = #{creatDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        update_by = #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateDt != null">
+        update_dt = #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteFlag != null">
+        delete_flag = #{deleteFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tuanche.directselling.model.FashionHalfPriceCar">
+    update fashion_half_price_car
+    set periods_id = #{periodsId,jdbcType=INTEGER},
+      car_fashion_id = #{carFashionId,jdbcType=INTEGER},
+      activity_start = #{activityStart,jdbcType=DATE},
+      activity_end = #{activityEnd,jdbcType=DATE},
+      activity_date = #{activityDate,jdbcType=DATE},
+      brand_id = #{brandId,jdbcType=INTEGER},
+      winning_number = #{winningNumber,jdbcType=INTEGER},
+      creat_by = #{creatBy,jdbcType=INTEGER},
+      creat_dt = #{creatDt,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=INTEGER},
+      update_dt = #{updateDt,jdbcType=TIMESTAMP},
+      delete_flag = #{deleteFlag,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

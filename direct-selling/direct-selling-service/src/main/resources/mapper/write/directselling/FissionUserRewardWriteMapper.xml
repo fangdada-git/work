@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.FissionUserRewardWriteMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FissionUserReward">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="fission_id" jdbcType="INTEGER" property="fissionId" />
+    <result column="user_wx_union_id" jdbcType="CHAR" property="userWxUnionId" />
+    <result column="task_id" jdbcType="INTEGER" property="taskId" />
+    <result column="reward_amount" jdbcType="DECIMAL" property="rewardAmount" />
+    <result column="payment_or_not" jdbcType="BIT" property="paymentOrNot" />
+    <result column="task_record_id" jdbcType="BIGINT" property="taskRecordId" />
+    <result column="trade_record_id" jdbcType="BIGINT" property="tradeRecordId" />
+    <result column="delete_flag" jdbcType="BIT" property="deleteFlag" />
+    <result column="create_dt" jdbcType="TIMESTAMP" property="createDt" />
+    <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, fission_id, user_wx_union_id, task_id, reward_amount, payment_or_not, task_record_id,
+    trade_record_id, delete_flag, create_dt, update_dt
+  </sql>
+    <!-- 获取裂变用户某一任务奖励及裂变任务已分发的总奖金额-主从同步有延时，所以从写库查 -->
+    <select id="getRewardAmountAndTotalRewarByFissionId" resultType="com.tuanche.directselling.dto.FissionUserRewardDto">
+        SELECT
+            (SELECT SUM(reward_amount) FROM fission_user_reward WHERE fission_id = #{fissionId} ) AS totalAmount,
+            (SELECT SUM(reward_amount) AS rewardAmount
+             FROM
+                 fission_user_reward
+             WHERE user_wx_union_id = #{userWxUnionId}
+               AND fission_id = #{fissionId}
+               AND task_id = #{taskId}) AS rewardAmount
+    </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from fission_user_reward
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from fission_user_reward
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tuanche.directselling.model.FissionUserReward">
+    insert into fission_user_reward (id, fission_id, user_wx_union_id,
+      task_id, reward_amount, payment_or_not, 
+      task_record_id, trade_record_id, delete_flag, 
+      create_dt, update_dt)
+    values (#{id,jdbcType=INTEGER}, #{fissionId,jdbcType=INTEGER}, #{userWxUnionId,jdbcType=CHAR},
+      #{taskId,jdbcType=INTEGER}, #{rewardAmount,jdbcType=DECIMAL}, #{paymentOrNot,jdbcType=BIT}, 
+      #{taskRecordId,jdbcType=BIGINT}, #{tradeRecordId,jdbcType=BIGINT}, #{deleteFlag,jdbcType=BIT}, 
+      #{createDt,jdbcType=TIMESTAMP}, #{updateDt,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.tuanche.directselling.model.FissionUserReward">
+    insert into fission_user_reward
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="fissionId != null">
+        fission_id,
+      </if>
+      <if test="userWxUnionId != null">
+        user_wx_union_id,
+      </if>
+      <if test="taskId != null">
+        task_id,
+      </if>
+      <if test="rewardAmount != null">
+        reward_amount,
+      </if>
+      <if test="paymentOrNot != null">
+        payment_or_not,
+      </if>
+      <if test="taskRecordId != null">
+        task_record_id,
+      </if>
+      <if test="tradeRecordId != null">
+        trade_record_id,
+      </if>
+      <if test="deleteFlag != null">
+        delete_flag,
+      </if>
+      <if test="createDt != null">
+        create_dt,
+      </if>
+      <if test="updateDt != null">
+        update_dt,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="fissionId != null">
+        #{fissionId,jdbcType=INTEGER},
+      </if>
+      <if test="userWxUnionId != null">
+        #{userWxUnionId,jdbcType=CHAR},
+      </if>
+      <if test="taskId != null">
+        #{taskId,jdbcType=INTEGER},
+      </if>
+      <if test="rewardAmount != null">
+        #{rewardAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="paymentOrNot != null">
+        #{paymentOrNot,jdbcType=BIT},
+      </if>
+      <if test="taskRecordId != null">
+        #{taskRecordId,jdbcType=BIGINT},
+      </if>
+      <if test="tradeRecordId != null">
+        #{tradeRecordId,jdbcType=BIGINT},
+      </if>
+      <if test="deleteFlag != null">
+        #{deleteFlag,jdbcType=BIT},
+      </if>
+      <if test="createDt != null">
+        #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDt != null">
+        #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.FissionUserReward">
+    update fission_user_reward
+    <set>
+      <if test="fissionId != null">
+        fission_id = #{fissionId,jdbcType=INTEGER},
+      </if>
+      <if test="userWxUnionId != null">
+        user_wx_union_id = #{userWxUnionId,jdbcType=CHAR},
+      </if>
+      <if test="taskId != null">
+        task_id = #{taskId,jdbcType=INTEGER},
+      </if>
+      <if test="rewardAmount != null">
+        reward_amount = #{rewardAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="paymentOrNot != null">
+        payment_or_not = #{paymentOrNot,jdbcType=BIT},
+      </if>
+      <if test="taskRecordId != null">
+        task_record_id = #{taskRecordId,jdbcType=BIGINT},
+      </if>
+      <if test="tradeRecordId != null">
+        trade_record_id = #{tradeRecordId,jdbcType=BIGINT},
+      </if>
+      <if test="deleteFlag != null">
+        delete_flag = #{deleteFlag,jdbcType=BIT},
+      </if>
+      <if test="createDt != null">
+        create_dt = #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDt != null">
+        update_dt = #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tuanche.directselling.model.FissionUserReward">
+    update fission_user_reward
+    set fission_id = #{fissionId,jdbcType=INTEGER},
+      user_wx_union_id = #{userWxUnionId,jdbcType=CHAR},
+      task_id = #{taskId,jdbcType=INTEGER},
+      reward_amount = #{rewardAmount,jdbcType=DECIMAL},
+      payment_or_not = #{paymentOrNot,jdbcType=BIT},
+      task_record_id = #{taskRecordId,jdbcType=BIGINT},
+      trade_record_id = #{tradeRecordId,jdbcType=BIGINT},
+      delete_flag = #{deleteFlag,jdbcType=BIT},
+      create_dt = #{createDt,jdbcType=TIMESTAMP},
+      update_dt = #{updateDt,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <!--更新用户奖励打款状态-->
+  <update id="updateUserPayStatus" parameterType="java.util.List">
+
+    <foreach collection="payList" item="item" separator=";">
+      UPDATE fission_user_reward
+      SET payment_or_not = 1,
+      update_dt = now(),
+      trade_record_id = #{item.tradeRecordId}
+      WHERE
+      id IN
+      <foreach collection="item.rewardIdList" index="index" item="rewardId" open="(" separator="," close=")">
+        #{rewardId}
+      </foreach>
+    </foreach>
+
+  </update>
+</mapper>

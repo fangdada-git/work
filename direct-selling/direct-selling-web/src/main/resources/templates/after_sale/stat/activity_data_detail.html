@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>售后特卖-活动数据对账明细</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.js"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/magnify/css/jquery.magnify.css">
+    <script src="/layui/js/formSelects-v4.js"></script>
+    <link rel="stylesheet" href="/layui/css/formSelects-v4.css" media="all">
+    <style type="text/css">
+        .layui-table-header .layui-table tr {
+            height: auto;
+            line-height: 50px;
+        }
+
+        .layui-table-cell {
+            height: auto;
+        }
+
+        .layui-table-col-special {
+            height: auto;
+        }
+
+        .layui-table tr {
+            height: 65px
+        }
+
+        #paymentContentDetail table {
+            height: 100%;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        #paymentContentDetail table td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #e3e3e3;
+        }
+
+        .titleTd {
+            text-align: right;
+            background-color: #f8f8f8;
+        }
+
+        .contentTd {
+            text-align: left;
+        }
+
+        .xm-select-label {
+            height: 30px;
+        }
+        .layui-icon{
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body class="childrenBody">
+<form class="layui-form" style="background-color: #ffffff;">
+    <div id="paymentContentDetail" style="padding:20px;">
+        <input type="hidden" id="detailActivityId"/>
+        <table>
+            <tr>
+                <td class="titleTd">活动：</td>
+                <td id="val1" class="contentTd" th:text="${activityData.activityName}" colspan="3"></td>
+                <td class="titleTd">所属经销商：</td>
+                <td id="val2" class="contentTd" th:text="${activityData.dealerName}" colspan="3"></td>
+            </tr>
+            <tr>
+                <td class="titleTd">活动开始-结束时间：</td>
+                <td id="val4" class="contentTd"
+                    th:text="${#dates.format(activityData.saleStartTime,'yyyy-MM-dd HH:mm:ss')}+' ~ '+${#dates.format(activityData.saleEndTime,'yyyy-MM-dd HH:mm:ss')}" colspan="3"></td>
+                <td class="titleTd">线下开始-结束时间：</td>
+                <td id="val5" class="contentTd" th:text="${#dates.format(activityData.offlineConvertStartTime,'yyyy-MM-dd HH:mm:ss')}+' ~ '+${#dates.format(activityData.offlineConvertEndTime,'yyyy-MM-dd HH:mm:ss')}" colspan="3"></td>
+            </tr>
+            <tr>
+                <td class="titleTd">活动状态：</td>
+                <td id="val3" class="contentTd" th:text="${activityData.activityStatus}" colspan="3"></td>
+                <td class="titleTd">推广页访问次数<sup class="layui-icon layui-icon-tips" lay-tips="推广卡页面的浏览次数" ></sup>：</td>
+                <td id="val6" class="contentTd" th:text="${activityData.browseTotal}" ></td>
+                <td class="titleTd">推广页访问人数<sup class="layui-icon layui-icon-tips" lay-tips="页面访问的独立人数" ></sup>：</td>
+                <td id="val6" class="contentTd" th:text="${activityData.uv}" ></td>
+            </tr>
+            <tr>
+                <td class="titleTd">推广卡售出金额<sup class="layui-icon layui-icon-tips" lay-tips="已支付成功的推广卡订单总金额" ></sup>：</td>
+                <td id="val10" class="contentTd" th:text="${activityData.promotionCardAmount}"></td>
+                <td class="titleTd">奖励总金额<sup class="layui-icon layui-icon-tips" lay-tips="裂变产生的邀请奖励和额外奖励的支出总和" ></sup>：</td>
+                <td id="val7" class="contentTd" th:text="${activityData.rewardTotal}"></td>
+                <td class="titleTd">退款总金额<sup class="layui-icon layui-icon-tips" lay-tips="手动退款订单和自动退款备案用户订单的总金额" ></sup>：</td>
+                <td id="val23" class="contentTd" th:text="${activityData.promotionCardRefundsAmount}"></td>
+                <td class="titleTd">推广期盈余<sup class="layui-icon layui-icon-tips" lay-tips="推广卡售出金额-奖励总金额-退款总金额" ></sup>：</td>
+                <td id="val23" class="contentTd" th:text="${activityData.promotionCardNetRevenue}"></td>
+            </tr>
+            <tr>
+                <td class="titleTd">推广卡售出数<sup class="layui-icon layui-icon-tips" lay-tips="手动退款订单和自动退款备案用户订单的总金额" ></sup>：</td>
+                <td id="val9" class="contentTd" th:text="${activityData.promotionCardTotal}"></td>
+                <td class="titleTd">推广转化率<sup class="layui-icon layui-icon-tips" lay-tips="推广卡售出数/推广页访问总人数" ></sup>：</td>
+                <td id="val11" class="contentTd" th:text="${activityData.promotionPercent}"></td>
+                <td class="titleTd">套餐售出数<sup class="layui-icon layui-icon-tips" lay-tips="已支付成功的推广卡订单总数（包括退款）" ></sup>：</td>
+                <td id="val26" class="contentTd" th:text="${activityData.packageCardTotal}"></td>
+                <td class="titleTd">套餐转化率<sup class="layui-icon layui-icon-tips" lay-tips="套餐卡售出数/到店人数" ></sup>：</td>
+                <td id="val28" class="contentTd" th:text="${activityData.packagePercent}"></td>
+            </tr>
+            <tr>
+                <td class="titleTd">套餐售出金额<sup class="layui-icon layui-icon-tips" lay-tips="已支付成功的套餐卡订单总金额" ></sup>：</td>
+                <td id="val27" class="contentTd" th:text="${activityData.packageCardAmount}"></td>
+                <td class="titleTd">总退款数<sup class="layui-icon layui-icon-tips" lay-tips="手动退款订单数+自动退款订单数" ></sup>：</td>
+                <td id="val8" class="contentTd" th:text="${activityData.promotionCardRefundsTotal}"></td>
+                <td class="titleTd">退款率<sup class="layui-icon layui-icon-tips" lay-tips="总退款数/推广卡售出数" ></sup>：</td>
+                <td id="val24" class="contentTd" th:text="${activityData.refundPercent}"></td>
+                <td class="titleTd">自动退款备案用户数<sup class="layui-icon layui-icon-tips" lay-tips="备案客户未完成邀请裂变，活动结束统一退款的订单数" ></sup>：</td>
+                <td id="val24" class="contentTd" th:text="${activityData.promotionCardRefundsTotalPassive}"></td>
+            </tr>
+            <tr>
+                <td class="titleTd">直接转化人数<sup class="layui-icon layui-icon-tips" lay-tips="通过代理人直接分享、电销直接分享，公众号直接购买的用户数" ></sup>：</td>
+                <td id="val12" class="contentTd" th:text="${activityData.primaryFissionTotal}"></td>
+                <td class="titleTd">直接转化占比<sup class="layui-icon layui-icon-tips" lay-tips="直接转化人数/推广卡售出数" ></sup>：</td>
+                <td id="val13" class="contentTd" th:text="${activityData.primaryFissionTotalPercent}"></td>
+                <td class="titleTd">转介绍人数<sup class="layui-icon layui-icon-tips" lay-tips="通过直接转化的人分享邀请的其他用户购买的人数（大于等于二级+断链的购买人数）" ></sup>：</td>
+                <td id="val14" class="contentTd" th:text="${activityData.beyondPrimaryFissionTotal}"></td>
+                <td class="titleTd">转介绍占比<sup class="layui-icon layui-icon-tips" lay-tips="转介绍人数/推广卡售出数" ></sup>：</td>
+                <td id="val14" class="contentTd" th:text="${activityData.beyondPrimaryFissionTotalPercent}" ></td>
+            </tr>
+            <tr>
+                <td class="titleTd">备案客户购买数<sup class="layui-icon layui-icon-tips" lay-tips="已支付成功的备案用户数" ></sup>：</td>
+                <td id="val17" class="contentTd" th:text="${activityData.keepOnRecordUserTotal}"></td>
+                <td class="titleTd">备案客户购占比<sup class="layui-icon layui-icon-tips" lay-tips="备案客户购买数/推广卡售出数" ></sup>：</td>
+                <td id="val18" class="contentTd" th:text="${activityData.keepOnRecordUserTotalPercent}"></td>
+                <td class="titleTd">备案客户完成裂变数<sup class="layui-icon layui-icon-tips" lay-tips="备案用户购买后且完成了裂变任务的订单数" ></sup>：</td>
+                <td id="val15" class="contentTd" th:text="${activityData.keepOnRecordFinishUserTotal}"></td>
+                <td class="titleTd">备案客户完成裂变占比<sup class="layui-icon layui-icon-tips" lay-tips="备案客户完成裂变数/备案客户购买数" ></sup>：</td>
+                <td id="val16" class="contentTd" th:text="${activityData.keepOnRecordFinishUserTotalPercent}"></td>
+            </tr>
+            <tr>
+                <td class="titleTd">流失客户购买数<sup class="layui-icon layui-icon-tips" lay-tips="已支付成功的流失用户数" ></sup>：</td>
+                <td id="val17" class="contentTd" th:text="${activityData.lostUserTotal}"></td>
+                <td class="titleTd">流失客户购买占比<sup class="layui-icon layui-icon-tips" lay-tips="流失客户购买数/推广卡售出数" ></sup>：</td>
+                <td id="val18" class="contentTd" th:text="${activityData.lostUserTotalPercent}"></td>
+                <td class="titleTd">发放礼品券数<sup class="layui-icon layui-icon-tips" lay-tips="已经发放给用户的礼品券总数" ></sup>：</td>
+                <td id="val19" class="contentTd" th:text="${activityData.giftCertificatesTotal}"></td>
+                <td class="titleTd">核销礼品券数<sup class="layui-icon layui-icon-tips" lay-tips="已核销的礼品券总数" ></sup>：</td>
+                <td id="val20" class="contentTd" th:text="${activityData.writeOffGiftVoucherTotal}"></td>
+            </tr>
+            <tr>
+                <td class="titleTd">到店人数<sup class="layui-icon layui-icon-tips" lay-tips="已经核销了礼品券或推广卡（待发券、已发券）的人数" ></sup>：</td>
+                <td id="val21" class="contentTd" th:text="${activityData.visitorsTotal}"></td>
+                <td class="titleTd">到店率<sup class="layui-icon layui-icon-tips" lay-tips="到店人数/推广卡售出数" ></sup>：</td>
+                <td id="val22" class="contentTd" th:text="${activityData.visitorsPercent}"></td>
+                <td class="titleTd">推广卡待发券数<sup class="layui-icon layui-icon-tips" lay-tips="核销了卡券二维码，但未发放抵用券的订单数" ></sup>：</td>
+                <td id="val25" class="contentTd" th:text="${activityData.promotionCardsWaitingReleaseTotal}"></td>
+                <td class="titleTd">已核销推广卡数<sup class="layui-icon layui-icon-tips" lay-tips="已核销推广卡订单数（待发券+已发券）" ></sup>：</td>
+                <td id="val25" class="contentTd" th:text="${activityData.promotionCardsWrittenOffTotal}"></td>
+            </tr>
+            <tr>
+                <td class="titleTd">核销推广卡率<sup class="layui-icon layui-icon-tips" lay-tips="核销推广卡数/推广卡售出数" ></sup>：</td>
+                <td id="val25" class="contentTd" th:text="${activityData.promotionCardsWrittenOffTotalPercent}"></td>
+            </tr>
+
+        </table>
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+            <!--<legend>表单集合演示</legend>-->
+        </fieldset>
+        <div  th:each="channel,index:${activityData.channelList}" th:style="'width: 32%;float:left;'+${index.index==1?'margin: 0 2% 0 2%;':''}">
+            <table>
+                <tr>
+                    <td class="titleTd" th:text="${channel.channelName}+'渠道'" colspan="2"></td>
+                </tr>
+                <tr>
+                    <td class="titleTd">推广卡售出数：</td>
+                    <td id="val1" class="contentTd" th:text="${channel.promotionCardTotal}" ></td>
+                </tr>
+                <tr>
+                    <td class="titleTd">售出占比：</td>
+                    <td id="val1" class="contentTd" th:text="${channel.promotionCardsSellPercent}">0</td>
+                </tr>
+                <tr>
+                    <td class="titleTd">直接转化人数：</td>
+                    <td id="val1" class="contentTd" th:text="${channel.primaryFissionTotal}"></td>
+                </tr>
+                <tr>
+                    <td class="titleTd">转介绍人数：</td>
+                    <td id="val1" class="contentTd" th:text="${channel.beyondPrimaryFissionTotal}"></td>
+                </tr>
+                <tr>
+                    <td class="titleTd">到店数：</td>
+                    <td id="val1" class="contentTd" th:text="${channel.visitorsTotal}"></td>
+                </tr>
+                <tr>
+                    <td class="titleTd">已核销推广卡数：</td>
+                    <td id="val1" class="contentTd" th:text="${channel.promotionCardsWrittenOffTotal}"></td>
+                </tr>
+                <tr>
+                    <td class="titleTd">渠道总退款数：</td>
+                    <td id="val1" class="contentTd" th:text="${channel.promotionCardRefundsTotal}"></td>
+                </tr>
+                <tr>
+                    <td class="titleTd">套餐卡售出数：</td>
+                    <td id="val1" class="contentTd" th:text="${channel.packageCardTotal}"></td>
+                </tr>
+                <tr>
+                    <td class="titleTd">套餐转化率：</td>
+                    <td id="val1" class="contentTd" th:text="${channel.packagePercent}">0</td>
+                </tr>
+            </table>
+        </div>
+        <div style="text-align: center">
+            <a class="layui-btn add_btn" id="export2" href="javascript:;" style="margin-top: 20px;"><i
+                        class="layui-icon layui-icon-release"></i>导出</a>
+        </div>
+    </div>
+</form>
+<!-- layui 初始化 -->
+<script type="text/javascript" th:inline="javascript">
+    var tableData;
+    layui.use(['form', 'layer', 'table', 'laydate'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            table = layui.table,
+            formSelects = layui.formSelects,
+            laydate = layui.laydate;
+
+        $("#export2").on("click", function () {
+            window.open("/afterSale/stat/activityDataDetailExport?activityId=" + [[${activityData.activityId}]]);
+        });
+        $('*[lay-tips]').on('mouseenter', function(){
+            var content = $(this).attr('lay-tips');
+
+            this.index = layer.tips('<div style="padding: 10px; font-size: 14px;">'+ content + '</div>', this, {
+                time: -1
+                ,maxWidth: 280
+                ,tips: [2, '#3A3D49']
+            });
+        }).on('mouseleave', function(){
+            layer.close(this.index);
+        });
+    })
+
+    function queryParams(data, isPrefix) {
+        isPrefix = isPrefix ? isPrefix : false
+        let prefix = isPrefix ? '?' : ''
+        let _result = []
+        for (let key in data) {
+            let value = data[key]
+            // 去掉为空的参数
+            if (['', undefined, null].includes(value)) {
+                continue
+            }
+            if (value.constructor === Array) {
+                value.forEach(_value => {
+                    _result.push(encodeURIComponent(key) + '[]=' + encodeURIComponent(_value))
+                })
+            } else {
+                _result.push(encodeURIComponent(key) + '=' + encodeURIComponent(value))
+            }
+        }
+
+        return _result.length ? prefix + _result.join('&') : ''
+    }
+
+    function view(id) {
+        for (var i = 0; i < tableData.length; i++) {
+            if (tableData[i].activityId == id) {
+                layui.jquery("#detailActivityId").val(id);
+                layui.jquery("#val1").text(tableData[i].activityName);
+                layui.jquery("#val2").text(tableData[i].dealerName);
+                var now = layui.util.toDateString(new Date().valueOf(), "yyyy-MM-dd HH:mm:ss");
+                var beginTimeStr = layui.util.toDateString(tableData[i].saleStartTime, "yyyy-MM-dd HH:mm:ss");
+                var endTimeStr = layui.util.toDateString(tableData[i].saleEndTime, "yyyy-MM-dd HH:mm:ss");
+                if (now < beginTimeStr) {
+                    layui.jquery("#val3").text("未开始");
+                } else if (now > beginTimeStr && now < endTimeStr) {
+                    layui.jquery("#val3").text("进行中");
+                } else if (now > endTimeStr) {
+                    layui.jquery("#val3").text("已结束");
+                }
+                layui.jquery("#val4").text(tableData[i].saleStartTime + " ~ " + tableData[i].saleEndTime);
+                layui.jquery("#val5").text(tableData[i].offlineConvertStartTime + " ~ " + tableData[i].offlineConvertEndTime);
+                layui.jquery("#val6").text(tableData[i].uv);
+                layui.jquery("#val7").text(tableData[i].rewardTotal);
+                layui.jquery("#val8").text(tableData[i].promotionCardRefundsTotal);
+                layui.jquery("#val9").text(tableData[i].promotionCardTotal);
+                layui.jquery("#val10").text(tableData[i].promotionCardAmount);
+                layui.jquery("#val11").text(tableData[i].promotionPercent + "%");
+                layui.jquery("#val12").text(tableData[i].agentFissionTotalOne + tableData[i].agentFissionTotalTwo);
+                layui.jquery("#val13").text(tableData[i].agentFissionTotalPercent + "%");
+                layui.jquery("#val14").text(tableData[i].agentFissionTotalOne);
+                layui.jquery("#val15").text(tableData[i].autonomousFissionTotal);
+                layui.jquery("#val16").text(tableData[i].autonomousFissionTotalPercent + "%");
+                layui.jquery("#val17").text(tableData[i].keepOnRecordUserTotal);
+                layui.jquery("#val18").text(tableData[i].keepOnRecordUserTotalPercent + "%");
+                layui.jquery("#val19").text(tableData[i].giftCertificatesTotal);
+                layui.jquery("#val20").text(tableData[i].writeOffGiftVoucherTotal);
+                layui.jquery("#val21").text(tableData[i].visitorsTotal);
+                layui.jquery("#val22").text(tableData[i].visitorsPercent + "%");
+                layui.jquery("#val23").text(tableData[i].promotionCardRefundsAmount);
+                layui.jquery("#val24").text(tableData[i].refundPercent + "%");
+                layui.jquery("#val25").text(tableData[i].promotionCardRefundsTotalPassive);
+                layui.jquery("#val26").text(tableData[i].packageCardTotal);
+                layui.jquery("#val27").text(tableData[i].packageCardAmount);
+                layui.jquery("#val28").text(tableData[i].packagePercent + "%");
+                break;
+            }
+        }
+        layer.open({
+            title: "明细",
+            type: 1,
+            shadeClose: false,
+            content: layui.jquery('#paymentContentDetail'),
+            area: ["100%", "100%"],
+            cancel: function () {
+                layui.jquery("#paymentContentDetail").css("display", "none");
+            }
+        });
+        layui.jquery("#paymentContentDetail").css("display", "show");
+    }
+</script>
+</body>
+</html>

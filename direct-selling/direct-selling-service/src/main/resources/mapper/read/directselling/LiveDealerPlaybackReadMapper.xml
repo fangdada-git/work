@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.LiveDealerPlaybackReadMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.LiveDealerPlayback">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="activity_id" jdbcType="INTEGER" property="activityId" />
+    <result column="dealer_id" jdbcType="INTEGER" property="dealerId" />
+    <result column="feed_id" jdbcType="VARCHAR" property="feedId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+  </resultMap>
+
+  <resultMap id="DtoResultMap" type="com.tuanche.directselling.dto.LiveDealerPlaybackDto" extends="BaseResultMap">
+    <result column="activityName" jdbcType="VARCHAR" property="activityName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, activity_id, dealer_id, feed_id, create_time, update_time, user_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from live_dealer_playback
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="getLiveDealerPlaybackByDealerId" parameterType="java.lang.Integer" resultMap="DtoResultMap">
+    select
+    <include refid="Base_Column_List" />,(select scene_title from live_scene where id = activity_id) as activityName
+    from live_dealer_playback
+    where dealer_id = #{dealerId,jdbcType=INTEGER}
+  </select>
+  <select id="getInfoByDealerIdAndActivityId" resultMap="DtoResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from live_dealer_playback
+    where dealer_id = #{dealerId,jdbcType=INTEGER} and activity_id = #{activityId,jdbcType=INTEGER}
+  </select>
+</mapper>

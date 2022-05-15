@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.AfterSaleActivityChannelStatisticsReadMapper" >
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.AfterSaleActivityChannelStatistics" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="activity_id" property="activityId" jdbcType="INTEGER" />
+    <result column="channel" property="channel" jdbcType="INTEGER" />
+    <result column="promotion_card_total" property="promotionCardTotal" jdbcType="INTEGER" />
+    <result column="promotion_card_amount" property="promotionCardAmount" jdbcType="DECIMAL" />
+    <result column="package_card_total" property="packageCardTotal" jdbcType="INTEGER" />
+    <result column="package_card_amount" property="packageCardAmount" jdbcType="DECIMAL" />
+    <result column="promotion_card_refunds_total_active" property="promotionCardRefundsTotalActive" jdbcType="INTEGER" />
+    <result column="promotion_card_refunds_amount_active" property="promotionCardRefundsAmountActive" jdbcType="DECIMAL" />
+    <result column="promotion_card_refunds_total_passive" property="promotionCardRefundsTotalPassive" jdbcType="INTEGER" />
+    <result column="promotion_card_refunds_amount_passive" property="promotionCardRefundsAmountPassive" jdbcType="DECIMAL" />
+    <result column="primary_fission_total" property="primaryFissionTotal" jdbcType="INTEGER" />
+    <result column="beyond_primary_fission_total" property="beyondPrimaryFissionTotal" jdbcType="INTEGER" />
+    <result column="promotion_cards_written_off_total" property="promotionCardsWrittenOffTotal" jdbcType="INTEGER" />
+    <result column="promotion_cards_written_off_amount" property="promotionCardsWrittenOffAmount" jdbcType="DECIMAL" />
+    <result column="visitors_total" property="visitorsTotal" jdbcType="INTEGER" />
+    <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+    <result column="update_dt" property="updateDt" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, activity_id, channel, promotion_card_total, promotion_card_amount, package_card_total, 
+    package_card_amount, promotion_card_refunds_total_active, promotion_card_refunds_amount_active, 
+    promotion_card_refunds_total_passive, promotion_card_refunds_amount_passive, primary_fission_total, 
+    beyond_primary_fission_total, promotion_cards_written_off_total, promotion_cards_written_off_amount, 
+    visitors_total, create_dt, update_dt
+  </sql>
+    <!-- 根据活动ID获取渠道统计信息 -->
+    <select id="getListByActivityId" parameterType="integer" resultMap="BaseResultMap">
+        SELECT
+            channel, promotion_card_total, promotion_card_amount, package_card_total,
+            package_card_amount, promotion_card_refunds_total_active, promotion_card_refunds_amount_active,
+            promotion_card_refunds_total_passive, promotion_card_refunds_amount_passive, primary_fission_total,
+            beyond_primary_fission_total, promotion_cards_written_off_total, promotion_cards_written_off_amount,
+            visitors_total
+        FROM after_sale_activity_channel_statistics
+        WHERE activity_id = #{activityId}
+
+    </select>
+    <!-- 获取统计的ID -->
+    <select id="getActivityChanelStatisticIdMap" resultType="com.tuanche.directselling.dto.ResultMapDto">
+        SELECT
+        CONCAT(activity_id,"_",channel) AS mapKey,
+        id AS mapValue
+        FROM after_sale_activity_channel_statistics
+        WHERE
+        (activity_id,channel) IN
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            (#{item.activityId},#{item.channel})
+        </foreach>
+    </select>
+
+</mapper>

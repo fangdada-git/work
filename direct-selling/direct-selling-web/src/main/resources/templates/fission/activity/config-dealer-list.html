@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>团车直卖-裂变经销商配置</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.js"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/magnify/css/jquery.magnify.css" >
+    <script src="/layui/js/formSelects-v4.js"></script>
+    <link rel="stylesheet" href="/layui/css/formSelects-v4.css" media="all">
+    <style type="text/css">
+        .layui-table-header .layui-table tr {
+            height: auto;
+            line-height: 50px;
+        }
+        .layui-table-cell {
+            height: auto;
+        }
+        .layui-table-col-special {
+            height: auto;
+        }
+        .layui-table tr{height: 65px}
+        .layui-form-label{
+            width: 120px;
+        }
+        .layui-input{
+            width: 200px;
+        }
+    </style>
+</head>
+<body class="childrenBody">
+<div class="layui-card-header">活动名称：[[${fissionActivity.activityName}]] &nbsp;&nbsp;&nbsp;活动时间：[[${fissionActivity.startTimeStr}]] - [[${fissionActivity.endTimeStr}]]
+</div>
+<form class="layui-form" style="background-color: #ffffff;">
+    <blockquote class="layui-elem-quote quoteBox">
+        <form class="layui-form">
+                <div class="layui-inline">
+                    <label class="layui-form-label">结算账户：</label>
+                    <div class="layui-input-block" style="margin-left: 154px;">
+                        <select id="accountTypeSel" name="accountType">
+                            <option value="">全部</option>
+                            <option value="0">无结算账户</option>
+                            <option value="1">有结算账户</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-input-block" style="margin-left: 10px;">
+                        <a class="layui-btn layui-btn-radius add_btn" id="search" href="javascript:;"><i class="layui-icon layui-icon-release"></i>查找</a>
+                    </div>
+                </div>
+                <div class="layui-inline" th:style="${fissionActivity.onState == 1 ? 'display: none;':''}">
+                    <a id="bulkJoinFission" class="layui-btn" href="javascript:;"><i class="layui-icon layui-icon-add-circle"></i>批量参与活动</a>
+                </div>
+                <div class="layui-inline" onclick="downloadTemplate()">
+                    <a class="layui-btn search_btn" >结算账户模板下载</a>
+                </div>
+                <div class="layui-inline">
+                    <a class="layui-btn search_btn" id="importData">导入结算账户</a>
+                </div>
+                <div class="layui-inline">
+                    <a class="layui-btn search_btn" id="export">导出结算账户</a>
+                </div>
+        </form>
+    </blockquote>
+    <table id="fissionActivityDealerList" lay-filter="fissionActivityDealerTool"></table>
+</form>
+<!-- 表格操作列按钮 -->
+<script type="text/html" id="barBtn">
+
+    {{# if(d.joinFission==1){ }}
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="viewSales"><i class="layui-icon layui-icon-component">管理</i></a>
+    {{# }else{ }}
+    <a class="layui-btn layui-btn-disabled layui-btn-xs"><i class="layui-icon layui-icon-component">管理</i></a>
+    {{# } }}
+
+</script>
+<!-- 参与切换 -->
+<script type="text/html" id="switchTpl">
+    <input type="checkbox" name="onState" value="{{d.dealerId}}" lay-skin="switch" lay-text="是|否" lay-filter="onStateFilter"  {{ d.onState == 1 ? 'checked' : '' }}>
+</script>
+<script type="text/html" id="personalAccount">
+    {{# if(d.paymentStatus == 1 ){ }}
+    <i>已打款,私人账户使用状态不可编辑</i>
+    {{# }else{ }}
+    <input type="checkbox" name="personalAccount" data-dealerId="{{d.dealerId}}" value="{{d.dealerSttlementAccountId}}" lay-skin="switch" lay-text="是|否" lay-filter="personalAccountFilter"  {{ d.accountType == 2 ? 'checked' : '' }}>
+    {{# } }}
+
+</script>
+<script type="text/html" id="hasSttlementAccount">
+    {{# if(d.dealerFinancialInvoiceId != null ){ }}
+        {{# if(d.paymentStatus == 1 ){ }}
+            <i>已打款,帐号信息不可编辑</i>
+        {{# }else{ }}
+            <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="viewSettlement"><i class="layui-icon layui-icon-component">编辑已有账户</i></a>
+            {{# if(d.syncStatus == 1 ){  }}
+            <input type="checkbox" name="dealerFinancialInvoiceId" data-accountType="{{d.accountType}}" data-dealerId="{{d.dealerId}}" value="{{d.dealerSttlementAccountId}}" lay-skin="switch" lay-text="已同步|未同步"  lay-filter="sttlementAccountFilter" checked="checked" disabled>
+            {{# }else{ }}
+            <input type="checkbox" name="dealerFinancialInvoiceId" data-accountType="{{d.accountType}}" data-dealerId="{{d.dealerId}}" value="{{d.dealerSttlementAccountId}}" lay-skin="switch" lay-text="已同步|未同步"  lay-filter="sttlementAccountFilter">
+            {{# } }}
+        {{# } }}
+    {{# }else{ }}
+        <i>经销商未配置结算帐号</i>
+    {{# } }}
+</script>
+
+<form class="layui-form" id="settlementAccountBox" lay-filter="settlementAccountForm" style="width: 100%;margin-top: 20px;display:none">
+    <!--<div class="layui-form-item">
+        <label class="layui-form-label"></label>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label"></label>
+    </div>-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">账户类型：</label>
+        <div class="layui-input-block">
+            <input type="radio" name="accountType" lay-filter="accountTypeRadio" value="0" title="对公账户" disabled="" checked>
+            <input type="radio" name="accountType" lay-filter="accountTypeRadio" value="1" title="个人账户" disabled="">
+        </div>
+    </div>
+    <div id="dgzh">
+        <div class="layui-form-item">
+            <label class="layui-form-label">对公银行账号：</label>
+            <div class="layui-input-block">
+                <input type="text" name="bankCardNumber" id="dgzh_bankCardNumber" required  lay-verify="required" placeholder="门店对公账号" autocomplete="on" class="layui-input" maxlength="30">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">开户支行名称：</label>
+            <div class="layui-input-block">
+                <input type="text" name="bankName" id="dgzh_bankName" required  lay-verify="required" placeholder="开户行名称" autocomplete="on" class="layui-input" maxlength="30">
+            </div>
+        </div>
+        <!--<div class="layui-form-item">
+            <label class="layui-form-label">开户行城市：</label>
+            <div class="layui-input-inline">
+                <select id="provinceListSel" name="provinceId" lay-filter="provinceListSelChange">
+                    <option value="">请选择省份</option>
+                </select>
+            </div>
+            <div class="layui-input-inline">
+                <select id="cityIdSel" name="cityId">
+                    <option value="">请选择城市</option>
+                </select>
+            </div>
+        </div>-->
+        <div class="layui-form-item">
+            <label class="layui-form-label">开户行地址：</label>
+            <div class="layui-input-block">
+                <input type="text" name="bankAddress" id="dgzh_bankAddress"  placeholder="开户行地址" autocomplete="on" class="layui-input" maxlength="50">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">公司税号：</label>
+            <div class="layui-input-block">
+                <input type="text" name="dutyParagraph" id="dgzh_dutyParagraph"  placeholder="公司税号" autocomplete="on" class="layui-input" maxlength="50">
+            </div>
+        </div>
+    </div>
+    <div id="grzh" style="display: none;">
+        <div class="layui-form-item">
+            <label class="layui-form-label">收款人姓名：</label>
+            <div class="layui-input-block">
+                <input type="text" name="bankCardName" id="grzh_bankCardName" readonly   placeholder="收款人姓名" autocomplete="on" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">收款人账号：</label>
+            <div class="layui-input-block">
+                <input type="text" name="bankCardNumber" id="grzh_bankCardNumber" readonly required  lay-verify="required" placeholder="收款人账号" autocomplete="on" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">开户支行名称：</label>
+            <div class="layui-input-block">
+                <input type="text" name="bankName" id="grzh_bankName" readonly  lay-verify="required" placeholder="开户行名称" autocomplete="on" class="layui-input">
+            </div>
+        </div>
+    </div>
+</form>
+<script type="text/javascript" src="/common/js/tools.js"></script>
+<!-- layui 初始化 -->
+<script type="text/javascript" th:inline="javascript">
+    layui.use(['form','layer','table','laydate', 'upload'],function(){
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            table = layui.table,
+            upload = layui.upload,
+            laydate = layui.laydate;
+        var fissionId = [[${fissionActivity.id}]];
+        var activityName = [[${fissionActivity.activityName}]];
+        var periodsId = [[${fissionActivity.periodsId}]];
+        var sceneId = [[${fissionActivity.sceneId}]];
+        var onOpen = [[${fissionActivity.onState}]];
+        var getUrl = '/fission/activity/searchdealerlist?fissionId='+fissionId + "&periodsId=" + periodsId;
+        if(sceneId != null && sceneId != ''){
+            getUrl = getUrl + "&sceneId=" + sceneId;
+        }
+        //执行实例
+        var uploadInst = upload.render({
+            elem: '#importData' //绑定元素
+            //, url: '/gift/importGift' //上传接口
+            , url: '/fission/activity/uploaddealersettlementaccount' //上传接口
+            , accept: 'file'
+            ,acceptMime:'.xls,.xlsx'
+            ,before:function(){
+                this.data = {
+                    fissionId:fissionId,
+                    fissionActivityName:activityName
+                }
+                var loadMsg = "上传中，请稍后";
+                layer.msg(loadMsg, {
+                    time: 0,
+                });
+            }
+            ,size:1024 //限制大小为1M
+            , done: function (res) {
+                layui.use('layer', function () {
+                    layer.close();
+                    layer.msg(res.responseHeader.message, {
+                        time: 0, //6s后自动关闭
+                        icon: 1,
+                        btn: ['关闭']
+                    });
+                    table.reload("fissionDealerListTable",{});
+                });
+            }
+            , error: function () {
+                //请求异常回调
+            }
+        });
+
+        // 裂变活动列表
+        var tableIns = table.render({
+            elem: '#fissionActivityDealerList',
+            url : getUrl,
+            cellMinWidth : 60,
+            page : true,
+            height : "full-125",
+            limits : [10,20,50,100],
+            limit : 10,
+            id : "fissionDealerListTable",
+            cols: [
+                [
+                    {type:'checkbox'},
+                    {field: 'dealerName', title: '经销商名称', minWidth: 180, align: "center"},
+                    {field: 'cityName', title: '城市', minWidth: 100, align: "center"},
+                    {field: 'brandNames', title: '直播品牌', minWidth: 160, align: "center"},
+                    {field: 'managerName', title: '负责人姓名', minWidth: 160, align: "center"},
+                    {field: 'managerPhone', title: '负责人手机号', minWidth: 160, align: "center"},
+                    {field: 'joinFission', title: '参与活动', width: 100, align: 'center', unresize: false, templet: function (d) {
+                            if(d.joinFission == 1){
+                                return '<input type="checkbox" name="onState" value="'+d.dealerId+'" lay-skin="switch" lay-text="是|否" lay-filter="onStateFilter" checked>'
+                            }else{
+                                return '<input type="checkbox" name="onState" value="'+d.dealerId+'" lay-skin="switch" lay-text="是|否" lay-filter="onStateFilter" >'
+                            }
+                        }},
+                    {field:'sex', title:'是否允许使用私人账户', width:180, align: "center", templet: '#personalAccount', unresize: true},
+                    {field:'sex', title:'是否已同步结算基础账户', width:250, templet: '#hasSttlementAccount', unresize: true},
+                    {fixed: 'right', title: '销售人员', minWidth: 160, align: 'center', toolbar: '#barBtn'}
+                ]
+            ]
+        });
+
+        // 操作事件
+        table.on('tool(fissionActivityDealerTool)', function(obj){
+            var data = obj.data;
+            if(obj.event == 'viewSales'){
+                commOpen("销售管理", "/fission/activity/toDealerSalesPage?fissionId=" + fissionId + "&dealerId=" + data.dealerId +
+                        "&dealerName=" + data.dealerName , '100%','100%');
+            }else if(obj.event == 'viewSettlement'){
+                $("input:radio[name='accountType']:eq(0)").prop("checked",'checked');
+                $("input:radio[name='accountType']:eq(1)").prop("checked",'');
+                cusIndex.dgzhBox();
+                form.render();
+                comvar.dgzh_bankCardNumber.val("");
+                comvar.dgzh_bankName.val("");
+                comvar.dgzh_bankAddress.val("");
+                comvar.dgzh_bankCardName.val("");
+                comvar.dgzh_bankCardPhone.val("");
+                comvar.grzh_bankCardNumber.val("");
+                comvar.grzh_bankName.val("");
+                comvar.grzh_bankCardName.val("");
+                comvar.dgzh_dutyParagraph.val("");
+                settlementAccountBox(fissionId,data.dealerSttlementAccountId,data.dealerId);
+            }
+        });
+
+        window.commOpen = function(title,url,width,height) {
+            layer.open({
+                title: title,
+                type: 2,
+                shadeClose: true,
+                content: url,
+                area: [width, height]
+            });
+        }
+
+        $('#bulkJoinFission').on('click',function(){
+            var chkdata = table.checkStatus('fissionDealerListTable').data;
+            var dataMap = new Map();
+            $.each(chkdata,function(index,value){
+                var dataObj = {dealerId:value.dealerId};
+                dataMap.set(value.dealerId,dataObj);
+            });
+            if(chkdata.length){
+                layer.confirm('确认批量参与裂变活动吗？', function(index) {
+                    var loadIndex = layer.load(1, {
+                        shade: [0.5, '#000']
+                    });
+                    var optCode = 200;
+                    var optMsg = "";
+                    dataMap.forEach(function(value,key,map){
+                        $.ajax({
+                            type: "post",
+                            url: "/fission/activity/joinFission",
+                            dataType:'json',
+                            data: {fissionId: fissionId, dealerId: key, joinFlag: 1},
+                            async:false,
+                            success: function (data) {
+                                optMsg = data.msg;
+                                optCode = data.code;
+                            },
+                            error: function () {
+                                optCode = 1;
+                                optMsg = "网络异常";
+                            }
+                        });
+                    });
+                    layer.msg(optMsg, {
+                        icon: optCode==200 ? 6 : 5, time: 1500, end: function () {
+                            layer.close(loadIndex);
+                            table.reload("fissionDealerListTable",{})
+                            // location.href = "/fission/activity/toConfigDealerList?fissionId=" + fissionId;
+                        }
+                    });
+                });
+            }else{
+                layer.msg("请选择要参与的经销商！", {icon: 6,time: 1500, title:'提示'});
+                return;
+            }
+        });
+
+        form.on('select(provinceListSelChange)', function(data){
+            var provinceId=data.value;
+            comvar.cityIdSel.html('');
+            if(provinceId){
+                cusIndex.getCityList(provinceId);
+            }
+        });
+        //监听性别操作
+        form.on('switch(onStateFilter)', function(obj){
+            if (onOpen == 1) {
+                if (!obj.elem.checked) {
+                    var em = $(obj.othis[0]);
+                    obj.othis[0].classList.add('layui-form-onswitch');
+                    em.children('em').text('是');
+                    obj.elem.checked = true;
+                    return;
+                }
+            }
+            var dealerId = this.value;
+            if(!obj.elem.checked){
+                layer.confirm('确定关闭该经销商吗？', function(index) {
+                        $.ajax({
+                            type: "post",
+                            url: "/fission/activity/joinFission",
+                            dataType:'json',
+                            data: {fissionId: fissionId, dealerId: dealerId, joinFlag: 0},
+                            dataType: "json",
+                            success: function (data) {
+                                var message = data.msg;
+                                if(data.code == 200){
+                                    layer.msg(message, {
+                                        icon: 6, time: 1500, end: function () {
+                                            table.reload("fissionDealerListTable",{})
+                                            // location.href = "/fission/activity/toConfigDealerList?fissionId=" + fissionId;
+                                        }
+                                    });
+                                } else if(data.code == 50003) {
+                                    layer.alert("活动正在进行中，该经销商不允许退出", {icon: 5,title:'提示'});
+                                    var em = $(obj.othis[0]);
+                                    obj.othis[0].classList.add('layui-form-onswitch');
+                                    em.children('em').text('是');
+                                    obj.elem.checked = true;
+                                    return;
+                                } else{
+                                    layer.alert(message, {icon: 5,title:'提示'});
+                                    var em = $(obj.othis[0]);
+                                    obj.othis[0].classList.add('layui-form-onswitch');
+                                    em.children('em').text('是');
+                                    obj.elem.checked = true;
+                                    return;
+                                }
+                            },
+                            error: function () {
+                                var em = $(obj.othis[0]);
+                                obj.othis[0].classList.add('layui-form-onswitch');
+                                em.children('em').text('是');
+                                obj.elem.checked = true;
+                                return;
+                            }
+                        })
+                    },
+                    function (index) {
+                        var em = $(obj.othis[0]);
+                        obj.othis[0].classList.add('layui-form-onswitch');
+                        em.children('em').text('是');
+                        obj.elem.checked = true;
+                        return;
+                    });
+            }else{
+                $.ajax({
+                    type: "post",
+                    url: "/fission/activity/joinFission",
+                    dataType:'json',
+                    data: {fissionId: fissionId, dealerId: dealerId, joinFlag: 1},
+                    dataType: "json",
+                    success: function (data) {
+                        var message = data.msg;
+                        if(data.code == 200){
+                            layer.msg(message, {
+                                icon: 6, time: 1500, end: function () {
+                                    table.reload("fissionDealerListTable",{})
+                                    // location.href = "/fission/activity/toConfigDealerList?fissionId=" + fissionId;
+                                }
+                            });
+                        } else if(data.code == 50003) {
+                            layer.alert("活动正在进行中，该经销商不允许退出", {icon: 5,title:'提示'});
+                            var em = $(obj.othis[0]);
+                            obj.othis[0].classList.add('layui-form-onswitch');
+                            em.children('em').text('是');
+                            obj.elem.checked = true;
+                            return;
+                        } else{
+                            layer.alert(message, {icon: 5,title:'提示'});
+                            var em = $(obj.othis[0]);
+                            obj.othis[0].classList.add('layui-form-onswitch');
+                            em.children('em').text('是');
+                            obj.elem.checked = true;
+                            return;
+                        }
+                    },
+                    error: function () {
+                        var em = $(obj.othis[0]);
+                        obj.othis[0].classList.add('layui-form-onswitch');
+                        em.children('em').text('是');
+                        obj.elem.checked = true;
+                        return;
+                    }
+                })
+            }
+        });
+        //导出订单
+        $("#export").on("click",function(){
+            var accountType = $("#accountTypeSel").val();
+            var fissionId = [[${fissionActivity.id}]];
+            window.open('/fission/dealer/settlement/exportDealerSettlementAccount?fissionId='+fissionId+"&accountType="+accountType);
+        });
+        var comvar = {
+            saveing:false,
+            host:'//'+window.location.host,
+            grzh:$('#grzh'),
+            dgzh:$('#dgzh'),
+            dgzh_bankCardName:$('#dgzh_bankCardName'),
+            dgzh_bankCardNumber:$('#dgzh_bankCardNumber'),
+            dgzh_bankName:$('#dgzh_bankName'),
+            dgzh_bankAddress:$('#dgzh_bankAddress'),
+            dgzh_bankCardPhone:$('#dgzh_bankCardPhone'),
+            grzh_bankCardName:$('#grzh_bankCardName'),
+            grzh_bankCardNumber:$('#grzh_bankCardNumber'),
+            grzh_bankName:$('#grzh_bankName'),
+            dgzh_dutyParagraph:$('#dgzh_dutyParagraph'),
+            provinceListSel:$('#provinceListSel'),
+            cityIdSel:$('#cityIdSel')
+        };
+        var cusIndex = {
+            save:function(fissionId,id,dealerId){
+                //海纳后台只能添加对公账户
+                var accountType = 1;
+                var data={},bankCardName="",bankCardNumber="",bankName="",bankAddress="",bankCardPhone="",provinceId,cityId;
+                bankCardNumber = comvar.dgzh_bankCardNumber.val();
+                if(cusIndex.isEmpty(bankCardNumber)){
+                    layer.msg("请填写对公银行账号")
+                    comvar.dgzh_bankCardNumber.focus();
+                    return;
+                }
+                bankName = comvar.dgzh_bankName.val();
+                if(cusIndex.isEmpty(bankName)){
+                    layer.msg("请填写开户支行名称")
+                    comvar.dgzh_bankName.focus();
+                    return;
+                }
+                bankAddress = comvar.dgzh_bankAddress.val();
+                if(cusIndex.isEmpty(bankAddress)){
+                    layer.msg("请填写开户支行地址")
+                    comvar.dgzh_bankAddress.focus();
+                    return;
+                }
+                data = {
+                    id:id,
+                    fissionId:fissionId,
+                    accountType:1,
+                    dealerId:dealerId,
+                    bankName:bankName,
+                    bankCardNumber:bankCardNumber,
+                    bankAddress:bankAddress,
+                    dutyParagraph:comvar.dgzh_dutyParagraph.val()
+                }
+                cusIndex.saveSettlementAccount(data,"/fission/activity/addOrUpdateFinancial");
+            },
+            saveSettlementAccount:function(data,url){
+                if(comvar.saveing){
+                    return;
+                }
+                comvar.saveing = true;
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    cache: false,
+                    data: data,
+                    success: function (result) {
+                        if(result.responseHeader.status==200){
+                            layer.msg("保存成功");
+                            table.reload('fissionDealerListTable');
+                            layer.closeAll();
+                        }else{
+                            layer.msg("保存失败", {icon:5,time:2500});
+                        }
+                        comvar.saveing = false;
+                    },
+                    error:function(){
+                        comvar.saveing = false;
+                    }
+                });
+            },
+            dgzhBox:function(){
+                comvar.dgzh.show();
+                comvar.grzh.hide();
+            },
+            grzhBox:function(){
+                comvar.dgzh.hide();
+                comvar.grzh.show();
+            },
+            isEmpty:function(val){
+                return val==null || val=="undefined" || val.length < 1;
+            },
+            getProvinceList:function(){
+                $.ajax({
+                    type: "POST",
+                    url: comvar.host+'/common/getProvinceList',
+                    cache: false,
+                    dataType: "json",
+                    success: function (result) {
+                        if(result){
+                            var data = result;
+                            var html = '<option value="">请选择省份</option>';
+                            for (var i = 0; i < data.length; i++) {
+                                html+='<option value="'+data[i].id+'">'+data[i].name+'</option>';
+                            }
+                            comvar.provinceListSel.html(html);
+                            form.render();
+                        }else{
+                            layer.msg("获取省份失败", {icon:5,time:2500});
+                        }
+                    },
+                    error:function(){
+                    }
+                });
+
+            },
+            getCityList:function(provinceId){
+                $.ajax({
+                    type: "get",
+                    url: comvar.host+'/common/loadCity?provinceId='+provinceId,
+                    cache: false,
+                    async:false,
+                    dataType: "json",
+                    success: function (result) {
+                        if(result){
+                            var data = result;
+                            var html = '<option value="">请选择城市</option>';
+                            for (var i = 0; i < data.length; i++) {
+                                html+='<option value="'+data[i].id+'">'+data[i].name+'</option>';
+                            }
+                            comvar.cityIdSel.html(html);
+                            form.render();
+                        }else{
+                            layer.msg("获取城市失败", {icon:5,time:2500});
+                        }
+                    },
+                    error:function(){
+                    }
+                });
+
+            }
+
+        }
+        //搜索订单
+        $("#search").on("click",function(){
+            var accountType = $("#accountTypeSel").val();
+            table.reload("fissionDealerListTable",{
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: {
+                    "hasSttlementAccount": accountType
+                }
+            })
+        });
+        form.on('radio(accountTypeRadio)', function(data){
+            if(data.value == 1){
+                cusIndex.dgzhBox();
+            } else {
+                cusIndex.grzhBox();
+            }
+        });
+        //是否允许使用私人账户
+        form.on('switch(personalAccountFilter)', function(obj){
+            var thisobj= this;
+            var ck = thisobj.checked;
+            //对公账户
+            var accountType = 1;
+            //允许使用个人账户
+            if(obj.elem.checked){
+                accountType = 2;
+            }
+            var dealerId = obj.elem.attributes["data-dealerId"].value;
+            var dealerSttlementAccountId = !obj.value||obj.value=='null'?null:obj.value;
+            layer.confirm(obj.elem.checked?'确定该经销商允许使用个人账户吗？':'确定该经销商不允许使用个人账户吗？', {
+                btn1: function (index) {
+
+                    var data = {
+                        id:dealerSttlementAccountId,
+                        dealerId:dealerId,
+                        fissionId:fissionId,
+                        accountType:accountType
+                    }
+                    cusIndex.saveSettlementAccount(data,"/fission/activity/dealerAccountType");
+                    layer.close(index);
+                },
+                btn2: function () {
+                    console.log("取消");
+                    thisobj.checked = !ck;
+                    form.render('checkbox');
+                },
+                cancel: function () {
+                    thisobj.checked = !ck;
+                    form.render('checkbox');
+                }
+            });
+        });
+        form.on('switch(sttlementAccountFilter)', function(obj){
+            var thisobj= this;
+            var ck = thisobj.checked;
+            var dealerId = obj.elem.attributes["data-dealerId"].value;
+            var accountType = obj.elem.attributes["data-accountType"].value=="null"?1:obj.elem.attributes["data-accountType"].value;
+            layer.confirm(obj.elem.checked?'确定同步结算账户吗？':'确定不同步结算账户吗？', {
+                btn1: function (index) {
+                    var data = {
+                        dealerId:dealerId,
+                        fissionId:fissionId,
+                        accountType:accountType
+                    }
+                    cusIndex.saveSettlementAccount(data,"/fission/activity/syncDealerAccount");
+                    layer.close(index);
+                },
+                btn2: function () {
+                    console.log("取消");
+                    thisobj.checked = !ck;
+                    form.render('checkbox');
+                },
+                cancel: function () {
+                    thisobj.checked = !ck;
+                    form.render('checkbox');
+                }
+            });
+        });
+
+        window.settlementAccountBox = function(fissionId,dealerSttlementAccountId,dealerId) {
+            var btn=['保存'];
+            var $form = this.from;
+            $.ajax({
+                type: "post",
+                url: "/fission/activity/getDealerSettlementAccount",
+                dataType:'json',
+                data: {id:dealerSttlementAccountId},
+                async:false,
+                success: function (result) {
+                    if(result){
+                        var accountType = result.accountType;
+                        if(accountType == 1){
+                            $("input:radio[name='accountType']:eq(0)").prop("checked","checked");
+                            cusIndex.dgzhBox();
+                            comvar.dgzh_bankCardNumber.val(result.bankCardNumber);
+                            comvar.dgzh_bankName.val(result.bankName);
+                            // comvar.provinceListSel.val(result.provinceId);
+                            // cusIndex.getCityList(result.provinceId)
+                            // comvar.cityIdSel.val(result.cityId);
+                            comvar.dgzh_bankAddress.val(result.bankAddress);
+                            comvar.dgzh_dutyParagraph.val(result.dutyParagraph)
+                        }else if(accountType == 2){
+                            $("input:radio[name='accountType']:eq(1)").prop("checked","checked");
+                            cusIndex.grzhBox();
+                            comvar.grzh_bankCardNumber.val(result.bankCardNumber);
+                            comvar.grzh_bankName.val(result.bankName);
+                            comvar.grzh_bankCardName.val(result.bankCardName);
+                            btn = [];
+                        }
+                        form.render();
+                    }else if(dealerSttlementAccountId == null){
+                        layer.msg("获取结算账户详情失败，请稍后再试", {icon:5,time:2500});
+                    }
+                },
+                error: function () {
+                    optCode = 1;
+                    optMsg = "网络异常";
+                }
+            });
+
+            var jsIndex = layer.open({
+                type:1,
+                area:['700px','458px'],
+                title: '结算账户'
+                ,content: $("#settlementAccountBox"),
+                shade: 0,
+                btn: btn
+                ,btn1: function(index, layero){
+                    cusIndex.save(fissionId,dealerSttlementAccountId,dealerId);
+                },
+                cancel: function(layero,index){
+                    layer.closeAll();
+                }
+            });
+        }
+        cusIndex.getProvinceList();
+    })
+    //模板下载
+    function downloadTemplate() {
+        window.open("/common/download?fileName=dealer-account.xlsx&contentType=application/vnd.ms-excel;charset=UTF-8");
+    }
+</script>
+</body>
+</html>

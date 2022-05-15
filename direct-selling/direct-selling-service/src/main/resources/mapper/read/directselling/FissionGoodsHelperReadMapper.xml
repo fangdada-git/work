@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.FissionGoodsHelperReadMapper" >
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FissionGoodsHelper" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="goods_id" property="goodsId" jdbcType="INTEGER" />
+    <result column="peroids_id" property="peroidsId" jdbcType="INTEGER" />
+    <result column="fission_id" property="fissionId" jdbcType="INTEGER" />
+    <result column="flag" property="flag" jdbcType="BIT" />
+    <result column="helper_num" property="helperNum" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, goods_id, peroids_id, fission_id, flag, helper_num, delete_flag
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from fission_goods_helper
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="getFissionGoodsHelperList" resultMap="BaseResultMap" parameterType="com.tuanche.directselling.model.FissionGoodsHelper" >
+    select 
+    <include refid="Base_Column_List" />
+    from fission_goods_helper
+    <where>
+      <choose>
+        <when test="id!=null">
+          and id = #{id,jdbcType=INTEGER}
+        </when>
+        <otherwise>
+          <if test="goodsId!=null">
+            and goods_id = #{goodsId,jdbcType=INTEGER}
+          </if>
+          <if test="peroidsId!=null">
+            and peroids_id = #{peroidsId,jdbcType=INTEGER}
+          </if>
+          <if test="fissionId!=null">
+            and fission_id = #{fissionId,jdbcType=INTEGER}
+          </if>
+          <if test="deleteFlag!=null">
+            and delete_flag = #{deleteFlag,jdbcType=INTEGER}
+          </if>
+        </otherwise>
+      </choose>
+    </where>
+  </select>
+  
+  
+  
+</mapper>

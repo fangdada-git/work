@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.GiftRefuelingcardReadMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.GiftRefuelingcard">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="refueling_code" jdbcType="VARCHAR" property="refuelingCode" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="delete_flag" jdbcType="BIT" property="deleteFlag" />
+    <result column="create_dt" jdbcType="TIMESTAMP" property="createDt" />
+    <result column="create_name" jdbcType="VARCHAR" property="createName" />
+    <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
+    <result column="update_name" jdbcType="VARCHAR" property="updateName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, refueling_code, `state`, delete_flag, create_dt, create_name, update_dt, update_name
+  </sql>
+    <!-- 获取指定条数的未赠送油卡 -->
+  <select id="getNoGiftRefuelingcardList" resultMap="BaseResultMap" parameterType="integer">
+      SELECT
+          <include refid="Base_Column_List"></include>
+      FROM
+          gift_refuelingcard
+      WHERE state = 1
+        AND delete_flag = 0
+      ORDER BY id
+      LIMIT #{limit};
+  </select>
+    <!-- 根据赠送油卡记录ID获取油卡卡号 -->
+   <select id="getRefuelingCodeByRecordId" parameterType="integer" resultType="string">
+        SELECT
+            t1.refueling_code
+        FROM gift_refuelingcard t1
+        WHERE t1.id = (
+            SELECT refuelingcard_id t2
+            FROM gift_refuelingcard_giftrecord t2
+            WHERE t2.id = #{recordId}
+        )
+    </select>
+    <!-- 油卡使用统计 -->
+    <select id="refuelCardUsedStatistics" resultType="com.tuanche.directselling.dto.GiftRefuelingcardUsedStatisticsDto">
+        SELECT
+            COUNT(*) AS total ,
+            (SELECT COUNT(*) FROM gift_refuelingcard WHERE state = 1 AND delete_flag = 0) AS unUsed
+        FROM gift_refuelingcard
+       WHERE delete_flag = 0
+    </select>
+    <!-- 获取所有油卡卡号 -->
+    <select id="getAllCards" resultType="java.lang.String">
+        SELECT refueling_code FROM gift_refuelingcard
+    </select>
+</mapper>

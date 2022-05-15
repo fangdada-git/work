@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>团车直卖-裂变商品订单列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.js"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/magnify/css/jquery.magnify.css" >
+    <script src="/layui/js/formSelects-v4.js"></script>
+    <script src="/layui/js/tableSelect.js"></script>
+    <link rel="stylesheet" href="/layui/css/formSelects-v4.css" media="all">
+    <style type="text/css">
+        .layui-table-header .layui-table tr {
+            height: auto;
+            line-height: 50px;
+        }
+        .layui-table tr{height: 65px}
+        .layui-form-label{width: 100px}
+        .layui-input-block{
+            margin-left: 131px;
+            min-height: 36px;
+        }
+        .layui-input{
+            width: 217.44px;
+        }
+        .layui-input-block-p{
+            padding-top: 8px;
+        }
+    </style>
+</head>
+<body class="childrenBody">
+<form class="layui-form" style="background-color: #ffffff;">
+    <blockquote class="layui-elem-quote quoteBox">
+        <form class="layui-form">
+            <div class="layui-form-item" >
+                <div class="layui-inline">
+                    <label class="layui-form-label">活动名称：</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="" placeholder="请选择活动" autocomplete="off" class="layui-input"
+                               id="acName">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item" >
+                <div class="layui-inline">
+                    <label class="layui-form-label">直播间名称：</label>
+                    <div class="layui-input-block">
+                        <select id="liveId" lay-filter="liveId">
+                            <option value="">请选择直播间</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item" >
+                <div class="layui-inline">
+                    <label class="layui-form-label">订单总数：</label>
+                    <div class="layui-input-block">
+                        <p id="orderSum" class="layui-input-block-p"></p>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">已支付订单：</label>
+                    <div class="layui-input-block">
+                        <p id="paidUncheckoutCount" class="layui-input-block-p"></p>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">已核销订单：</label>
+                    <div class="layui-input-block">
+                        <p id="checkoutOrderCount" class="layui-input-block-p"></p>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">已退款订单：</label>
+                    <div class="layui-input-block">
+                        <p id="refundedCount" class="layui-input-block-p"></p>
+                    </div>
+                </div>
+                <div class="layui-inline" style="width:130px;">
+                    <label class="layui-form-label" style="width:130px;">核销订单总金额：</label>
+                    <div class="layui-input-block" style="width:130px;">
+                        <p id="checkoutOrderAmountSum" class="layui-input-block-p"></p>
+                    </div>
+                </div>
+                <div class="layui-inline" style="width:200px;">
+                    <label class="layui-form-label" style="width:200px;">退款订单总金额：</label>
+                    <div class="layui-input-block" style="width:150px;">
+                        <p id="refundedAmountSum" class="layui-input-block-p"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item" >
+                <div class="layui-inline">
+<!--                    <label class="layui-form-label">订单状态筛选：</label>-->
+                    <div class="layui-input-block" style="margin-left: 10px;">
+                        <select id="orderStatus" name="orderStatus">
+                            <option value="">请选择订单状态</option>
+                            <option value="UNPAID">待支付</option>
+                            <option value="PAID">已支付</option>
+                            <option value="APPLY_REFUND">申请退款</option>
+                            <option value="REFUND_SUCCESS">已退款</option>
+                            <option value="CHECKOUT">已发券</option>
+                            <option value="TRADE_CLOSED">已取消</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+<!--                    <label class="layui-form-label">订单状态筛选：</label>-->
+                    <div class="layui-input-block" style="margin-left: 10px;">
+                        <select id="orderSource" name="orderSource">
+                            <option value="">请选择订单来源</option>
+                            <option th:each="orderSource : ${orderSourceList}" th:value="${orderSource.code}" th:text="${orderSource.name}"></option>
+<!--                            <option value="1">直播间</option>-->
+<!--                            <option value="2">裂变活动页</option>-->
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-input-block" style="margin-left: 10px;">
+                        <input type="text" name="userPhone" id="userPhone" placeholder="请输入手机号" class="layui-input"/>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item" >
+                <div class="layui-inline">
+                    <div class="layui-input-block" style="margin-left: 10px;">
+                        <input type="text" name="dealerName" id="dealerName" placeholder="下单经销商" class="layui-input"/>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-input-block" style="margin-left: 10px;">
+                        <input type="text" name="cancelDealerName" id="cancelDealerName" placeholder="核销经销商" class="layui-input"/>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <!--                    <label class="layui-form-label">订单状态筛选：</label>-->
+                    <div class="layui-input-block" style="margin-left: 10px;">
+                        <select id="orderChannel" name="orderChannel">
+                            <option value="">请选择渠道</option>
+                            <option th:each="fissionDict : ${fissionDictList}" th:value="${fissionDict.code}" th:text="${fissionDict.name}"></option>
+<!--                            <option value="1">裸连接</option>-->
+<!--                            <option value="2">销售渠道</option>-->
+<!--                            <option value="3">用户运营渠道</option>-->
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-input-block" style="margin-left: 10px;">
+                        <a class="layui-btn layui-btn-radius add_btn" id="search" href="javascript:;"><i class="layui-icon layui-icon-release"></i>查找</a>
+                        <a class="layui-btn layui-btn-radius add_btn" id="export" href="javascript:;"><i class="layui-icon layui-icon-release"></i>导出</a>
+                        <a class="layui-btn layui-btn-radius add_btn" id="batchRefund" href="javascript:;"><i class="layui-icon layui-icon-release"></i>批量退款</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </blockquote>
+    <table id="fissionGoodsOrderList" lay-filter="fissionActivityTool"></table>
+</form>
+
+<!-- 表格操作列按钮 -->
+<script type="text/html" id="barBtn">
+    {{# if(d.orderStatus=="PAID"){ }}
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="refund"><i class="layui-icon layui-icon-edit">退款</i></a>
+    {{# } }}
+    {{# if(d.orderStatus=="APPLY_REFUND") { }}
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="refund"><i class="layui-icon layui-icon-edit">通过</i></a>
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="reject"><i class="layui-icon layui-icon-edit">拒绝</i></a>
+    {{# } }}
+</script>
+
+<script type="text/javascript" src="/common/js/tools.js"></script>                              
+<!-- layui 初始化 -->
+<script type="text/javascript" th:inline="javascript">
+    layui.use(['form','layer','table','laydate'],function(){
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            table = layui.table,
+            tableSelect = layui.tableSelect;
+
+        tableSelect.render({
+            elem: '#acName',
+            checkedKey: 'id',
+            table: {
+                url: '/fission/data/view/business/activity/select',
+                cols: [
+                    [
+                        {type: 'radio'},
+                        {field: 'id', title: 'ID', width: 50},
+                        {field: 'activityName', title: '活动名称', width: 200},
+                        {field: 'startTime', title: '活动开始时间', width: 300},
+                        {field: 'endTime', title: '活动结束时间', width: 300}
+                    ]
+                ]
+            },
+            done: function (elem, data) {
+                var NEWJSON = []
+                layui.each(data.data, function (index, item) {
+                    NEWJSON.push(item.activityName)
+                    $.ajax({
+                        type: "post",
+                        url: "/fission/goods/order/getLiveList",
+                        dataType:'json',
+                        data: {fissionId: item.id},
+                        dataType: "json",
+                        success: function (s) {
+                            $('#liveId').html("");
+                            $('#liveId').append(new Option("请选择直播间",""));
+                            if (s.code==200) {
+                                $.each(s.result, function (index, val) {
+                                    $('#liveId').append(new Option(val.roomTitle,val.id));
+                                })
+                            }
+                            form.render("select");
+                        },
+                        error: function (e) {
+                            layer.alert('网络繁忙', {icon: 5,title:'提示'});
+                        }
+                    });
+                })
+                elem.val(NEWJSON.join(","))
+                $("#dataTab").show();
+            }
+        })
+
+        //当前页数据数量
+        var table_data = new Array();
+        //选中的订单编号
+        var orderNos = new Array();
+        // 裂变活动列表
+        var tableIns = table.render({
+            elem: '#fissionGoodsOrderList',
+            url : '/fission/goods/order/getGoodsOrderList',
+            cellMinWidth : 100,
+            page : true,
+            height : "full-125",
+            limits : [10,20,50,100],
+            limit : 10,
+            id : "goodsOrderListTable",
+            cols: [
+                [
+                    {type:'numbers', fixed: 'left'},
+                    {type: "checkbox", fixed: "left", width: 50},
+                    {field: 'orderNo', title: '订单编号', align: "center"},
+                    {field: 'userPhone', title: '用户手机号', align: "center"},
+                    {field: 'userName', title: '用户姓名', align: "center"},
+                    {field: 'orderChannelName', title: '渠道', align: "center"},
+                    {field: 'orderCreateDtStr', title: '下单时间', align: "center", minWidth: 200},
+                    {field: 'payTimeStr', title: '支付时间', align: "center", minWidth: 200},
+                    {field: 'orderCityName', title: '下单人城市', align: "center"},
+                    {field: 'goodsName', title: '商品名称', align: "center"},
+                    {field: 'orderMoney', title: '订单金额', align: "center"},
+                    {field: 'fissionActivityName', title: '所属活动名称', align: "center", minWidth: 120},
+                    {field: 'liveName', title: '直播间名称', align: "center", minWidth: 120},
+                    {field: 'watchLiveName', title: '是否看过直播', align: "center", minWidth: 120},
+                    {field: 'saleName', title: '下单所属销售', align: "center", minWidth: 120},
+                    {field: 'dealerName', title: '下单所属经销商', align: "center", minWidth: 140},
+                    {field: 'tradeNo', title: '微信交易流水号', align: "center", minWidth: 140},
+                    {field: 'orderStatusName', title: '订单状态', align: "center"},
+                    {field: 'orderSourceName', title: '订单来源', align: "center", minWidth: 100},
+                    {field: 'cancelSaleName', title: '核销销售', align: "center"},
+                    {field: 'cancelDealerName', title: '核销经销商', align: "center"},
+                    {field: 'cancelDate', title: '核销时间', align: "center",minWidth: 200, templet: function (d) {
+                            if (d.cancelDate==null) return "";
+                            return layui.util.toDateString(d.cancelDate, 'yyyy-MM-dd HH:mm:ss');
+                        }
+                    },
+                    {field: 'refundTradeNo', title: '退款交易流水号', align: "center", minWidth: 140},
+                    {field: 'refundDate', title: '退款时间', align: "center",minWidth: 200, templet: function (d) {
+                            if (d.refundDate==null) return "";
+                            return layui.util.toDateString(d.refundDate, 'yyyy-MM-dd HH:mm:ss');
+                        }
+                    },
+                    {fixed: 'right', title: '操作', align: 'center',minWidth: 200, toolbar: '#barBtn'},
+                ]
+            ],
+            done: function (res, curr, count) {
+                orderNos = new Array();
+                table_data = res.data;
+                var fissionId = $("#acName").attr("ts-selected");
+                getFissionOrderStatistics(fissionId);
+
+                for(var suborders_key in table_data) {
+                    var index = table_data[suborders_key]['LAY_TABLE_INDEX'];
+                    $('tr[data-index=' + index + '] input[type="checkbox"]').prop('disabled', true); // 禁止选择
+                    if(table_data[suborders_key]['orderStatusType'] == 3 || table_data[suborders_key]['orderStatusType'] == 5){
+                        $('tr[data-index=' + index + '] input[type="checkbox"]').prop('disabled', false); // 可选择
+                    }
+                };
+                form.render('checkbox');
+            }
+        });
+        //选择活动
+        form.on('select(fission)', function(data){
+            var fissionId = $("#fissionId").val();
+            if (fissionId==null) {
+                $("#activityDate").html("")
+            } else {
+                var starttime = $("#fissionId option:selected").data("starttime");
+                var endtime = $("#fissionId option:selected").data("endtime");
+                $("#activityDate").html(starttime+" 至 "+endtime);
+
+                $.ajax({
+                    type: "post",
+                    url: "/fission/goods/order/getLiveList",
+                    dataType:'json',
+                    data: {fissionId: fissionId},
+                    dataType: "json",
+                    success: function (s) {
+                        $('#liveId').html("");
+                        $('#liveId').append(new Option("请选择直播间",""));
+                        if (s.code==200) {
+                            $.each(s.result, function (index, val) {
+                                $('#liveId').append(new Option(val.roomTitle,val.id));
+                            })
+                        }
+                        form.render("select");
+                    },
+                    error: function (e) {
+                        layer.alert('网络繁忙', {icon: 5,title:'提示'});
+                    }
+                });
+            }
+
+        });
+        
+        function getFissionOrderStatistics (fissionId) {
+            $.ajax({
+                type: "post",
+                url: "/fission/goods/order/getFissionOrderStatistics",
+                dataType:'json',
+                data: {fissionId: fissionId},
+                dataType: "json",
+                success: function (s) {
+
+                    $("#orderSum").html(s.code != 200 ? 0: s.result.ORDER_COUNT);
+                    $("#paidUncheckoutCount").html(s.code != 200 ? 0: s.result.PAID_UNCHECKOUT_COUNT);
+                    $("#checkoutOrderCount").html(s.code != 200 ? 0: s.result.CHECKOUT_ORDER_COUNT);
+                    $("#refundedCount").html(s.code != 200 ? 0: s.result.REFUNDED_COUNT);
+                    $("#checkoutOrderAmountSum").html(keepTwoDecimalFull(s.code != 200 ? 0: s.result.CHECKOUT_ORDER_AMOUNT_SUM));
+                    $("#refundedAmountSum").html(keepTwoDecimalFull(s.code != 200 ? 0: s.result.REFUNDED_AMOUNT_SUM));
+                },
+                error: function (e) {
+                    layer.alert('网络繁忙', {icon: 5,title:'提示'});
+                }
+            });
+        }
+
+        // 操作事件
+        table.on('tool(fissionActivityTool)', function(obj){
+            var data = obj.data;
+            var url = "";
+            var confirmMsg = "";
+            //退款 | 通过
+            if (obj.event == 'refund') {
+                url = "/fission/goods/order/batchRefund";
+                confirmMsg = "退款";
+                //驳回
+            } else if (obj.event == 'reject') {
+                url = "/fission/goods/order/rejectRefund";
+                confirmMsg = "驳回";
+            }
+            layer.confirm('是否确认'+confirmMsg+'?', {icon: 3, title:'提示'}, function(index){
+                $.ajax({
+                    type: "post",
+                    url: url,
+                    dataType:'json',
+                    data: {orderNos: JSON.stringify([{orderNo: data.orderNo, userId : data.userId}])},
+                    dataType: "json",
+                    success: function (s) {
+                        var message = s.msg;
+                        var icon = 5;
+                        if(s.code == 200) icon=6;
+                        layer.alert(message, {icon: icon,title:'提示'}, function (index) {
+                            //关闭弹窗
+                            layer.close(index);
+                            refresh();
+                        });
+                    },
+                    error: function (e) {
+                        layer.alert('网络繁忙', {icon: 5,title:'提示'});
+                    }
+                })
+                layer.close(index);
+            });
+
+        });
+
+        //搜索订单
+        $("#search").on("click",function(){
+            var fissionId = $("#acName").attr("ts-selected");
+            var orderStatus = $("#orderStatus").val();
+            var userPhone = $("#userPhone").val();
+            var orderSource = $("#orderSource").val();
+            var dealerName = $("#dealerName").val();
+            var cancelDealerName = $("#cancelDealerName").val();
+            var orderChannel = $("#orderChannel").val();
+            var liveId = $("#liveId").val();
+            table.reload("goodsOrderListTable",{
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: {
+                    "fissionActivityId": fissionId
+                    ,"orderStatus": orderStatus
+                    ,"userPhone": userPhone
+                    ,"orderSource": orderSource
+                    ,"dealerName": dealerName
+                    ,"cancelDealerName": cancelDealerName
+                    ,"orderChannel": orderChannel
+                    ,"liveId": liveId
+                }
+            })
+        });
+        //重新加载
+        function refresh (){
+            var fissionId = $("#acName").attr("ts-selected");
+            var orderStatus = $("#orderStatus").val();
+            var userPhone = $("#userPhone").val();
+            table.reload("goodsOrderListTable",{
+                where: {
+                    "fissionActivityId": fissionId
+                    ,"orderStatus": orderStatus
+                    ,"userPhone": userPhone
+                }
+            })
+        }
+        //导出订单
+        $("#export").on("click",function(){
+            if (table_data ==null || table_data.length==0)  return false;
+            var fissionId = $("#acName").attr("ts-selected");
+            var orderStatus = $("#orderStatus").val();
+            var userPhone = $("#userPhone").val();
+            var orderSource = $("#orderSource").val();
+            var dealerName = $("#dealerName").val();
+            var cancelDealerName = $("#cancelDealerName").val();
+            var orderChannel = $("#orderChannel").val();
+            var liveId = $("#liveId").val();
+            fissionId = fissionId==undefined||fissionId=='undefined'?"":fissionId;
+            location.href="/fission/goods/order/export?fissionActivityId="+fissionId+"&orderStatus="+orderStatus+"&userPhone="+userPhone
+                +"&orderSource="+orderSource+"&dealerName="+dealerName+"&cancelDealerName="+cancelDealerName+"&orderChannel="+orderChannel+"&liveId="+liveId;
+        });
+        //订单批量退款
+        $("#batchRefund").on("click",function(){
+            if (orderNos.length==0)  return false;
+            $.ajax({
+                type: "post",
+                url: "/fission/goods/order/batchRefund",
+                dataType:'json',
+                data: {orderNos: JSON.stringify(orderNos)},
+                dataType: "json",
+                success: function (s) {
+                    var message = s.msg;
+                    var icon = 5;
+                    if(s.code == 200) icon=6;
+                    layer.alert(message, {icon: icon,title:'提示'}, function (index) {
+                        //关闭弹窗
+                        layer.close(index);
+                        refresh();
+                    });
+                },
+                error: function (e) {
+                    layer.alert('网络繁忙', {icon: 5,title:'提示'});
+                }
+            })
+        });
+        // 记录勾选数据
+        table.on('checkbox(fissionActivityTool)', function (obj) {
+            if (obj.checked == true) {
+                if (obj.type == 'one') {// 勾选单条
+                    for (var i = 0; i < table_data.length; i++) {
+                        if (table_data[i]['orderStatusType'] != 3 && table_data[i]['orderStatusType'] != 5) {
+                            $('tr[data-index=' + i + '] div.layui-form-checked').removeClass("layui-form-checked");
+                        }
+                    }
+                    if(obj.data.orderStatusType == 3 || obj.data.orderStatusType == 5) {
+                        orderNos.push({orderNo: obj.data.orderNo, userId: obj.data.userId});
+                    }
+                }
+                if (obj.type == 'all') {// 勾选全部
+                    orderNos.splice(0);
+                    for (var i = 0; i < table_data.length; i++) {
+                        if(table_data[i]['orderStatusType'] == 3 || table_data[i]['orderStatusType'] == 5){
+                            orderNos.push({orderNo :table_data[i].orderNo, userId : table_data[i].userId});
+                        }else{
+                            $('tr[data-index=' + i + '] div.layui-form-checked').removeClass("layui-form-checked");
+                        }
+                    }
+                }
+            } else {
+                if (obj.type == 'one') {
+                    for (var i = 0; i < table_data.length; i++) {
+                        if (table_data[i]['orderStatusType'] != 3 && table_data[i]['orderStatusType'] != 5) {
+                            $('tr[data-index=' + i + '] div.layui-form-checked').removeClass("layui-form-checked");
+                        }
+                    }
+                    for (var i = 0; i < orderNos.length; i++) {
+                        if (orderNos[i].orderNo==obj.data.orderNo && orderNos[i].userId==obj.data.userId) {
+                            orderNos.splice(i,1);
+                            return;
+                        }
+                    }
+                } else {
+                    orderNos.splice(0);
+                }
+            }
+        });
+        
+        window.commOpen = function(title,url,width,height) {
+            layer.open({
+                title: title,
+                type: 2,
+                shadeClose: true,
+                content: url,
+                area: [width, height]
+            });
+        }
+
+    });
+    function keepTwoDecimalFull(num) {
+        var result = parseFloat(num);
+        if (isNaN(result)) {
+            return "0.00元";
+        }
+        result = Math.round(num * 100) / 100;
+        var s_x = result.toString();
+        var pos_decimal = s_x.indexOf('.');
+        if (pos_decimal < 0) {
+            pos_decimal = s_x.length;
+            s_x += '.';
+        }
+        while (s_x.length <= pos_decimal + 2) {
+            s_x += '0';
+        }
+        return s_x+"元";
+    }
+</script>
+
+</body>
+</html>

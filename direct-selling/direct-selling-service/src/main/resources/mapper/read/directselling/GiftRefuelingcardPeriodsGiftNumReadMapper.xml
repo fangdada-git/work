@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.GiftRefuelingcardPeriodsGiftNumReadMapper" >
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.GiftRefuelingcardPeriodsGiftNum" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="rc_periods_id" property="rcPeriodsId" jdbcType="INTEGER" />
+    <result column="commodity_price" property="commodityPrice" jdbcType="DECIMAL" />
+    <result column="gift_num" property="giftNum" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, rc_periods_id, commodity_price, gift_num
+  </sql>
+  <!-- 根据赠送油卡场次表ID获取油卡规则列表 -->
+  <select id="getByRcPeriodsId" resultMap="BaseResultMap"  >
+    SELECT
+    <include refid="Base_Column_List" />
+      FROM gift_refuelingcard_periods_gift_num
+     WHERE rc_periods_id = #{rcPeriodsId}
+  </select>
+ <!-- 根据价格和大场次ID获取配置的油卡赠送数量 -->
+  <select id="getGiftNumByPriceAndPeriodsId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"></include>
+        FROM
+        gift_refuelingcard_periods_gift_num
+        WHERE
+        commodity_price = #{commodityPrice}
+        AND rc_periods_id IN (SELECT t2.id FROM gift_refuelingcard_periods t2 WHERE periods_id = #{periodsId} AND delete_flag = 0)
+        ORDER BY gift_num DESC
+        LIMIT 1
+    </select>
+</mapper>

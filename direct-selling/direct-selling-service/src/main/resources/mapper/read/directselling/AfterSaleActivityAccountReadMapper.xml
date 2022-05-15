@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.AfterSaleActivityAccountReadMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.AfterSaleActivityAccount">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="activity_id" jdbcType="INTEGER" property="activityId" />
+    <result column="dealer_id" jdbcType="INTEGER" property="dealerId" />
+    <result column="mch_id" jdbcType="VARCHAR" property="mchId" />
+    <result column="mch_name" jdbcType="VARCHAR" property="mchName" />
+    <result column="sub_account_ratio" jdbcType="DECIMAL" property="subAccountRatio" />
+    <result column="approve_materials" jdbcType="VARCHAR" property="approveMaterials" />
+    <result column="verify_state" jdbcType="VARCHAR" property="verifyState" />
+    <result column="fail_reason" jdbcType="VARCHAR" property="failReason" />
+    <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+    <result column="order_money" jdbcType="DECIMAL" property="orderMoney" />
+    <result column="wx_transaction_id" jdbcType="VARCHAR" property="wxTransactionId" />
+    <result column="sub_account_transaction_detail_id" jdbcType="VARCHAR" property="subAccountTransactionDetailId" />
+    <result column="refund_id" jdbcType="VARCHAR" property="refundId" />
+    <result column="delete_flag" jdbcType="BIT" property="deleteFlag" />
+    <result column="ctreate_by" jdbcType="INTEGER" property="ctreateBy" />
+    <result column="ctreate_dt" jdbcType="TIMESTAMP" property="ctreateDt" />
+    <result column="update_by" jdbcType="INTEGER" property="updateBy" />
+    <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, activity_id, dealer_id, mch_id, mch_name, sub_account_ratio, approve_materials, 
+    verify_state, fail_reason, order_no, order_money, wx_transaction_id, sub_account_transaction_detail_id,
+    refund_id, delete_flag, ctreate_by, ctreate_dt, update_by, update_dt
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from after_sale_activity_account
+    where delete_flag = 0 and id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectByActivityId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from after_sale_activity_account
+    where delete_flag = 0
+    and activity_id = #{activityId,jdbcType=INTEGER}
+    <if test="dealerId !=null">
+      and dealer_id = #{dealerId,jdbcType=INTEGER}
+    </if>
+    limit 1
+  </select>
+  <select id="selectListByAccount" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from after_sale_activity_account
+    where delete_flag = 0
+    <if test="orderNo !=null">
+      and order_no = #{orderNo,jdbcType=VARCHAR}
+    </if>
+    <if test="wxTransactionId !=null">
+      and wx_transaction_id = #{wxTransactionId,jdbcType=VARCHAR}
+    </if>
+    <if test="refundId !=null">
+      and refund_id = #{refundId,jdbcType=VARCHAR}
+    </if>
+    <if test="subAccountTransactionDetailId !=null">
+      and sub_account_transaction_detail_id = #{subAccountTransactionDetailId,jdbcType=VARCHAR}
+    </if>
+    <if test="dealerId !=null">
+      and dealer_id = #{dealerId,jdbcType=INTEGER}
+    </if>
+  </select>
+<!-- 获取账号列表 -->
+    <select id="getActivityAccountList" parameterType="com.tuanche.directselling.dto.AfterSaleActivityAccountDto" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from after_sale_activity_account
+        where delete_flag = 0
+        <if test="activityIds !=null">
+            and activity_id IN
+            <foreach collection="activityIds" item="activityId" open="(" separator="," close=")">
+                #{activityId}
+            </foreach>
+        </if>
+    </select>
+</mapper>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.FissionGoodsHelperUserReadMapper" >
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FissionGoodsHelperUser" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="goods_id" property="goodsId" jdbcType="INTEGER" />
+    <result column="fission_id" property="fissionId" jdbcType="INTEGER" />
+    <result column="buy_goods" property="buyGoods" jdbcType="INTEGER" />
+    <result column="user_wx_union_id" property="userWxUnionId" jdbcType="VARCHAR" />
+    <result column="helper_wx_union_id" property="helperWxUnionId" jdbcType="VARCHAR" />
+    <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+    <result column="update_dt" property="updateDt" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    t1.id, t1.goods_id, t1.fission_id, t1.user_wx_union_id, t1.helper_wx_union_id,t1.buy_goods, t1.create_dt,
+    t1.update_dt
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from fission_goods_helper_user t1
+    where t1.id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="getFissionGoodsHelperUserList" resultMap="BaseResultMap" parameterType="com.tuanche.directselling.model.FissionGoodsHelperUser" >
+    select 
+    <include refid="Base_Column_List" />
+    from fission_goods_helper_user t1
+    <where>
+      <if test="goodsId !=null">
+        and t1.goods_id = #{goodsId}
+      </if>
+      <if test="fissionId !=null">
+        and t1.fission_id = #{fissionId}
+      </if>
+      <if test="userWxUnionId !=null">
+        and t1.user_wx_union_id = #{userWxUnionId}
+      </if>
+      <if test="helperWxUnionId !=null">
+        and t1.helper_wx_union_id = #{helperWxUnionId}
+      </if>
+      <if test="buyGoods !=null">
+        and t1.buy_goods = #{buyGoods}
+      </if>
+    </where>
+  </select>
+  <select id="getFissionGoodsHelperUserCount" resultType="int" parameterType="com.tuanche.directselling.model.FissionGoodsHelperUser" >
+    select 
+    count(t1.id)
+    from fission_goods_helper_user t1
+    <where> 
+      <if test="goodsId !=null">
+        and t1.goods_id = #{goodsId}
+      </if>
+      <if test="fissionId !=null">
+        and t1.fission_id = #{fissionId}
+      </if>
+      <if test="userWxUnionId !=null">
+        and t1.user_wx_union_id = #{userWxUnionId}
+      </if>
+      <if test="helperWxUnionId !=null">
+        and t1.helper_wx_union_id = #{helperWxUnionId}
+      </if>
+      <if test="buyGoods !=null">
+        and t1.buy_goods = #{buyGoods}
+      </if>
+    </where>
+  </select>
+  
+</mapper>

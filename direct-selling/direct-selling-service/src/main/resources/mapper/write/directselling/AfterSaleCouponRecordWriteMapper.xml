@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.AfterSaleCouponRecordWriteMapper" >
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from after_sale_coupon_record
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.tuanche.directselling.model.AfterSaleCouponRecord" keyProperty="id" useGeneratedKeys="true">
+    insert into after_sale_coupon_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userCouponId!=null">
+        user_coupon_id,
+      </if>
+      <if test="couponId != null" >
+        coupon_id,
+      </if>
+      <if test="couponCode != null" >
+        coupon_code,
+      </if>
+      <if test="orderCode != null" >
+        order_code,
+      </if>
+      <if test="activityId != null" >
+        activity_id,
+      </if>
+      <if test="dealerId != null" >
+        dealer_id,
+      </if>
+      <if test="cbId != null" >
+        cb_id,
+      </if>
+      <if test="csId != null" >
+        cs_id,
+      </if>
+      <if test="couponType != null" >
+        coupon_type,
+      </if>
+      <if test="couponStatus != null" >
+        coupon_status,
+      </if>
+      <if test="userWxUnionId != null" >
+        user_wx_union_id,
+      </if>
+      <if test="checkedSalesId != null" >
+        checked_sales_id,
+      </if>
+      <if test="checkedDealerId != null" >
+        checked_dealer_id,
+      </if>
+      <if test="checkedDate != null" >
+        checked_date,
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userCouponId!=null">
+        #{userCouponId},
+      </if>
+      <if test="couponId != null" >
+        #{couponId,jdbcType=INTEGER},
+      </if>
+      <if test="couponCode != null" >
+        #{couponCode,jdbcType=VARCHAR},
+      </if>
+      <if test="orderCode != null" >
+        #{orderCode,jdbcType=VARCHAR},
+      </if>
+      <if test="activityId != null" >
+        #{activityId,jdbcType=INTEGER},
+      </if>
+      <if test="dealerId != null" >
+        #{dealerId,jdbcType=INTEGER},
+      </if>
+      <if test="cbId != null" >
+        #{cbId,jdbcType=INTEGER},
+      </if>
+      <if test="csId != null" >
+        #{csId,jdbcType=INTEGER},
+      </if>
+      <if test="couponType != null" >
+        #{couponType},
+      </if>
+      <if test="couponStatus != null" >
+        #{couponStatus,jdbcType=TINYINT},
+      </if>
+      <if test="userWxUnionId != null" >
+        #{userWxUnionId,jdbcType=VARCHAR},
+      </if>
+      <if test="checkedSalesId != null" >
+        #{checkedSalesId,jdbcType=INTEGER},
+      </if>
+      <if test="checkedDealerId != null" >
+        #{checkedDealerId,jdbcType=INTEGER},
+      </if>
+      <if test="checkedDate != null" >
+        #{checkedDate},
+      </if>
+      <if test="deleteFlag != null" >
+        #{deleteFlag,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+
+  <insert id="addAfterSaleCouponList" parameterType="com.tuanche.directselling.model.AfterSaleCouponRecord">
+    insert into after_sale_coupon_record
+        (user_coupon_id, coupon_id,
+          coupon_code, order_code, activity_id,
+          dealer_id, coupon_type, coupon_status,
+          user_wx_union_id, checked_sales_id, checked_dealer_id,
+          checked_date, cb_id, cs_id)
+    values
+      <foreach collection="list" item="item" separator="," >
+        ( #{item.userCouponId}, #{item.couponId},
+        #{item.couponCode}, #{item.orderCode}, #{item.activityId},
+        #{item.dealerId}, #{item.couponType}, #{item.couponStatus},
+        #{item.userWxUnionId}, #{item.checkedSalesId}, #{item.checkedDealerId},
+        #{item.checkedDate}, #{item.cbId}, #{item.csId})
+      </foreach>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.AfterSaleCouponRecord" >
+    update after_sale_coupon_record
+    <set >
+      <if test="userCouponId!=null">
+        user_coupon_id = #{userCouponId},
+      </if>
+      <if test="couponId != null" >
+        coupon_id = #{couponId,jdbcType=INTEGER},
+      </if>
+      <if test="couponCode != null" >
+        coupon_code = #{couponCode,jdbcType=VARCHAR},
+      </if>
+      <if test="orderCode != null" >
+        order_code = #{orderCode,jdbcType=VARCHAR},
+      </if>
+      <if test="activityId != null" >
+        activity_id = #{activityId,jdbcType=INTEGER},
+      </if>
+      <if test="dealerId != null" >
+        dealer_id = #{dealerId,jdbcType=INTEGER},
+      </if>
+      <if test="cbId != null" >
+        cb_id = #{cbId},
+      </if>
+      <if test="csId != null" >
+        cs_id = #{csId},
+      </if>
+      <if test="couponType != null" >
+        coupon_type = #{couponType},
+      </if>
+      <if test="couponStatus != null" >
+        coupon_status = #{couponStatus,jdbcType=TINYINT},
+      </if>
+      <if test="userWxUnionId != null" >
+        user_wx_union_id = #{userWxUnionId,jdbcType=VARCHAR},
+      </if>
+      <if test="checkedSalesId != null" >
+        checked_sales_id = #{checkedSalesId,jdbcType=INTEGER},
+      </if>
+      <if test="checkedDealerId != null" >
+        checked_dealer_id = #{checkedDealerId,jdbcType=INTEGER},
+      </if>
+      <if test="checkedDate != null" >
+        checked_date = #{checkedDate},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateAfterSaleCouponByUserCouponId" parameterType="com.tuanche.directselling.model.AfterSaleCouponRecord" >
+    update after_sale_coupon_record
+    <set >
+      <if test="couponId != null" >
+        coupon_id = #{couponId,jdbcType=INTEGER},
+      </if>
+      <if test="couponCode != null" >
+        coupon_code = #{couponCode,jdbcType=VARCHAR},
+      </if>
+      <if test="activityId != null" >
+        activity_id = #{activityId,jdbcType=INTEGER},
+      </if>
+      <if test="dealerId != null" >
+        dealer_id = #{dealerId,jdbcType=INTEGER},
+      </if>
+      <if test="cbId != null" >
+        cb_id = #{cbId},
+      </if>
+      <if test="csId != null" >
+        cs_id = #{csId},
+      </if>
+      <if test="couponType != null" >
+        coupon_type = #{couponType},
+      </if>
+      <if test="couponStatus != null" >
+        coupon_status = #{couponStatus,jdbcType=TINYINT},
+      </if>
+      <if test="userWxUnionId != null" >
+        user_wx_union_id = #{userWxUnionId,jdbcType=VARCHAR},
+      </if>
+      <if test="checkedSalesId != null" >
+        checked_sales_id = #{checkedSalesId,jdbcType=INTEGER},
+      </if>
+      <if test="checkedDealerId != null" >
+        checked_dealer_id = #{checkedDealerId,jdbcType=INTEGER},
+      </if>
+      <if test="checkedDate != null" >
+        checked_date = #{checkedDate},
+      </if>
+    </set>
+    where delete_flag =0 and user_coupon_id = #{userCouponId}
+  </update>
+
+  <update id="delCoupon">
+    update after_sale_coupon_record set delete_flag=1
+    where user_wx_union_id=#{userWxUnionId} and order_code=#{orderCode}
+    and coupon_type in
+    <foreach collection="couponTypeList" item="item" open="(" separator="," close=")">
+        #{item}
+    </foreach>
+  </update>
+
+  <update id="updateByOrderCode">
+    update after_sale_coupon_record set coupon_status=#{couponStatus}
+    where coupon_type=#{couponType} and order_code=#{orderCode} and coupon_status&lt;#{couponStatus}
+  </update>
+  <update id="updateStatusByIds">
+    update after_sale_coupon_record set coupon_status=#{couponStatus}
+    where id in
+    <foreach collection="ids" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </update>
+
+</mapper>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>团车直卖-直播账号编辑</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.js"></script>
+    <script src="/layui/js/formSelects-v4.js"></script>
+    <script src="/common/js/tools.js"></script>
+    <script src="/common/js/xm-select.js"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/layui/css/formSelects-v4.css" media="all">
+    <style type="text/css">
+        .layui-table-header .layui-table tr {
+            height: auto;
+            line-height: 50px;
+        }
+
+        .layui-table-cell {
+            height: auto;
+        }
+
+        .layui-table-col-special {
+            height: auto;
+        }
+
+        .layui-table tr {
+            height: 65px
+        }
+
+        .label-close-icon {
+            vertical-align: bottom;
+            margin-left: -8px;
+            font-size: 18px;
+            position: absolute;
+            top: -8px;
+            cursor: pointer;
+            z-index: 100;
+        }
+
+        .layui-input {
+            width: 300px;
+        }
+
+        .xm-form-select {
+            padding-left: 8px;
+            width: 145px;
+            float: left;
+            display: inline;
+        }
+
+        .layui-form-label {
+            width: 100px;
+        }
+
+        .layui-input-block {
+            margin-left: 138px;
+        }
+    </style>
+</head>
+<body class="childrenBody">
+<form class="layui-form" style="background-color:#ffffff" lay-filter="anchorForm">
+    <input type="hidden" id="id" name="id" th:value="${liveDealerAnchor.id}">
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">经销商名称</label>
+            <div id="dealerName_edit" class="layui-input-inline" style="width: 300px;padding:10px 0px" th:text="${liveDealerAnchor.dealerName}"></div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">门店直播账号</label>
+            <div class="layui-input-block">
+                <input id="tbNick_edit" type="text" name="tbNick" th:value="${liveDealerAnchor.tbNick}" maxlength="100" lay-verify="required" lay-reqtext="门店直播账号能为空！"  placeholder="请填写门店直播账号" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">淘宝店铺名称</label>
+            <div class="layui-input-block">
+                <input id="storeName_edit" type="text" name="storeName" th:value="${liveDealerAnchor.storeName}" maxlength="100" lay-verify="required" lay-reqtext="淘宝店铺名称不能为空！"  placeholder="请填写淘宝店铺名称" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline" style="width: 438px;">
+            <label class="layui-form-label">门店地址</label>
+            <select name="sceneProvinceSelect" xm-select="sceneProvinceSelect" xm-select-search="" xm-select-search-type="dl" xm-select-radio="">
+                <option value="">省份</option>
+                <option th:each="province : ${provinceList}" th:value="${province.id}" th:text="${province.name}" th:selected="${province.id == liveDealerAnchor.provinceId}"></option>
+            </select>
+            <select name="sceneCitySelect" xm-select="sceneCitySelect" xm-select-search="" xm-select-search-type="dl" xm-select-radio="">
+                <option value="">城市</option>
+            </select>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">详细地址</label>
+            <div class="layui-input-block">
+                <input id="address_edit" type="text" name="address" maxlength="100" th:value="${liveDealerAnchor.address}" lay-verify="required" lay-reqtext="详细地址不能为空！" placeholder="请填写详细地址" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">门店座机号</label>
+            <div class="layui-input-block">
+                <input id="dealerLandline_edit" type="text" name="dealerLandline" th:value="${liveDealerAnchor.dealerLandline}" maxlength="100" lay-verify="required" lay-reqtext="门店座机号不能为空！" placeholder="请填写门店座机号" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">直播User ID</label>
+            <div class="layui-input-block">
+                <input id="anchorId_edit" type="text" name="anchorId" maxlength="100" th:value="${liveDealerAnchor.anchorId}" placeholder="请填写直播User ID" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">负责人姓名</label>
+            <div class="layui-input-block">
+                <input id="chargeName_edit" type="text" name="chargeName" maxlength="100" th:value="${liveDealerAnchor.chargeName}" lay-verify="required" lay-reqtext="负责人姓名不能为空！" placeholder="请填写负责人姓名" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">负责人手机号</label>
+            <div class="layui-input-block">
+                <input id="chargePhone_edit" type="text" name="chargePhone" maxlength="11" th:value="${liveDealerAnchor.chargePhone}" lay-verify="required" lay-reqtext="负责人手机号不能为空！" placeholder="请填写负责人手机号" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">企业支付宝账号</label>
+            <div class="layui-input-block">
+                <input id="enterpriseAlipay_edit" type="text" name="enterpriseAlipay" th:value="${liveDealerAnchor.enterpriseAlipay}" maxlength="100" placeholder="请填写企业支付宝账号" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">支付宝企业主体</label>
+            <div class="layui-input-block">
+                <input id="enterpriseAlipayName_edit" type="text" name="enterpriseAlipayName" th:value="${liveDealerAnchor.enterpriseAlipayName}" maxlength="100" placeholder="请填写支付宝企业主体" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button type="submit" class="layui-btn layui-btn-normal btn-submit-ok" id="submitBtn" lay-submit lay-filter="submitBtn"><i class="layui-icon layui-icon-ok-circle"></i>提交</button>
+        </div>
+    </div>
+</form>
+
+<!-- layui 初始化 -->
+<script type="text/javascript" th:inline="javascript">
+    layui.use(['form','layer','table','upload','laydate','element'],function(){
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            formSelects = layui.formSelects,
+            element = layui.element;
+        element.init();
+
+        // 加载城市下拉框选中
+        loadCity([[${liveDealerAnchor.provinceId}]],[[${liveDealerAnchor.cityId}]]);
+
+        // 设置下拉框 只保留清空按钮
+        formSelects.btns('sceneProvinceSelect', ['remove']);
+
+        // 省份下拉框选择事件
+        formSelects.on('sceneProvinceSelect', function(id, vals, val, isAdd, isDisabled){
+            if(vals.length){
+                loadCity(val.value, null);
+            }else{
+                // 清空已选城市
+                layui.formSelects.render('sceneCitySelect');
+            }
+        },true);
+
+        function loadCity(provinceId, cityId){
+            layui.formSelects.config('sceneCitySelect', {
+                beforeSuccess: function(id, url, searchVal, result){
+                    var cityList = new Array();
+                    $.each(result, function(index, item) {
+                        var cityJson = {"name":item.name,"value":item.id};
+                        cityList.push(cityJson);
+                    });
+                    return cityList;
+                },
+                success: function(){
+                    var cityIdArr = [];
+                    cityIdArr.push(cityId);
+                    layui.formSelects.value('sceneCitySelect', cityIdArr);
+                }
+            }).data('sceneCitySelect', 'server', {
+                url: '/common/loadCity',
+                data: {provinceId: provinceId}
+            });
+        }
+
+        // 监听提交
+        form.on('submit(submitBtn)', function(data){
+            var provinceId = layui.formSelects.value("sceneProvinceSelect","val");
+            var provinceName = layui.formSelects.value("sceneProvinceSelect","nameStr");
+            var cityId = layui.formSelects.value("sceneCitySelect","val");
+            var cityName = layui.formSelects.value("sceneCitySelect","nameStr");
+            if(provinceId == "" || null == provinceId){
+                layer.msg("请选择省份！", {icon: 5});
+                return false;
+            }
+            if(cityId == "" || null == cityId){
+                layer.msg("请选择城市！", {icon: 5});
+                return false;
+            }
+            $("#id").val(id);
+            data.field.provinceId = provinceId[0];
+            data.field.provinceName = provinceName;
+            data.field.cityId = cityId[0];
+            data.field.cityName = cityName;
+
+            $('#submitBtn').attr('disabled','disabled');
+            var loadIndex = layer.load(1,{
+                shade: [0.5,'#000']
+            });
+            $.ajax({
+                url: '/anchor/list/edit',
+                type:"POST",
+                dataType: 'json',
+                data:JSON.stringify(data.field),
+                contentType:"application/json;charset=UTF-8",
+                success :function(data){
+                    if (data.code === 200) {
+                        layer.msg("修改成功", {
+                            icon: 6, time: 2000, end: function () {
+                                parent.location.href = "/anchor/list";
+                            }
+                        });
+                    } else {
+                        layer.alert(data.msg == null ? "有一丝丝问题，请联系管理员" : data.msg, {icon: 5});
+                        $('#submitBtn').removeAttr('disabled');
+                    }
+                    layer.close(loadIndex);
+                },
+                error :function(e){
+                    console.log(e);
+                    layer.close(loadIndex);
+                    layer.msg("有一丝丝问题，请联系管理员", {icon: 5});
+                    $('#submitBtn').removeAttr('disabled');
+                    return false;
+                }
+            });
+            return false;
+        });
+
+        $("#backBtn").on("click",function () {
+            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+            parent.layer.close(index);//关闭弹出的子页面窗口
+        })
+    });
+
+</script>
+</body>
+</html>

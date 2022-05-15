@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.FissionSaleTaskStatisticsReadMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FissionSaleTaskStatistics">
+      <id column="id" property="id" jdbcType="INTEGER" />
+      <result column="fission_id" property="fissionId" jdbcType="INTEGER" />
+      <result column="dealer_id" property="dealerId" jdbcType="INTEGER" />
+      <result column="sale_id" property="saleId" jdbcType="INTEGER" />
+      <result column="sale_wx_union_id" property="saleWxUnionId" jdbcType="CHAR" />
+      <result column="task_id" property="taskId" jdbcType="INTEGER" />
+      <result column="finish_task_total" property="finishTaskTotal" jdbcType="INTEGER" />
+      <result column="task_integral" property="taskIntegral" jdbcType="INTEGER" />
+      <result column="whether_complete_task" property="whetherCompleteTask" jdbcType="BIT" />
+      <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+      <result column="update_dt" property="updateDt" jdbcType="TIMESTAMP" />
+      <result column="delete_flag" property="deleteFlag" jdbcType="BIT" />
+  </resultMap>
+  <sql id="Base_Column_List">
+      id, fission_id, dealer_id, sale_id, sale_wx_union_id, task_id, finish_task_total,
+      task_integral, whether_complete_task, create_dt, update_dt, delete_flag
+  </sql>
+
+  <select id="getSaleIntegral" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    SELECT
+	    sum( fstt.task_integral )
+    FROM
+        fission_sale_task_statistics fstt
+    where
+        fstt.sale_id=#{saleId}
+  </select>
+
+  <select id="selectSaleIntegralListByBySaleId" parameterType="java.lang.Integer" resultType="com.tuanche.directselling.dto.FissionActivitySaleIntegralDto">
+    SELECT
+        fstt.id,
+        fstt.fission_id,
+        fa.activity_name,
+        fa.start_time,
+        fa.end_time,
+        sum( fstt.task_integral ) AS integral
+    FROM
+        fission_sale_task_statistics fstt
+        LEFT JOIN fission_activity fa ON fstt.fission_id = fa.id
+    where
+        fstt.sale_id=#{saleId}
+    GROUP BY
+        fstt.fission_id
+    order by fstt.fission_id desc
+  </select>
+
+    <select id="selectTaskFinishInfoByFissionIdSaleId" resultMap="BaseResultMap">
+        SELECT
+            task_id,
+            finish_task_total,
+            task_integral,
+            whether_complete_task
+        FROM
+            fission_sale_task_statistics
+        WHERE
+            fission_id = #{fissionId} and sale_id=#{saleId}
+    </select>
+
+  <select id="getFissionIntegral" resultType="java.lang.Integer">
+      select sum(task_integral) from fission_sale_task_statistics where fission_id = #{fissionId}
+    </select>
+
+  <select id="getFissionSaleIntegral" resultType="java.lang.Integer">
+      select sum(task_integral) from fission_sale_task_statistics where fission_id = #{fissionId} and sale_id=#{saleId}
+    </select>
+  <!-- 统计表里存在的销售(key=fissionId_saleWxUnionId)-->
+  <select id="existingSales" resultType="map">
+      SELECT
+          CONCAT(fission_id,'_',sale_wx_union_id) AS mapKey
+      FROM
+          fission_sale_task_statistics
+      <where>
+          <if test="fissionIds != null">
+              AND fission_id IN
+              <foreach collection="fissionIds" index="index" item="item" open="(" separator="," close=")">
+                  #{item}
+              </foreach>
+          </if>
+      </where>
+      GROUP BY
+          sale_wx_union_id,fission_id
+  </select>
+  <!-- 通过裂变活动IDS获取销售总积分 -->
+  <select id="getSaleTotalIntegralByFissionIds" resultMap="BaseResultMap">
+      SELECT
+          t.fission_id,
+          t.sale_wx_union_id,
+          SUM(t.task_integral) AS task_integral,
+          MIN(t.whether_complete_task) AS whether_complete_task
+      FROM
+          fission_sale_task_statistics t INNER JOIN fission_sale t1
+      <where>
+          <if test="fissionIds != null">
+              t.fission_id IN
+              <foreach collection="fissionIds" index="index" item="item" open="(" separator="," close=")">
+                  #{item}
+              </foreach>
+          </if>
+          AND t1.sale_wx_union_id = t.sale_wx_union_id
+          AND t1.fission_id = t.fission_id
+          AND t1.delete_flag = 0
+      </where>
+      GROUP BY t.fission_id,t.sale_wx_union_id
+  </select>
+  <!-- 裂变活动总积分 -->
+  <select id="getTotalIntegralByFissionIds" resultMap="BaseResultMap">
+      SELECT
+          fission_id,
+          SUM(task_integral) AS task_integral
+      FROM
+        fission_sale_task_statistics
+      <where>
+          <if test="fissionIds != null">
+              fission_id IN
+              <foreach collection="fissionIds" index="index" item="item" open="(" separator="," close=")">
+                  #{item}
+              </foreach>
+          </if>
+      </where>
+      GROUP BY fission_id
+  </select>
+  <!-- 完成销售任务的总积分 -->
+  <select id="getCompleteTaskTotalIntegral" resultMap="BaseResultMap">
+      SELECT
+            fission_id,
+            SUM(task_integral) AS task_integral
+      FROM (
+            SELECT
+                  t.fission_id,
+                  SUM(t.task_integral) AS task_integral,
+                  MIN(t.whether_complete_task) AS whether_complete_task
+            FROM
+                fission_sale_task_statistics t INNER JOIN fission_sale t1
+          <where>
+              <if test="fissionIds != null">
+                  t.fission_id IN
+                  <foreach collection="fissionIds" index="index" item="item" open="(" separator="," close=")">
+                      #{item}
+                  </foreach>
+              </if>
+              AND t1.sale_wx_union_id = t.sale_wx_union_id
+              AND t1.fission_id = t.fission_id
+              AND t1.delete_flag = 0
+          </where>
+            GROUP BY t.fission_id,t.sale_wx_union_id
+        ) tmp
+      WHERE tmp.whether_complete_task = 1
+      GROUP BY tmp.fission_id
+
+
+  </select>
+
+  <select id="selectSaleTaskByFissionIdSaleIds" resultMap="BaseResultMap">
+      select id,sale_id,task_id,finish_task_total,task_integral from fission_sale_task_statistics where fission_id=#{fissionId}
+      <if test="saleIds != null and saleIds.size() > 0">
+          and sale_id in <foreach collection="saleIds" index="index" item="item" open="(" separator="," close=")">
+          #{item}
+            </foreach>
+      </if>
+
+    </select>
+
+  <select id="selectSaleTaskByFissionId" resultMap="BaseResultMap">
+      SELECT
+          dealer_id,
+          task_id,
+          sum(finish_task_total) finish_task_total,
+          sum(task_integral) task_integral
+      FROM
+          fission_sale_task_statistics
+      WHERE
+          fission_id = #{fissionId}
+      GROUP BY
+          dealer_id,
+          task_id
+    </select>
+</mapper>

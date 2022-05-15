@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.LiveEffectWriteMapper" >
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.LiveEffect" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="feed_title" property="feedTitle" jdbcType="VARCHAR" />
+    <result column="guide_name" property="guideName" jdbcType="VARCHAR" />
+    <result column="guide_tb_nick" property="guideTbNick" jdbcType="VARCHAR" />
+    <result column="read_time_all" property="readTimeAll" jdbcType="DOUBLE" />
+    <result column="pv" property="pv" jdbcType="INTEGER" />
+    <result column="pv_hu_dong" property="pvHuDong" jdbcType="INTEGER" />
+    <result column="pv_ping" property="pvPing" jdbcType="INTEGER" />
+    <result column="pv_zan" property="pvZan" jdbcType="INTEGER" />
+    <result column="pv_share" property="pvShare" jdbcType="INTEGER" />
+    <result column="pv_guanzhu" property="pvGuanzhu" jdbcType="INTEGER" />
+    <result column="ipv" property="ipv" jdbcType="INTEGER" />
+    <result column="alipay_amt" property="alipayAmt" jdbcType="DECIMAL" />
+    <result column="alipay_cnt" property="alipayCnt" jdbcType="INTEGER" />
+    <result column="start_time" property="startTime" jdbcType="TIMESTAMP" />
+    <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, feed_title, guide_name, guide_tb_nick, read_time_all, pv, pv_hu_dong, pv_ping, 
+    pv_zan, pv_share, pv_guanzhu, ipv, alipay_amt, alipay_cnt, start_time, create_dt
+  </sql>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from live_effect
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tuanche.directselling.model.LiveEffect" >
+    insert into live_effect (id, feed_title, guide_name, 
+      guide_tb_nick, read_time_all, pv, 
+      pv_hu_dong, pv_ping, pv_zan, 
+      pv_share, pv_guanzhu, ipv, 
+      alipay_amt, alipay_cnt, start_time, 
+      create_dt)
+    values (#{id,jdbcType=INTEGER}, #{feedTitle,jdbcType=VARCHAR}, #{guideName,jdbcType=VARCHAR}, 
+      #{guideTbNick,jdbcType=VARCHAR}, #{readTimeAll,jdbcType=DOUBLE}, #{pv,jdbcType=INTEGER}, 
+      #{pvHuDong,jdbcType=INTEGER}, #{pvPing,jdbcType=INTEGER}, #{pvZan,jdbcType=INTEGER}, 
+      #{pvShare,jdbcType=INTEGER}, #{pvGuanzhu,jdbcType=INTEGER}, #{ipv,jdbcType=INTEGER}, 
+      #{alipayAmt,jdbcType=DECIMAL}, #{alipayCnt,jdbcType=INTEGER}, #{startTime,jdbcType=TIMESTAMP}, 
+      #{createDt,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.tuanche.directselling.model.LiveEffect" >
+    insert into live_effect
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="feedTitle != null" >
+        feed_title,
+      </if>
+      <if test="guideName != null" >
+        guide_name,
+      </if>
+      <if test="guideTbNick != null" >
+        guide_tb_nick,
+      </if>
+      <if test="readTimeAll != null" >
+        read_time_all,
+      </if>
+      <if test="pv != null" >
+        pv,
+      </if>
+      <if test="pvHuDong != null" >
+        pv_hu_dong,
+      </if>
+      <if test="pvPing != null" >
+        pv_ping,
+      </if>
+      <if test="pvZan != null" >
+        pv_zan,
+      </if>
+      <if test="pvShare != null" >
+        pv_share,
+      </if>
+      <if test="pvGuanzhu != null" >
+        pv_guanzhu,
+      </if>
+      <if test="ipv != null" >
+        ipv,
+      </if>
+      <if test="alipayAmt != null" >
+        alipay_amt,
+      </if>
+      <if test="alipayCnt != null" >
+        alipay_cnt,
+      </if>
+      <if test="startTime != null" >
+        start_time,
+      </if>
+      <if test="createDt != null" >
+        create_dt,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="feedTitle != null" >
+        #{feedTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="guideName != null" >
+        #{guideName,jdbcType=VARCHAR},
+      </if>
+      <if test="guideTbNick != null" >
+        #{guideTbNick,jdbcType=VARCHAR},
+      </if>
+      <if test="readTimeAll != null" >
+        #{readTimeAll,jdbcType=DOUBLE},
+      </if>
+      <if test="pv != null" >
+        #{pv,jdbcType=INTEGER},
+      </if>
+      <if test="pvHuDong != null" >
+        #{pvHuDong,jdbcType=INTEGER},
+      </if>
+      <if test="pvPing != null" >
+        #{pvPing,jdbcType=INTEGER},
+      </if>
+      <if test="pvZan != null" >
+        #{pvZan,jdbcType=INTEGER},
+      </if>
+      <if test="pvShare != null" >
+        #{pvShare,jdbcType=INTEGER},
+      </if>
+      <if test="pvGuanzhu != null" >
+        #{pvGuanzhu,jdbcType=INTEGER},
+      </if>
+      <if test="ipv != null" >
+        #{ipv,jdbcType=INTEGER},
+      </if>
+      <if test="alipayAmt != null" >
+        #{alipayAmt,jdbcType=DECIMAL},
+      </if>
+      <if test="alipayCnt != null" >
+        #{alipayCnt,jdbcType=INTEGER},
+      </if>
+      <if test="startTime != null" >
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createDt != null" >
+        #{createDt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.LiveEffect" >
+    update live_effect
+    <set >
+      <if test="feedTitle != null" >
+        feed_title = #{feedTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="guideName != null" >
+        guide_name = #{guideName,jdbcType=VARCHAR},
+      </if>
+      <if test="guideTbNick != null" >
+        guide_tb_nick = #{guideTbNick,jdbcType=VARCHAR},
+      </if>
+      <if test="readTimeAll != null" >
+        read_time_all = #{readTimeAll,jdbcType=DOUBLE},
+      </if>
+      <if test="pv != null" >
+        pv = #{pv,jdbcType=INTEGER},
+      </if>
+      <if test="pvHuDong != null" >
+        pv_hu_dong = #{pvHuDong,jdbcType=INTEGER},
+      </if>
+      <if test="pvPing != null" >
+        pv_ping = #{pvPing,jdbcType=INTEGER},
+      </if>
+      <if test="pvZan != null" >
+        pv_zan = #{pvZan,jdbcType=INTEGER},
+      </if>
+      <if test="pvShare != null" >
+        pv_share = #{pvShare,jdbcType=INTEGER},
+      </if>
+      <if test="pvGuanzhu != null" >
+        pv_guanzhu = #{pvGuanzhu,jdbcType=INTEGER},
+      </if>
+      <if test="ipv != null" >
+        ipv = #{ipv,jdbcType=INTEGER},
+      </if>
+      <if test="alipayAmt != null" >
+        alipay_amt = #{alipayAmt,jdbcType=DECIMAL},
+      </if>
+      <if test="alipayCnt != null" >
+        alipay_cnt = #{alipayCnt,jdbcType=INTEGER},
+      </if>
+      <if test="startTime != null" >
+        start_time = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createDt != null" >
+        create_dt = #{createDt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tuanche.directselling.model.LiveEffect" >
+    update live_effect
+    set feed_title = #{feedTitle,jdbcType=VARCHAR},
+      guide_name = #{guideName,jdbcType=VARCHAR},
+      guide_tb_nick = #{guideTbNick,jdbcType=VARCHAR},
+      read_time_all = #{readTimeAll,jdbcType=DOUBLE},
+      pv = #{pv,jdbcType=INTEGER},
+      pv_hu_dong = #{pvHuDong,jdbcType=INTEGER},
+      pv_ping = #{pvPing,jdbcType=INTEGER},
+      pv_zan = #{pvZan,jdbcType=INTEGER},
+      pv_share = #{pvShare,jdbcType=INTEGER},
+      pv_guanzhu = #{pvGuanzhu,jdbcType=INTEGER},
+      ipv = #{ipv,jdbcType=INTEGER},
+      alipay_amt = #{alipayAmt,jdbcType=DECIMAL},
+      alipay_cnt = #{alipayCnt,jdbcType=INTEGER},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      create_dt = #{createDt,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

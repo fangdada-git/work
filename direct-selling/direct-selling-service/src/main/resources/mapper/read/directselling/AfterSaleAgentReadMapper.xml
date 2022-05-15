@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.AfterSaleAgentReadMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.AfterSaleAgent">
+    <!--@mbg.generated-->
+    <!--@Table after_sale_agent-->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="activity_id" property="activityId" jdbcType="INTEGER" />
+    <result column="agent_wx_union_id" jdbcType="CHAR" property="agentWxUnionId" />
+    <result column="agent_wx_open_id" jdbcType="CHAR" property="agentWxOpenId" />
+    <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
+    <result column="wx_head" jdbcType="VARCHAR" property="wxHead" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="position" jdbcType="VARCHAR" property="position" />
+    <result column="dealer_id" jdbcType="INTEGER" property="dealerId" />
+    <result column="is_admin" jdbcType="BOOLEAN" property="isAdmin" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="create_dt" jdbcType="TIMESTAMP" property="createDt" />
+    <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
+    <result column="delete_flag" jdbcType="BOOLEAN" property="deleteFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id,activity_id, agent_wx_union_id, agent_wx_open_id, nick_name, wx_head, `name`, phone, `position`, dealer_id, is_admin, create_dt, update_dt, delete_flag, type
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select
+    <include refid="Base_Column_List" />
+    from after_sale_agent
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectByAgentWxUnionIds" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from after_sale_agent
+    <where>
+        delete_flag=0
+        <if test="activityId!=null">
+            and activity_id=#{activityId}
+        </if>
+        <if test="wxUnionIds != null and wxUnionIds.size() != 0">
+            and agent_wx_union_id in
+            <foreach collection="wxUnionIds" item="item" index="index" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </if>
+    </where>
+
+  </select>
+    <select id="getAfterSaleAgent" resultMap="BaseResultMap" parameterType="com.tuanche.directselling.model.AfterSaleAgent">
+        SELECT
+        <include refid="Base_Column_List"></include>
+        FROM after_sale_agent
+        where delete_flag=0
+            <if test="activityId != null">
+                AND activity_id = #{activityId}
+            </if>
+            <if test="agentWxUnionId != null">
+                AND agent_wx_union_id = #{agentWxUnionId}
+            </if>
+        ORDER BY id DESC LIMIT 1
+    </select>
+
+  <select id="getAfterSaleList" resultType="com.tuanche.directselling.dto.AfterSaleAgentDto">
+      select agent.id,agent.name,agent.phone,agent.nick_name,agent.agent_wx_union_id,agent.position,agent.type,agent.create_dt,agent.is_admin,agent.dealer_id,act.activity_name from after_sale_agent agent
+      left join after_sale_activity act on agent.activity_id=act.id
+      where agent.activity_id=#{activityId} and agent.type=#{agentType} and agent.delete_flag=0
+      <if test="nameOrPhone != null and nameOrPhone != ''">
+          and (agent.phone like CONCAT(#{nameOrPhone},'%') or agent.name like CONCAT(#{nameOrPhone},'%'))
+      </if>
+    </select>
+  <select id="getAfterSaleAgentList" resultMap="BaseResultMap" parameterType="com.tuanche.directselling.model.AfterSaleAgent">
+    SELECT
+    <include refid="Base_Column_List"></include>
+    FROM after_sale_agent
+    where delete_flag=0
+    <if test="activityId != null">
+        AND activity_id = #{activityId}
+    </if>
+    <if test="agentWxUnionId != null">
+        AND agent_wx_union_id = #{agentWxUnionId}
+    </if>
+    <if test="dealerId != null">
+        AND dealer_id = #{dealerId}
+    </if>
+    <if test="phone != null and phone!=''">
+        AND LOCATE(#{phone}, phone)
+    </if>
+  </select>
+</mapper>

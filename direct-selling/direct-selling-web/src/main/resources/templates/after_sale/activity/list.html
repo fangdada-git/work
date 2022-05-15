@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>售后特卖-活动列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.all.js"></script>
+    <script src="/common/js/jquery-1.12.4.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/magnify/css/jquery.magnify.css">
+    <script src="/layui/js/tableSelect.js"></script>
+
+    <style type="text/css">
+        .layui-table-header .layui-table tr {
+            height: auto;
+            /*line-height: 50px;*/
+        }
+        .layui-table-cell {
+            height: auto;
+        }
+        .layui-table-col-special {
+            height: auto;
+        }
+        /*.layui-table tr{height: 65px}*/
+        .layui-table-cell {
+            height:auto;
+            overflow:visible;
+            text-overflow:inherit;
+            white-space:normal;
+        }
+    </style>
+</head>
+<body class="childrenBody">
+<form class="layui-form" style="background-color: #ffffff;">
+    <blockquote class="layui-elem-quote quoteBox">
+        <form class="layui-form">
+            <div class="layui-inline">
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input activityName" id="activityName" placeholder="输入活动名称"/>
+                </div>
+                <div class="layui-input-inline">
+                    <input type="text" name="" placeholder="选择经销商" autocomplete="off" class="layui-input"
+                           id="dealerNameSel">
+                </div>
+                <a class="layui-btn search_btn" data-type="reload"><i class="layui-icon layui-icon-search"></i>搜索</a>
+            </div>
+            <div class="layui-inline">
+                <a class="layui-btn add_btn" href="javascript:;" onclick="commOpen('添加售后特卖活动','/afterSale/activity/toAddAfterSalePage?pageType=1', '100%', '100%')"><i class="layui-icon layui-icon-add-1"></i>添加售后特卖活动</a>
+                <a class="layui-btn" href="javascript:;" onclick="commOpen('团车电销管理','/afterSale/agent/toList?type=1','100%','100%')">团车电销管理</a>
+                <a class="layui-btn" href="javascript:;" onclick="commOpen('预警设置','/afterSale/alarm/toAlarmPage','80%','80%')">预警设置</a>
+                <span style="font-size: 16px;">&nbsp;&nbsp;&nbsp;&nbsp;裂变金余额：<span style="font-size: 18px; font-weight:bold;">[[${amount}]]</span></span>
+            </div>
+        </form>
+    </blockquote>
+    <table id="afterSaleActivityList" lay-filter="afterSaleActivityTool"></table>
+</form>
+
+<!-- 表格操作列按钮 -->
+<script type="text/html" id="barBtn">
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="viewUrl"><i class="layui-icon layui-icon-search">查看活动链接</i></a>
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit">编辑</i></a>
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="view"><i class="layui-icon layui-icon-search">查看</i></a>
+    <br/>
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="activityCouponPage"><i class="layui-icon layui-icon-templeate-1">卡券管理</i></a>
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="configPackagePage"><i class="layui-icon layui-icon-component">套餐管理</i></a>
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="pubicQRCode"><i class="layui-icon layui-icon-component">公众号</i></a>
+    <br/>
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="agentManage0"><i class="layui-icon layui-icon-group">车商代理人管理</i></a>
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="KeepOnRecordManage"><i class="layui-icon layui-icon-group">用户管理</i></a>
+    {{# if(d.onSubAccount==0){ }}
+    <a class="layui-btn layui-btn-disabled layui-btn-xs"><i class="layui-icon layui-icon-set">分账设置</i></a>
+    {{# }else if(d.onSubAccount==1){ }}
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="setSubAccount" style="background-color: red"><i class="layui-icon layui-icon-set" >分账设置</i></a>
+    {{# }else if(d.onSubAccount==2){ }}
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="setSubAccount" style="background-color: lightseagreen"><i class="layui-icon layui-icon-set" >分账设置</i></a>
+    {{# } }}
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="delActivityCache"><i class="layui-icon layui-icon-group">清缓存</i></a>
+</script>
+<!-- 开启切换 -->
+<script type="text/html" id="switchTpl">
+    <input type="checkbox" name="onState" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="onStateFilter"  {{ d.onState == 1 ? 'checked' : '' }}>
+    <input type="checkbox" name="onSubAccount" value="{{d.id}}" offlineConvertStartTime="{{d.offlineConvertStartTime}}"
+           offlineConvertEndTime="{{d.offlineConvertEndTime}}" lay-skin="switch" lay-text="是|否" lay-filter="onSubAccountFilter"  {{ (d.onSubAccount == 1 || d.onSubAccount == 2) ? 'checked' : '' }}>
+</script>
+<!-- layui 初始化 -->
+<script >
+    ;!function () {
+        var form = layui.form;
+        var tableSelect = layui.tableSelect;
+        var table = layui.table;
+
+        tableSelect.render({
+            elem: '#dealerNameSel',
+            checkedKey: 'id',
+            table: {
+                url: '/afterSale/activity/dealerDetailList',
+                cols: [
+                    [
+                        {type: 'radio'},
+                        {field: 'id', title: 'Id', width: 100},
+                        {field: 'companyName', title: '经销商名称', width: 200},
+                        {field: 'address', title: '地址', width: 300},
+                        {field: 'uname', title: '负责人', width: 150},
+                        {field: 'tel', title: '电话', width: 150}
+                    ]
+                ]
+            },
+            done: function (elem, data) {
+                var NEWJSON = [];
+                layui.each(data.data, function (index, item) {
+                    NEWJSON.push(item.companyName);
+                    $("#dealerNameSel").val(item.id);
+                })
+                elem.val(NEWJSON.join(","))
+            }
+        })
+
+        document.onkeydown = function (e) { // 回车提交表单
+            var theEvent = window.event || e;
+            var code = theEvent.keyCode || theEvent.which;
+            if (code == 13) {
+                $(".search_btn").click();
+            }
+        }
+        // 裂变活动列表
+         table.render({
+            elem: '#afterSaleActivityList',
+            url : '/afterSale/activity/searchActivityList',
+            cellMinWidth : 60,
+            page : true,
+            height : "full",
+            limits : [10,20,50,100],
+            limit : 10,
+            id : "afterSaleListTable",
+             width: "100%",
+             height: 500,
+             even:true,
+            cols: [
+                [
+                    {field: 'id', title: '编号', maxWidth: 10, align: "center"},
+                    {field: 'activityName', title: '活动名称', minWidth: 180, align: "left"},
+                    {field: 'dealerName', title: '经销商名称', minWidth: 180, align: "left"},
+                    {field: 'managerName', title: '负责人', minWidth: 120, align: "center"},
+                    {field: 'dealerTel', title: '电话', minWidth: 120, align: "center"},
+                    {
+                        field: 'startEndTime', title: '售卖时间', minWidth: 200, align: 'center',templet:function(d){
+                            return layui.util.toDateString(d.saleStartTime, "yyyy-MM-dd HH:mm:ss") + "<br/>~" + layui.util.toDateString(d.saleEndTime, "yyyy-MM-dd HH:mm:ss");
+                        }
+                    },
+                    {
+                        field: 'startEndTime', title: '线下转化时间', minWidth: 260, align: 'center',templet:function(d){
+                            return layui.util.toDateString(d.offlineConvertStartTime, "yyyy-MM-dd HH:mm:ss") + "~" + layui.util.toDateString(d.offlineConvertEndTime, "yyyy-MM-dd HH:mm:ss");
+                        }
+                    },
+                    {
+                        field: 'onState',
+                        title: '确认开启',
+                        minWidth: 120,
+                        align: 'center',
+                        unresize: false,
+                        templet: function (d) {
+                            if (d.onState == 1) {
+                                return '<input type="checkbox" name="onState" value="' + d.id + '" class="layui-btn-disabled" lay-skin="switch" lay-text="是|否" lay-filter="onStateFilter" checked>'
+                            } else {
+                                return '<input type="checkbox" name="onState" value="' + d.id + '" lay-skin="switch" lay-text="是|否" lay-filter="onStateFilter" >'
+                            }
+                        }
+                    },
+                    {
+                        field: 'onSubAccount',
+                        title: '开启分账',
+                        minWidth: 120,
+                        align: 'center',
+                        unresize: false,
+                        templet: function (d) {
+                            if (d.onSubAccount == 1 || d.onSubAccount == 2) {
+                                return '<input type="checkbox" name="onSubAccount"  value="' + d.id + '" offlineConvertEndTime="' + d.offlineConvertEndTime +'" offlineConvertStartTime="' + d.offlineConvertStartTime +'" class="layui-btn-disabled" lay-skin="switch" lay-text="是|否" lay-filter="onSubAccountFilter" checked>'
+                            } else {
+                                return '<input type="checkbox" name="onSubAccount" value="' + d.id + '"  offlineConvertEndTime="' + d.offlineConvertEndTime +'" offlineConvertStartTime="' + d.offlineConvertStartTime +'" lay-skin="switch" lay-text="是|否" lay-filter="onSubAccountFilter" >'
+                            }
+                        }
+                    },
+                    {title: '操作', minWidth: 320, align: 'center', toolbar: '#barBtn', fixed: 'right'}
+                ]
+            ]
+        });
+
+
+        // 获取搜索表单
+        function getSearchInput(){
+            // 获取裂变活动名称
+            let activityName = $("#activityName").val();
+            let dealerId = $("#dealerNameSel").attr("ts-selected");
+            let params = {"activityName":activityName, "dealerId": (dealerId!=undefined && dealerId!="")? parseInt(dealerId) : null};
+            return params;
+        }
+
+        //搜索
+        $(".search_btn").on("click",function(){
+            let params = getSearchInput();
+            table.reload("afterSaleListTable",{
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: params
+            })
+        });
+
+        // 操作事件
+        table.on('tool(afterSaleActivityTool)', function(obj){
+            var data = obj.data;
+            if(obj.event == 'edit'){
+                // if(data.onState == 1){
+                //     layer.alert("当前裂变活动不允许修改！", {icon: 5,title:'提示'});
+                //     return false;
+                // }
+                commOpen("编辑售后特卖活动","/afterSale/activity/toAddAfterSalePage?activityId="+data.id + "&pageType=1",'100%', '100%');
+            }else if(obj.event == 'viewUrl'){
+                commOpen("活动链接", "/afterSale/activity/viewActivityUrls?activityId=" + data.id,'620px','520px');
+            }else if(obj.event == 'agentManage0'){
+                commOpen('车商代理人管理','/afterSale/agent/toList?dealerId='+data.dealerId+"&activityId="+data.id+"&type=0",'100%','100%')
+            }else if(obj.event == 'configPackagePage'){
+                commOpen('套餐管理','/afterSale/activity/toActivityPackageList?activityId='+data.id,'100%','100%')
+            } else if(obj.event == 'activityCouponPage'){
+                commOpen('卡券管理','/afterSale/activity/toActivityCouponList?type=1&activityId='+data.id,'100%','100%')
+            } else if(obj.event == 'KeepOnRecordManage'){
+                commOpen('用户管理', '/afterSale/keepOnRecord/keepOnRecordIndex?activityId=' + data.id, '100%', '100%')
+            } else if(obj.event == 'pubicQRCode'){
+                commOpen("经销商：" + data.dealerName, "/afterSale/activity/toPublicQrCodePage?activityId=" + data.id,'620px','520px');
+            } else if(obj.event == 'view'){
+                commOpen("查看售后特卖活动","/afterSale/activity/toAddAfterSalePage?activityId="+data.id + "&pageType=2",'100%', '100%');
+            } else if(obj.event == 'delActivityCache'){//清除缓存
+
+                $.ajax({
+                    url:"/afterSale/activity/delActivityCache?id=" + data.id,
+                    success:function(res){
+                        layer.msg(res.msg, {icon: 6});
+                    },
+                    error:function(){
+                        layer.msg("发生系统错误", {icon: 5});
+                    }
+                })
+            }else if(obj.event == 'setSubAccount'){
+                commOpen("线下升级套餐分账设置", "/afterSale/activity/setSubAccountPage?activityId=" + data.id + "&dealerName=" + data.dealerName
+                    + "&dealerId=" + data.dealerId,'100%','100%');
+            }
+        });
+
+        window.commOpen = function(title,url,width,height) {
+            layer.open({
+                title: title,
+                type: 2,
+                shadeClose: true,
+                content: url,
+                area: [width, height]
+            });
+        }
+
+        window.commOpenPage = function(title,url,width,height) {
+            layer.open({
+                title: title,
+                type: 1,
+                shadeClose: true,
+                content: url,
+                area: [width, height]
+            });
+        }
+
+        //监听活动开启操作
+        form.on('switch(onStateFilter)', function(obj){
+            var activityId = this.value;
+            //开启的不允许关闭
+            if(!obj.elem.checked){
+                var em = $(obj.othis[0]);
+                obj.othis[0].classList.add('layui-form-onswitch');
+                em.children('em').text('是');
+                obj.elem.checked = true;
+                return;
+            }
+
+            layer.confirm('确认开启该活动吗？开启后部分信息不可修改！！', function(index) {
+                $.ajax({
+                    type: "post",
+                    url: "/afterSale/activity/openFission",
+                    dataType:'json',
+                    data: {activityId:activityId},
+                    dataType: "json",
+                    success: function (data) {
+                        var message = data.msg;
+                        if(data.code == 200){
+                            layer.msg(message, {
+                                icon: 6, time: 1500, end: function () {
+                                    location.href = "/afterSale/activity/toListPage"
+                                }
+                            });
+                        } else {
+                            layer.alert(message, {icon: 5,title:'提示'});
+                            var em = $(obj.othis[0]);
+                            obj.othis[0].classList.remove('layui-form-onswitch');
+                            em.children('em').text('否');
+                            obj.elem.checked = false;
+                            return;
+                        }
+                    },
+                    error: function () {
+                        var em = $(obj.othis[0]);
+                        obj.othis[0].classList.remove('layui-form-onswitch');
+                        em.children('em').text('否');
+                        obj.elem.checked = false;
+                        return;
+                    }
+                })
+            },
+            function (index) {
+                var em = $(obj.othis[0]);
+                obj.othis[0].classList.remove('layui-form-onswitch');
+                em.children('em').text('否');
+                obj.elem.checked = false;
+                return;
+            });
+        });
+
+        //监听开启分账操作
+        form.on('switch(onSubAccountFilter)', function(obj){
+            var activityId = this.value;
+            if(Date.parse(obj.elem.attributes['offlineConvertStartTime'].nodeValue) < Date.now()){
+                var em = $(obj.othis[0]);
+                if (obj.elem.checked) {
+                    obj.othis[0].classList.remove('layui-form-onswitch');
+                    em.children('em').text('否');
+                    obj.elem.checked = false;
+                } else {
+                    obj.othis[0].classList.add('layui-form-onswitch');
+                    em.children('em').text('是');
+                    obj.elem.checked = true;
+                }
+                layer.msg("线下转化时间开始了，不允许修改", {icon: 5});
+                return;
+            }
+
+            layer.confirm('确认开启分账吗？开启后转化时间开始后不可修改！！', function(index) {
+                    $.ajax({
+                        type: "post",
+                        url: "/afterSale/activity/openCloseSubAccount",
+                        dataType:'json',
+                        data: {activityId:activityId},
+                        dataType: "json",
+                        success: function (data) {
+                            var message = data.msg;
+                            if(data.code == 200){
+                                layer.msg(message, {
+                                    icon: 6, time: 1500, end: function () {
+                                        location.href = "/afterSale/activity/toListPage"
+                                    }
+                                });
+                            } else {
+                                layer.alert(message, {icon: 5,title:'提示'});
+                                var em = $(obj.othis[0]);
+                                if (obj.elem.checked) {
+                                    obj.othis[0].classList.remove('layui-form-onswitch');
+                                    em.children('em').text('否');
+                                    obj.elem.checked = false;
+                                } else {
+                                    obj.othis[0].classList.add('layui-form-onswitch');
+                                    em.children('em').text('是');
+                                    obj.elem.checked = true;
+                                }
+                                return;
+                            }
+                        },
+                        error: function () {
+                            var em = $(obj.othis[0]);
+                            obj.othis[0].classList.remove('layui-form-onswitch');
+                            em.children('em').text('否');
+                            obj.elem.checked = false;
+                            return;
+                        }
+                    })
+                },
+                function (index) {
+                    var em = $(obj.othis[0]);
+                    obj.othis[0].classList.remove('layui-form-onswitch');
+                    em.children('em').text('否');
+                    obj.elem.checked = false;
+                    return;
+                });
+        });
+    }();
+</script>
+</body>
+</html>

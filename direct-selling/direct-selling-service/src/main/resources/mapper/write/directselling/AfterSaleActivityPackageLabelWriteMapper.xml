@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.AfterSaleActivityPackageLabelWriteMapper" >
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.AfterSaleActivityPackageLabel" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="package_id" property="packageId" jdbcType="INTEGER" />
+    <result column="primary_label_id" property="primaryLabelId" jdbcType="INTEGER" />
+    <result column="secondary_label_id" property="secondaryLabelId" jdbcType="INTEGER" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="BIT" />
+    <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="update_dt" property="updateDt" jdbcType="TIMESTAMP" />
+    <result column="update_name" property="updateName" jdbcType="VARCHAR" />
+  </resultMap>
+
+    <!--根据主键删除-->
+    <update id="delByIds" >
+        update after_sale_activity_package_label
+        set delete_flag = 1
+        where id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+    <!--根据一级标签ID删除-->
+    <update id="delByPrimaryLabelIds" >
+        update after_sale_activity_package_label
+        set delete_flag = 1
+        where primary_label_id IN
+        <foreach collection="primaryLabelIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+    <!--根据二级标签ID删除-->
+    <update id="delBySecondaryIds" >
+        update after_sale_activity_package_label
+        set delete_flag = 1
+        where secondary_label_id IN
+        <foreach collection="secondaryIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+    <!-- 批量新增 -->
+    <insert id="batchInsert"  >
+        insert into after_sale_activity_package_label ( package_id, primary_label_id,secondary_label_id, create_name)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.packageId,jdbcType=INTEGER}, #{item.primaryLabelId,jdbcType=INTEGER},
+            #{item.secondaryLabelId,jdbcType=INTEGER}, #{item.createName,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+
+    <update id="batchUpdate" >
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update after_sale_activity_package_label
+            set
+            primary_label_id = #{item.primaryLabelId,jdbcType=INTEGER},
+            secondary_label_id = #{item.secondaryLabelId,jdbcType=INTEGER},
+            update_name = #{item.updateName,jdbcType=VARCHAR}
+            where id = #{item.id,jdbcType=INTEGER} and package_id = #{item.packageId,jdbcType=INTEGER}
+        </foreach>
+    </update>
+</mapper>

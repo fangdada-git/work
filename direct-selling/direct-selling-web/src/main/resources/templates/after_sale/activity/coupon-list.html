@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>售后特卖-卡券管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.js"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/magnify/css/jquery.magnify.css">
+    <script src="/layui/js/formSelects-v4.js"></script>
+    <link rel="stylesheet" href="/layui/css/formSelects-v4.css" media="all">
+    <style type="text/css">
+        .layui-table-header .layui-table tr {
+            height: auto;
+            line-height: 50px;
+        }
+
+        .layui-table-cell {
+            height: auto;
+        }
+
+        .layui-table-col-special {
+            height: auto;
+        }
+
+        .layui-table tr {
+            height: 65px
+        }
+
+        .layui-form-label {
+            width: 120px;
+        }
+
+        .layui-input {
+            width: 200px;
+        }
+    </style>
+</head>
+<body class="childrenBody">
+<div class="layui-card-header">活动名称：[[${afterSaleActivity.activityName}]]
+</div>
+<form class="layui-form" style="background-color: #ffffff;">
+    <blockquote class="layui-elem-quote quoteBox">
+        <form class="layui-form">
+            <div class="layui-inline">
+                <label class="layui-form-label">抵用券名称：</label>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input couponName" id="couponName" placeholder="输入抵用券名称"/>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <div class="layui-input-block" style="margin-left: 10px;">
+                    <a class="layui-btn layui-btn-radius add_btn" id="search" href="javascript:;"><i
+                            class="layui-icon layui-icon-search"></i>搜索</a>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <a class="layui-btn layui-btn-radius add_btn" href="javascript:;"
+                   onclick="addActivityCoupon()">
+                    <i class="layui-icon layui-icon-add-1"></i>添加抵用券</a>
+            </div>
+        </form>
+    </blockquote>
+    <table id="afterSaleActivityCouponList" lay-filter="afterSaleActivityCouponTool"></table>
+</form>
+<!-- 表格操作列按钮 -->
+<script type="text/html" id="barBtn0">
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"> <i
+            class="layui-icon layui-icon-edit">编辑</i></a>
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="delete"> <i
+            class="layui-icon layui-icon-delete">删除</i></a>
+</script>
+
+
+<script type="text/javascript" src="/common/js/tools.js"></script>
+<!-- layui 初始化 -->
+<script type="text/javascript" th:inline="javascript">
+    layui.use(['form', 'layer', 'table', 'laydate', 'upload'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            table = layui.table,
+            laydate = layui.laydate;
+        var activityId = [[${afterSaleActivity.id}]];
+        var onOpen = [[${afterSaleActivity.onState}]];
+        var packageId = [[${packageId}]];
+        var type = [[${type}]];
+
+        let params = {"type": type, "packageId": packageId, "activityId": activityId};
+        var toAddUrl = '/afterSale/activity/toAddCouponPage?activityId=' + activityId + "&type=" + type;
+        // 售后特卖卡券列表
+        var tableIns = table.render({
+            elem: '#afterSaleActivityCouponList',
+            url: '/afterSale/activity/getActivityCouponList',
+            cellMinWidth: 60,
+            page: true,
+            height: "full-125",
+            limits: [10, 20, 50, 100],
+            limit: 10,
+            where: params,
+            id: "afterSaleCouponListTable",
+            cols: [
+                [
+                    {field: 'couponName', title: '抵用券名称', minWidth: 180, align: "center"},
+                    {field: 'serviceSpecification', title: '规格', minWidth: 180, align: "center"},
+                    {field: 'money', title: '金额', minWidth: 100, align: "center"},
+                    {field: 'couponCount', title: '发券数量', minWidth: 160, align: "center"},
+                    {field: 'validity', title: '有效期（年）', minWidth: 160, align: "center"},
+                    {
+                        field: 'relTime', title: '创建时间', minWidth: 260, align: 'center', templet: function (d) {
+                            return layui.util.toDateString(d.relTime, "yyyy-MM-dd HH:mm:ss");
+                        }
+                    },
+                    {fixed: 'right', title: '操作', minWidth: 160, align: 'center', toolbar: '#barBtn0'}
+                ]
+            ]
+        });
+
+        // 操作事件
+        table.on('tool(afterSaleActivityCouponTool)', function (obj) {
+            var data = obj.data;
+            if (obj.event == 'edit') {
+                if( type == '2'){
+                    commOpen('编辑抵用券', toAddUrl + "&id=" +  data.id + "&packageId=" + packageId , '780px', '490px')
+                }else{
+                    commOpen('编辑抵用券', toAddUrl + "&id=" +  data.id + "&packageId=" , '780px', '490px')
+                }
+            } else if (obj.event == 'delete') {
+                /*if (onOpen == 1) {
+                    layer.msg("活动开启中，不允许此操作", {icon: 5});
+                    return false;
+                }*/
+                layer.confirm('确定删除该抵用券吗?', {icon: 3, title: '提示'}, function (index) {
+                    $.ajax({
+                        type: 'post',
+                        url: '/afterSale/activity/deleteVoucherCoupon',
+                        dataType: 'json',
+                        data: {id: data.id},
+                        success: function (s) {
+                            layer.alert(s.msg, {icon: 6, title: '提示'}, function (i) {
+                                //关闭弹窗
+                                layer.close(i);
+                                var couponName = $("#couponName").val();
+                                table.reload("afterSaleCouponListTable", {
+                                    page: {
+                                        curr: 1
+                                    },
+                                    where: {
+                                        "activityId": activityId,
+                                        "couponName": couponName
+                                    }
+                                })
+                            });
+                        },
+                        error: function (e) {
+                            layer.alert('网络繁忙', {icon: 5, title: '提示'});
+                        }
+                    })
+                    layer.close(index);
+                })
+            }
+        });
+        //添加卡券
+        window.addActivityCoupon = function () {
+            if( type == '2'){
+                commOpen('添加抵用券', toAddUrl + "&packageId=" + packageId , '780px', '490px')
+            }else{
+                commOpen('添加抵用券', toAddUrl + "&packageId=" , '780px', '490px')
+            }
+        }
+
+        window.commOpen = function (title, url, width, height) {
+            layer.open({
+                title: title,
+                type: 2,
+                shadeClose: true,
+                content: url,
+                area: [width, height]
+            });
+        }
+        window.setOnOpen=function(data){
+            onOpen=data;
+        }
+        //搜索
+        $("#search").on("click", function () {
+            var couponName = $("#couponName").val();
+            table.reload("afterSaleCouponListTable", {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: {
+                    "activityId": activityId,
+                    "couponName": couponName
+                }
+            })
+        });
+    })
+
+</script>
+</body>
+</html>

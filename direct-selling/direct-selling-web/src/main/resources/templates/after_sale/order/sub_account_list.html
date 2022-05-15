@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>团车直卖-裂变商品订单列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.js"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/magnify/css/jquery.magnify.css">
+    <script src="/layui/js/formSelects-v4.js"></script>
+    <link rel="stylesheet" href="/layui/css/formSelects-v4.css" media="all">
+    <style type="text/css">
+        .layui-table-header .layui-table tr {
+            height: auto;
+            line-height: 50px;
+        }
+        .layui-table tr{height: 65px}
+        .layui-input-block{
+            margin-left: 131px;
+            min-height: 36px;
+        }
+        .layui-input{
+            width: 180.44px;
+        }
+        .layui-select{
+            width: 180.44px;
+        }
+        .layui-input-block-p{
+            padding-top: 8px;
+        }
+        .layui-table-cell {
+            height:auto;
+            overflow:visible;
+            text-overflow:inherit;
+            white-space:normal;
+        }
+    </style>
+</head>
+<body class="childrenBody">
+<form class="layui-form" style="background-color: #ffffff;">
+    <blockquote class="layui-elem-quote quoteBox">
+        <form class="layui-form">
+
+            <div class="layui-form-item" >
+                <div class="layui-inline">
+                    <div class="layui-input-block" style="margin-left: 10px; width: 383px;">
+                        <select id="dealerId" name="dealerId" xm-select="dealerSelect" xm-select-search="" xm-select-search-type="dl" xm-select-radio="">
+                                xm-select-radio="" >
+                            <option value="">请选择经销商</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-input-block" style="margin-left: 10px; width: 383px;">
+                        <select id="activityId" name="activityId"  xm-select="activitySelect" xm-select-search="" xm-select-search-type="dl"
+                                xm-select-radio="">
+                            <option value="">请选择活动</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item" >
+                <div class="layui-inline">
+                    <div class="layui-input-block" style="margin-left: 10px;">
+                        <input type="text" name="licencePlate" id="licencePlate" placeholder="请输入车牌" class="layui-input"/>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-input-block" style="margin-left: 10px;">
+                        <input type="text" name="userPhone" id="userPhone" placeholder="请输入手机号" class="layui-input"/>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-input-block" style="margin-left: 10px;">
+                        <select id="subAccountStatus" name="subAccountStatus">
+                            <option value="">请选择分账状态</option>
+                            <option value="1">不分账</option>
+                            <option value="2">待分账</option>
+                            <option value="3">分账中</option>
+                            <option value="4">已分账</option>
+                            <option value="5">分账失败</option>
+                            <option value="6">分账退回中</option>
+                            <option value="7">分账已退回</option>
+                            <option value="8">分账退回失败</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-input-block" style="margin-left: 10px; width: 383px;">
+                        <input type="text" name="subAccountTime" id="subAccountTime" placeholder="请选择分账时间" class="layui-input" style="width: 383px;"/>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item" >
+                <div class="layui-inline">
+                    <div class="layui-input-block" style="margin-left: 10px;">
+                        <a class="layui-btn layui-btn-radius add_btn" id="search" href="javascript:;"><i class="layui-icon layui-icon-search"></i>搜索</a>
+                        <a class="layui-btn layui-btn-radius add_btn" id="export" href="javascript:;"><i class="layui-icon layui-icon-release"></i>导出</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </blockquote>
+    <table id="fissionGoodsOrderList" lay-filter="fissionActivityTool"></table>
+</form>
+
+<!-- 表格操作列按钮 -->
+<script type="text/html" id="barBtn">
+    {{# if(d.orderStatus=="3"){ }}
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="refund"><i class="layui-icon layui-icon-edit">退款</i></a>
+    {{# } }}
+</script>
+
+<script type="text/javascript" src="/common/js/tools.js"></script>                              
+<!-- layui 初始化 -->
+<script type="text/javascript" th:inline="javascript">
+    layui.use(['form', 'layer', 'table', 'laydate'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            table = layui.table,
+            formSelects = layui.formSelects,
+            laydate = layui.laydate;
+
+        // 裂变活动列表
+        var tableIns = table.render({
+            elem: '#fissionGoodsOrderList',
+            url : '/afterSale/order/getOrderList?orderType=2',
+            cellMinWidth : 100,
+            page : true,
+            height : "full",
+            limits : [10,20,50,100],
+            limit : 10,
+            id : "goodsOrderListTable",
+            width: "100%",
+            height: 500,
+            even:true,
+            cols: [
+                [
+                    // {field: 'orderCode', title: '订单编号', align: "center", minWidth: 160},
+                    {field: 'activityName', title: '活动名称', minWidth: 180, align: "left"},
+                    {field: 'dealerName', title: '经销商名称', minWidth: 220, align: "left"},
+                    {field: 'goodsName', title: '商品名称', align: "center",minWidth: 160},
+                    {field: 'orderTypeFormat', title: '商品类型', align: "center",minWidth: 160},
+                    {field: 'licencePlate', title: '下单车牌', align: "center",width: 110, templet: function (d) {
+                            var r = '';
+                            if (d.keepOnRecordUser==true) {
+                                r = '<sup style="margin-left: 5px;">R</sup>';
+                            }
+                            var html = '<div><div style="display: inline-block">'+d.licencePlate+'</div>'+r+'</div>';
+                            return html;
+                        }
+                    },
+                    {field: 'userPhone', title: '手机号', align: "center", width: 120},
+                    {field: 'orderMoney', title: '订单金额', align: "center"},
+                    {field: 'payTime', title: '购买时间', align: "center", minWidth: 200,templet:function(d){
+                            return layui.util.toDateString(d.payTime, "yyyy-MM-dd HH:mm:ss") ;
+                        }
+                    },
+                    {field: 'subAccountStatusFormat', title: '分账状态', align: "center", minWidth: 120, templet: function (d) {
+                        var html = '';
+                        if (d.subAccountStatus==5 || d.subAccountStatus==8) {
+                            html = '&nbsp;<i class="layui-icon alone-tips" lay-tips="'+d.subAccountDesc+'">&#xe60b;</i>';
+                        }
+                            return (d.subAccountStatusFormat?d.subAccountStatusFormat:'')+html;
+                    }
+                    },
+                    {field: 'subAccountAmount', title: '分账金额', align: "center", minWidth: 120},
+                    {field: 'subAccountTime', title: '分账时间', align: "center", minWidth: 120,templet:function(d){
+                            return layui.util.toDateString(d.subAccountTime, "yyyy-MM-dd HH:mm:ss") ;
+                        }
+                    },
+                    {field: 'subAccountTransactionDetailId', title: '分账流水号', align: "center", minWidth: 240},
+                    {field: 'subAccountReturnTime', title: '退款时间', align: "center", minWidth: 120,templet:function(d){
+                            return layui.util.toDateString(d.subAccountReturnTime, "yyyy-MM-dd HH:mm:ss") ;
+                        }
+                    },
+                    {field: 'subAccountReturnNo', title: '退款流水号', align: "center", minWidth: 240},
+                ]
+            ],
+            done: function (res, curr, count) {
+                $('*[lay-tips]').on('mouseenter', function () {
+                    let content = $(this).attr('lay-tips');
+                    this.index = layer.tips('<div style="padding: 10px; font-size: 14px; color: #eee;">' + content + '</div>', this, {
+                        time: -1
+                        , maxWidth: 280
+                        , tips: [3, '#3A3D49']
+                    });
+                }).on('mouseleave', function () {
+                    layer.close(this.index);
+                });
+            }
+        });
+
+        var payTimeBegin = laydate.render({
+            elem: '#payTimeBegin',
+            type : 'datetime',
+            trigger: 'click',
+            done: function(value, date) {
+                if (date.year!=undefined) {
+                    payTimeEnd.config.min = {
+                        year : date.year,
+                        month : date.month - 1,
+                        date : date.date,
+                        hours : date.hours,
+                        minutes : date.minutes,
+                        seconds : date.seconds
+                    };
+                }
+            }
+        });
+        var payTimeEnd = laydate.render({
+            elem: '#payTimeEnd',
+            type : 'datetime',
+            trigger: 'click',
+            done: function(value, date) {
+                if (date.year!=undefined) {
+                    payTimeEnd.config.max = {
+                        year : date.year,
+                        month : date.month - 1,
+                        date : date.date,
+                        hours : date.hours,
+                        minutes : date.minutes,
+                        seconds : date.seconds
+                    };
+                }
+            }
+        });
+        var subAccountTime = laydate.render({
+            elem: '#subAccountTime',
+            type : 'datetime',
+            trigger: 'click',
+            range: '~'
+        });
+        $.ajax({
+            url: "/afterSale/stat/dealer",
+            success: function (res) {
+                var array = [];
+                for (var i = 0; i < res.length; i++) {
+                    array.push({"name": res[i].dealerName, "value": res[i].id})
+                }
+                layui.formSelects.data('dealerSelect', 'local', {
+                    arr: array
+                });
+            }
+        });
+
+        $.ajax({
+            url: "/afterSale/stat/activity",
+            success: function (res) {
+                var array = [];
+                for (var i = 0; i < res.length; i++) {
+                    array.push({"name": res[i].activityName, "value": res[i].id})
+                }
+                layui.formSelects.data('activitySelect', 'local', {
+                    arr: array
+                });
+            }
+        });
+        /*form.on('select(activitySelect)', function(data){
+            console.log(data);
+        });*/
+        layui.formSelects.on('activitySelect', function (id, vals, val, isAdd, isDisabled) {
+            if (isAdd) {
+                getAfterSaleAgentList(val.value);
+            }else{
+                setSaleAgentSel({});
+            }
+
+        });
+        layui.formSelects.on('dealerSelect', function (id, vals, val, isAdd, isDisabled) {
+            var url;
+            if (isAdd) {
+                url = "/afterSale/stat/activity?dealerId=" + val.value;
+            } else {
+                url = "/afterSale/stat/activity"
+            }
+            $.ajax({
+                url: url,
+                success: function (res) {
+                    var array = [];
+                    for (var i = 0; i < res.length; i++) {
+                        array.push({"name": res[i].activityName, "value": res[i].id})
+                    }
+                    layui.formSelects.data('activitySelect', 'local', {
+                        arr: array
+                    });
+                }
+            });
+
+        });
+
+        // 操作事件
+        table.on('tool(fissionActivityTool)', function(obj){
+            var data = obj.data;
+            layer.confirm('是否确认退款?', {icon: 3, title:'提示'}, function(index){
+                $.ajax({
+                    type: "post",
+                    url: '/afterSale/order/batchRefund',
+                    dataType:'json',
+                    data: {orderCode: data.orderCode, userId : data.userId},
+                    dataType: "json",
+                    success: function (s) {
+                        var message = s.msg;
+                        var icon = 5;
+                        if(s.code == 200) icon=6;
+                        layer.alert(message, {icon: icon,title:'提示'}, function (index) {
+                            //关闭弹窗
+                            layer.close(index);
+                            refresh();
+                        });
+                    },
+                    error: function (e) {
+                        layer.alert('网络繁忙', {icon: 5,title:'提示'});
+                    }
+                })
+                layer.close(index);
+            });
+
+        });
+
+        //搜索订单
+        $("#search").on("click", function () {
+            table.reload("goodsOrderListTable", {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: getData()
+            })
+        });
+        $("#export").on("click", function () {
+            var params = getData();
+            window.open("/afterSale/order/subAccount/excelexport" + queryParams(params, true));
+        });
+        $("#carOrder").on("click", function () {
+            var url = "";
+            var activityId = formSelects.value("activitySelect", "val");
+            if(activityId!=""){
+                url += "?activityId="+parseInt(activityId);
+            }
+            var dealerId = formSelects.value("dealerSelect", "val");
+            if(dealerId!=""){
+                url += (url=="" ? "?" : "&")+"dealerId="+parseInt(dealerId);
+            }
+            commOpen('下单车型统计','/afterSale/order/toCarOrderPage'+url,'100%','100%');
+        });
+
+        function getAfterSaleAgentList(activityId) {
+            var saleAgentSel = $("#saleAgentSel");
+            var opt0='<option value="">请先选择活动</option>';
+            if(activityId=="") {
+                saleAgentSel.empty();
+                saleAgentSel.append(opt0);
+                form.render("select");
+                alert("清空1");
+                return;
+            }
+            $.ajax({
+                url: '/afterSale/agent/getAgentList',
+                data: {activityId: activityId},
+                success: function (data) {
+                    saleAgentSel.empty();
+                    if (data != null && data != "") {
+                        var arr = [];
+                        for (var i = 0; i < data.length; i++) {
+                            arr.push({"name": data[i].name, "value": data[i].agentWxUnionId})
+                        }
+                        setSaleAgentSel(arr);
+                    }else{
+                        setSaleAgentSel({});
+                    }
+                }
+            })
+        }
+        function setSaleAgentSel(array){
+            layui.formSelects.data('saleAgentSel', 'local', {
+                arr: array
+            });
+        }
+        //重新加载
+        function refresh() {
+            table.reload("goodsOrderListTable", {
+                where: getData()
+            })
+        }
+
+        function getData() {
+            var dealerId = formSelects.value("dealerSelect", "val");
+            var activityId = formSelects.value("activitySelect", "val");
+            var agentWxUnionId = formSelects.value("saleAgentSel", "val");
+            var orderStatus = $("#orderStatus").val();
+            var licencePlate = $("#licencePlate").val();
+            var userPhone = $("#userPhone").val();
+            var orderCode = $("#orderCode").val();
+            var orderType = $("#orderType").val();
+            var channel = $("#channel").val();
+            var payTimeBegin = $("#payTimeBegin").val();
+            var payTimeEnd = $("#payTimeEnd").val();
+            var startTime = $("#startTime").val();
+            var endTime = $("#endTime").val();
+            var userType = $("#userType").val();
+            var subAccountTime = $("#subAccountTime").val();
+            var subAccountStatus = $("#subAccountStatus").val();
+            var subAccountStartTime = null;
+            var subAccountEndTime = null;
+            if(subAccountTime && subAccountTime.length > 8){
+                var subAccountTimeRange = subAccountTime.split(" ~");//注意此处有个空格
+                subAccountStartTime=subAccountTimeRange[0];
+                subAccountEndTime=subAccountTimeRange[1];
+            }
+            var data = {
+                "activityId": activityId != "" ? parseInt(activityId) : null
+                ,"dealerId": dealerId != "" ? parseInt(dealerId) : null
+                , "userPhone": userPhone
+                , "subAccountStatus": subAccountStatus
+                , "licencePlate": licencePlate
+                , "subAccountStartTime": subAccountStartTime
+                , "subAccountEndTime": subAccountEndTime
+
+            };
+            return data;
+        }
+
+        function queryParams(data, isPrefix) {
+            isPrefix = isPrefix ? isPrefix : false
+            let prefix = isPrefix ? '?' : ''
+            let _result = []
+            for (let key in data) {
+                let value = data[key]
+                // 去掉为空的参数
+                if (['', undefined, null].includes(value)) {
+                    continue
+                }
+                if (value.constructor === Array) {
+                    value.forEach(_value => {
+                        _result.push(encodeURIComponent(key) + '[]=' + encodeURIComponent(_value))
+                    })
+                } else {
+                    _result.push(encodeURIComponent(key) + '=' + encodeURIComponent(value))
+                }
+            }
+
+            return _result.length ? prefix + _result.join('&') : ''
+        }
+    });
+
+    window.commOpen = function(title,url,width,height) {
+        layer.open({
+            title: title,
+            type: 2,
+            shadeClose: true,
+            content: url,
+            area: [width, height]
+        });
+    }
+</script>
+
+</body>
+</html>

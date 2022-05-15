@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.GiftRefuelingcardGiftrecordCardsWriteMapper" >
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.GiftRefuelingcardGiftrecordCards" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="giftrecord_id" property="giftrecordId" jdbcType="INTEGER" />
+    <result column="refueling_code" property="refuelingCode" jdbcType="VARCHAR" />
+  </resultMap>
+    <!-- 批量新增 -->
+    <insert id="batchInsert"  >
+        insert into gift_refuelingcard_giftrecord_cards (giftrecord_id, refueling_code)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            ( #{item.giftrecordId,jdbcType=INTEGER}, #{item.refuelingCode,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+  <insert id="insertSelective" parameterType="com.tuanche.directselling.model.GiftRefuelingcardGiftrecordCards" >
+    insert into gift_refuelingcard_giftrecord_cards
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="giftrecordId != null" >
+        giftrecord_id,
+      </if>
+      <if test="refuelingCode != null" >
+        refueling_code,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="giftrecordId != null" >
+        #{giftrecordId,jdbcType=INTEGER},
+      </if>
+      <if test="refuelingCode != null" >
+        #{refuelingCode,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.GiftRefuelingcardGiftrecordCards" >
+    update gift_refuelingcard_giftrecord_cards
+    <set >
+      <if test="giftrecordId != null" >
+        giftrecord_id = #{giftrecordId,jdbcType=INTEGER},
+      </if>
+      <if test="refuelingCode != null" >
+        refueling_code = #{refuelingCode,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tuanche.directselling.model.GiftRefuelingcardGiftrecordCards" >
+    update gift_refuelingcard_giftrecord_cards
+    set giftrecord_id = #{giftrecordId,jdbcType=INTEGER},
+      refueling_code = #{refuelingCode,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

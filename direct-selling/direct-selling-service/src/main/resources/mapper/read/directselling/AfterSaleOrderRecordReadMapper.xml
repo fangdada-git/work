@@ -1,0 +1,1075 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.AfterSaleOrderRecordReadMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.AfterSaleOrderRecord">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="order_code" jdbcType="VARCHAR" property="orderCode" />
+    <result column="activity_id" jdbcType="INTEGER" property="activityId" />
+    <result column="dealer_id" jdbcType="INTEGER" property="dealerId" />
+    <result column="goods_id" jdbcType="INTEGER" property="goodsId" />
+    <result column="order_status" jdbcType="INTEGER" property="orderStatus" />
+    <result column="order_type" jdbcType="INTEGER" property="orderType" />
+    <result column="order_money" property="orderMoney" jdbcType="DECIMAL" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="user_phone" jdbcType="VARCHAR" property="userPhone" />
+    <result column="city_id" jdbcType="INTEGER" property="cityId" />
+    <result column="cb_id" jdbcType="INTEGER" property="cbId" />
+    <result column="cs_id" jdbcType="INTEGER" property="csId" />
+    <result column="licence_plate" jdbcType="VARCHAR" property="licencePlate" />
+    <result column="agent_wx_union_id" jdbcType="VARCHAR" property="agentWxUnionId" />
+    <result column="share_wx_union_id" jdbcType="VARCHAR" property="shareWxUnionId" />
+    <result column="user_wx_union_id" jdbcType="VARCHAR" property="userWxUnionId" />
+    <result column="user_wx_open_id" property="userWxOpenId" jdbcType="VARCHAR" />
+    <result column="page_url" jdbcType="VARCHAR" property="pageUrl" />
+    <result column="ip" jdbcType="VARCHAR" property="ip" />
+    <result column="channel" jdbcType="INTEGER" property="channel" />
+    <result column="keep_on_record_user" property="keepOnRecordUser" jdbcType="BIT" />
+    <result column="user_type" property="userType" jdbcType="INTEGER" />
+    <result column="finish_fission_task" property="finishFissionTask" jdbcType="BIT" />
+    <result column="fission_level" property="fissionLevel" jdbcType="INTEGER" />
+    <result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
+    <result column="tc_transaction_id" property="tcTransactionId" jdbcType="VARCHAR" />
+    <result column="wx_transaction_id" property="wxTransactionId" jdbcType="VARCHAR" />
+    <result column="sub_account_status" property="subAccountStatus" jdbcType="INTEGER" />
+    <result column="sub_account_amount" property="subAccountAmount" jdbcType="DECIMAL" />
+    <result column="sub_account_time" property="subAccountTime" jdbcType="TIMESTAMP" />
+    <result column="sub_account_transaction_detail_id" property="subAccountTransactionDetailId" jdbcType="VARCHAR" />
+    <result column="sub_account_result_code" property="subAccountResultCode" jdbcType="VARCHAR" />
+    <result column="sub_account_receiver_result" property="subAccountReceiverResult" jdbcType="VARCHAR" />
+    <result column="sub_account_desc" property="subAccountDesc" jdbcType="VARCHAR" />
+    <result column="sub_account_return_no" property="subAccountReturnNo" jdbcType="VARCHAR" />
+    <result column="sub_account_return_time" property="subAccountReturnTime" jdbcType="TIMESTAMP" />
+    <result column="checked_sales_id" property="checkedSalesId" jdbcType="INTEGER" />
+    <result column="checked_dealer_id" property="checkedDealerId" jdbcType="INTEGER" />
+    <result column="checked_date" property="checkedDate" />
+    <result column="create_dt" jdbcType="TIMESTAMP" property="createDt" />
+    <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
+    <result column="delete_flag" jdbcType="INTEGER" property="deleteFlag" />
+  </resultMap>
+  <resultMap id="afterSaleOrderRecordDtoMap" type="com.tuanche.directselling.dto.AfterSaleOrderRecordDto" extends="BaseResultMap">
+    <result column="share_licence_plate" jdbcType="INTEGER" property="shareLicencePlate" />
+    <result column="shareNickName" jdbcType="VARCHAR" property="shareNickName" />
+    <result column="agent_name" jdbcType="INTEGER" property="agentName" />
+
+  </resultMap>
+  <sql id="Base_Column_List">
+      id, order_code, activity_id, dealer_id, goods_id, order_money, order_type, order_status,
+      user_id, user_name, user_phone, city_id, licence_plate, agent_wx_union_id, share_wx_union_id,
+      user_wx_union_id, user_wx_open_id, cs_id, cb_id, page_url, ip, channel, keep_on_record_user,
+      user_type, finish_fission_task, fission_level, pay_time, sub_account_status, sub_account_amount,
+      sub_account_time, sub_account_transaction_detail_id, sub_account_result_code, sub_account_receiver_result,
+      sub_account_desc, sub_account_return_no, sub_account_return_time, checked_sales_id,
+      checked_dealer_id, checked_date, create_dt, update_dt, delete_flag,wx_transaction_id,tc_transaction_id
+  </sql>
+
+  <sql id="query_list_sql" >
+    select
+    <include refid="Base_Column_List" />
+    from after_sale_order_record
+    <include refid="query_where_sql" />
+    order by pay_time desc
+  </sql>
+
+    <sql id="query_where_sql" >
+        where delete_flag = 0
+        <if test="orderCode != null and orderCode!=''">
+            AND order_code LIKE CONCAT("%",#{orderCode},"%")
+        </if>
+        <if test="orderCodeList != null and orderCodeList.size>0">
+            AND order_code in
+            <foreach collection="orderCodeList" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="activityId != null" >
+            AND activity_id = #{activityId,jdbcType=INTEGER}
+        </if>
+        <if test="dealerId != null" >
+            AND dealer_id = #{dealerId,jdbcType=INTEGER}
+        </if>
+        <if test="goodsId != null" >
+            AND goods_id = #{goodsId,jdbcType=INTEGER}
+        </if>
+        <if test="userType != null" >
+            AND user_type = #{userType,jdbcType=INTEGER}
+        </if>
+        <if test="orderMoney != null" >
+            AND order_money = #{orderMoney,jdbcType=DECIMAL}
+        </if>
+        <choose>
+            <when test="orderStatus != null" >
+                AND order_status = #{orderStatus,jdbcType=INTEGER}
+            </when>
+            <when test="orderStatusList != null and orderStatusList.size>0">
+                AND order_status in
+                <foreach collection="orderStatusList" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </when>
+        </choose>
+        <if test="orderType != null" >
+            AND order_type = #{orderType}
+        </if>
+        <if test="userName != null and userName!=''">
+            AND user_name LIKE CONCAT("%",#{userName},"%")
+        </if>
+        <if test="userPhone != null and userPhone!=''" >
+            AND user_phone LIKE CONCAT("%",#{userPhone},"%")
+        </if>
+        <if test="cityId != null" >
+            AND city_id = #{cityId,jdbcType=INTEGER}
+        </if>
+        <if test="cbId != null" >
+            AND cb_id = #{cbId}
+        </if>
+        <if test="csId != null" >
+            AND cs_id = #{csId}
+        </if>
+        <if test="licencePlate != null and licencePlate!=''" >
+            AND licence_plate LIKE CONCAT("%",#{licencePlate},"%")
+        </if>
+        <if test="agentWxUnionId != null" >
+            AND agent_wx_union_id = #{agentWxUnionId,jdbcType=VARCHAR}
+        </if>
+        <if test="shareWxUnionId != null" >
+            AND share_wx_union_id = #{shareWxUnionId,jdbcType=VARCHAR}
+        </if>
+        <if test="userWxUnionId != null" >
+            AND user_wx_union_id = #{userWxUnionId,jdbcType=VARCHAR}
+        </if>
+        <if test="userWxOpenId != null" >
+            AND user_wx_open_id = #{userWxOpenId,jdbcType=VARCHAR}
+        </if>
+        <if test="pageUrl != null" >
+            AND page_url = #{pageUrl,jdbcType=VARCHAR}
+        </if>
+        <if test="ip != null" >
+            AND ip = #{ip,jdbcType=VARCHAR}
+        </if>
+        <if test="channel != null" >
+            AND channel = #{channel}
+        </if>
+        <if test="keepOnRecordUser != null" >
+            AND keep_on_record_user = #{keepOnRecordUser,jdbcType=BIT}
+        </if>
+        <if test="finishFissionTask != null" >
+            AND finish_fission_task = #{finishFissionTask,jdbcType=BIT}
+        </if>
+        <if test="fissionLevel != null" >
+            AND fission_level = #{fissionLevel,jdbcType=INTEGER}
+        </if>
+        <if test="payTime != null" >
+            AND pay_time = #{payTime}
+        </if>
+        <if test="payTimeBegin != null" >
+            AND pay_time &gt;= #{payTimeBegin}
+        </if>
+        <if test="payTimeEnd != null" >
+            AND pay_time &lt;= #{payTimeEnd}
+        </if>
+        <if test="startTime != null" >
+            AND checked_date &gt;= #{startTime}
+        </if>
+        <if test="endTime != null" >
+            AND checked_date &lt;= #{endTime}
+        </if>
+        <if test="checkedSalesId!=null">
+            and checked_sales_id = #{checkedSalesId}
+        </if>
+        <if test="checkedDealerId!=null">
+            and checked_dealer_id = #{checkedDealerId}
+        </if>
+        <if test="createDt != null" >
+            AND create_dt = #{createDt,jdbcType=DATE}
+        </if>
+        <if test="updateDt != null" >
+            AND update_dt = #{updateDt,jdbcType=DATE}
+        </if>
+        <if test="deleteFlag != null" >
+            AND delete_flag = #{deleteFlag,jdbcType=INTEGER}
+        </if>
+    </sql>
+
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from after_sale_order_record
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="getAfterSaleOrderRecordByOrderCodes" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from after_sale_order_record
+    where delete_flag =0
+    and order_code in
+    <foreach collection="orderCodes" item="orderCode" open="(" separator="," close=")">
+      #{orderCode}
+    </foreach>
+  </select>
+
+  <select id="getAfterSaleOrderRecordList" parameterType="com.tuanche.directselling.dto.AfterSaleOrderRecordDto" resultMap="BaseResultMap">
+    <include refid="query_list_sql" />
+  </select>
+  <select id="getAfterSaleOrderChangeInfo" parameterType="com.tuanche.directselling.dto.AfterSaleOrderRecordDto" resultMap="BaseResultMap">
+      select
+        order_code
+        ,dealer_id
+        ,user_id
+        ,user_name
+        ,user_phone
+        ,licence_plate
+        ,licence_plate
+        ,cs_id
+        ,cb_id
+        ,channel
+      from after_sale_order_record
+      <include refid="query_where_sql" />
+      order by pay_time desc limit 1
+  </select>
+  <select id="getAfterSaleOrderRecordListByPage" parameterType="com.tuanche.directselling.dto.AfterSaleOrderRecordDto" resultMap="BaseResultMap">
+    <include refid="query_list_sql" />
+  </select>
+
+  <select id="getAfterSaleBuyListByPage" parameterType="com.tuanche.directselling.model.AfterSaleOrderRecord" resultMap="BaseResultMap">
+    select
+        id, licence_plate, pay_time
+    from after_sale_order_record
+    where delete_flag = 0
+    <if test="id != null" >
+      AND id &lt;= #{id}
+    </if>
+    <if test="activityId != null" >
+      AND activity_id = #{activityId,jdbcType=INTEGER}
+    </if>
+    <if test="dealerId != null" >
+      AND dealer_id = #{dealerId,jdbcType=INTEGER}
+    </if>
+    <if test="orderStatusList != null and orderStatusList.size>0">
+      AND order_status in
+      <foreach collection="orderStatusList" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    <if test="orderType != null" >
+      AND order_type = #{orderType}
+    </if>
+    order by id desc
+  </select>
+
+  <select id="selectAgentSalesCount" resultType="com.tuanche.directselling.dto.AfterSaleAgentOrderSalesStatDto">
+    select agent_wx_union_id,count(*) as `value` from after_sale_order_record where
+    agent_wx_union_id=share_wx_union_id and agent_wx_union_id is not null and channel=1
+    and order_status > 2
+    <if test="dealerId != null">
+      and dealer_id = #{dealerId}
+    </if>
+    <if test="activityId != null">
+      and activity_id = #{activityId}
+    </if>
+    <if test="startTime != null">
+      and create_dt &gt;=#{startTime}
+    </if>
+    <if test="endTime != null">
+      and create_dt &lt;=#{endTime}
+    </if>
+    group by agent_wx_union_id
+  </select>
+
+  <select id="selectAgentSalesCountByChannel" resultType="com.tuanche.directselling.dto.AfterSaleAgentOrderSalesStatDto">
+    select channel,count(*) as `value` from after_sale_order_record where
+    channel in (2,3) and order_type=1
+    and order_status > 2
+    <if test="dealerId != null">
+      and dealer_id = #{dealerId}
+    </if>
+    <if test="activityId != null">
+      and activity_id = #{activityId}
+    </if>
+    <if test="startTime != null">
+      and create_dt &gt;=#{startTime}
+    </if>
+      <if test="endTime != null">
+          and create_dt &lt;=#{endTime}
+      </if>
+      group by channel
+  </select>
+
+    <select id="selectLatestIdByTime" resultType="java.lang.Integer">
+        select max(id) from after_sale_order_record where create_dt &gt;=#{startTime} and create_dt &lt;=#{endTime}
+    </select>
+
+    <select id="selectAgentSalesForwardCount"
+            resultType="com.tuanche.directselling.dto.AfterSaleAgentOrderSalesStatDto">
+        select agent_wx_union_id,count(*) as `value` from after_sale_order_record where
+        fission_level =2 and agent_wx_union_id is not null
+        and order_status > 2
+        <if test="dealerId != null">
+            and dealer_id = #{dealerId}
+        </if>
+        <if test="activityId != null">
+            and activity_id = #{activityId}
+        </if>
+        <if test="startTime != null">
+            and create_dt &gt;=#{startTime}
+        </if>
+        <if test="endTime != null">
+            and create_dt &lt;=#{endTime}
+        </if>
+        group by agent_wx_union_id
+    </select>
+
+    <select id="selectSaleOrderByAgent" resultType="com.tuanche.directselling.dto.AfterSaleOrderPersonRecordDto"
+            parameterType="com.tuanche.directselling.dto.AfterSaleOrderPersonRecordDto">
+        SELECT
+        o.id,
+        o.licence_plate,
+        o.create_dt,
+        o.user_phone,
+        o.order_status,
+        o.agent_wx_union_id,
+        o.order_type,
+        o.user_wx_union_id,
+        o.keep_on_record_user,
+        (select count(*) from after_sale_coupon_record where order_code=o.order_code and coupon_type=2) as coupon
+    FROM
+        after_sale_order_record o where o.fission_level&lt;3 and o.order_status in (3,4,7,11,12,13)
+    <if test="activityId != null">
+        and o.activity_id=#{activityId}
+    </if>
+    <if test="orderStatus != null">
+<!--      //订单状态:     待核销： 3:已支付 12已进店       已核销:11待发券 4:核销      已退款：7:退款完成
+            //0:待核销 1:已核销 2:购套餐 3:已退款 4:备案用户-->
+        <choose>
+          <when test="orderStatus==0">
+           and o.order_status in (3,12)
+          </when>
+          <when test="orderStatus==1">
+            and o.order_status in (4,11)
+          </when>
+          <when test="orderStatus==2">
+            and o.order_type=2
+          </when>
+          <when test="orderStatus==3">
+            and o.order_status in (7,13)
+          </when>
+          <when test="orderStatus==4">
+            and o.keep_on_record_user=1
+          </when>
+          <otherwise>
+            and o.order_status in (3,12)
+          </otherwise>
+        </choose>
+    </if>
+<!--    <if test="orderType != null">-->
+<!--        and o.order_type=#{orderType}-->
+<!--    </if>-->
+<!--    <if test="keepOnRecordUser != null">-->
+<!--        and o.keep_on_record_user=#{keepOnRecordUser}-->
+<!--    </if>-->
+    <if test="licencePlate != null and licencePlate != ''">
+        and o.licence_plate like CONCAT(#{licencePlate},'%')
+    </if>
+    <if test="agentWxUnionId != null and agentWxUnionId != ''">
+        and o.agent_wx_union_id=#{agentWxUnionId}
+    </if>
+  </select>
+
+  <select id="keepOnRecordUserRefund" resultMap="BaseResultMap">
+    SELECT
+       t1.id,
+       t1.order_code,
+       t1.user_id
+    FROM after_sale_order_record t1
+    LEFT JOIN after_sale_activity t2 ON t1.activity_id=t2.id
+    WHERE t1.delete_flag=0
+    AND t1.order_status=3
+    AND t1.order_type=1
+    AND t1.keep_on_record_user=1
+    AND t1.finish_fission_task=0
+    AND t2.sale_end_time &lt; NOW()
+    <if test="dealerId != null">
+      AND t1.dealer_id = #{dealerId}
+    </if>
+    <if test="activityId != null">
+      AND t1.activity_id = #{activityId}
+    </if>
+    GROUP BY t1.order_code;
+  </select>
+    <!-- 核销统计 -->
+    <select id="writeOffStatistics" resultType="com.tuanche.directselling.dto.AfterSaleOrderRecordWriteOffStatisticsDto">
+        SELECT
+            IF(t1.order_type = 2 AND t.checked_sales_id IS NULL,t1.checked_sales_id,t.checked_sales_id) AS saleId,
+            SUM(IF(t1.order_type = 1 AND t1.order_status IN (4,11), 1, 0)) promotionCardWriteOffTotal,
+            SUM(IF(t1.order_type = 2, 1, 0)) packageCardTotal,
+            SUM(IF(t1.order_type = 2 AND t1.order_status IN (4,11), 1, 0)) packageCardWriteOffTotal,
+            SUM(IF(t1.order_type = 2, t1.order_money, 0)) packageCardAmount
+        FROM
+            after_sale_order_record t1
+            LEFT JOIN after_sale_order_record t ON t.activity_id=t1.activity_id AND t.order_type=1 AND t.user_wx_union_id =t1.user_wx_union_id AND t.order_status IN (4,11)
+        WHERE
+            t1.order_status > 2
+            <if test="activityId != null">
+                AND t1.activity_id = #{activityId}
+            </if>
+            <if test="dealerId != null">
+                AND t1.dealer_id = #{dealerId}
+            </if>
+            <if test="startTime != null">
+                AND t1.checked_date &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND t1.checked_date &lt;= #{endTime}
+            </if>
+            AND IF((t1.order_type = 1 AND t.checked_sales_id IS NULL) OR (t1.order_type = 2 AND t.checked_sales_id IS NULL AND t1.checked_sales_id IS NULL) ,0,1)=1
+            GROUP BY saleId
+            ORDER BY promotionCardWriteOffTotal DESC
+        <!--SELECT
+            t1.checked_sales_id AS saleId,
+            SUM(IF(t1.order_type = 1, 1, 0)) promotionCardTotal,
+            SUM(IF(t1.order_type = 2, 1, 0)) packageCardTotal,
+            SUM(IF(t1.order_type = 2, t1.order_money, 0)) packageCardAmount
+      FROM
+      after_sale_order_record t1
+      WHERE
+      t1.order_status IN (4,11)
+      <if test="activityId != null">
+        AND t1.activity_id = #{activityId}
+      </if>
+      <if test="dealerId != null">
+        AND t1.dealer_id = #{dealerId}
+      </if>
+      <if test="startTime != null">
+        AND t1.checked_date &gt;= #{startTime}
+      </if>
+      <if test="endTime != null">
+        AND t1.checked_date &lt;= #{endTime}
+      </if>
+      GROUP BY
+      t1.checked_sales_id-->
+    </select>
+
+    <select id="getUserBuyCheck" resultType="com.tuanche.directselling.model.AfterSaleOrderRecord" resultMap="BaseResultMap">
+      select
+        t1.order_code
+        ,t1.order_status
+        ,t1.user_wx_union_id
+        ,t1.licence_plate
+        ,t1.user_phone
+      from after_sale_order_record t1
+      WHERE t1.activity_id = #{activityId}
+      AND (
+            t1.licence_plate=#{licencePlate} OR t1.user_phone=#{userPhone}
+            <if test="userWxUnionId != null">
+                OR t1.user_wx_union_id = #{userWxUnionId}
+            </if>
+        )
+      <if test="orderType != null">
+        AND t1.order_type = #{orderType}
+      </if>
+      <if test="goodsId != null" >
+        AND t1.goods_id = #{goodsId,jdbcType=INTEGER}
+      </if>
+      <if test="orderStatus != null" >
+        AND t1.order_status = #{orderStatus}
+      </if>
+      <if test="orderStatusList != null and orderStatusList.size>0">
+        AND t1.order_status in
+        <foreach collection="orderStatusList" item="item" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+      order by t1.id desc
+    </select>
+    <select id="selectAgentSalesForwardCountNonAgent" resultType="java.lang.Integer">
+        select count(*) from after_sale_order_record where
+        ((agent_wx_union_id is null) or (agent_wx_union_id != share_wx_union_id and fission_level=1) or (fission_level >2 and agent_wx_union_id is not null)) and
+        channel=1 and order_status > 2
+        <if test="dealerId != null">
+            and dealer_id = #{dealerId}
+        </if>
+        <if test="activityId != null">
+            and activity_id = #{activityId}
+        </if>
+        <if test="startTime != null">
+            and create_dt &gt;=#{startTime}
+        </if>
+        <if test="endTime != null">
+            and create_dt &lt;=#{endTime}
+        </if>
+    </select>
+
+    <!-- 获取用户身份 0：备案用户 1：流失用户 2：普通用户 3：车商代理人 -->
+    <select id="getUserType" resultType="com.tuanche.directselling.dto.ResultMapDto">
+        SELECT
+            CONCAT(t1.activity_id,'_',t1.user_wx_union_id) AS mapKey,
+            t1.user_type AS mapValue
+        FROM
+          after_sale_order_record t1
+        WHERE
+            (t1.activity_id,t1.user_wx_union_id) IN
+            <foreach collection="list" item="item" open="(" separator="," close=")">
+                (#{item.activityId},#{item.userWxUnionId})
+            </foreach>
+            AND t1.order_type = 1
+            AND t1.order_status > 2
+    </select>
+    <!-- 活动数据统计 -->
+    <select id="activityStatistics" resultType="com.tuanche.directselling.model.AfterSaleActivityStatistics">
+        SELECT
+            activity_id AS activityId,
+            SUM(IF(order_type=1,1,0)) AS promotionCardTotal,
+            SUM(IF(order_type=1,order_money,0)) AS promotionCardAmount,
+            SUM(IF(order_type=2,1,0)) AS packageCardTotal,
+            SUM(IF(order_type=2,order_money,0)) AS packageCardAmount,
+            SUM(IF(channel=3 AND order_type=1,1,0)) AS autonomousFissionTotal,
+            SUM(IF(order_status=7 AND order_type=1,1,0)) AS promotionCardRefundsTotalActive,
+            SUM(IF(order_status=7 AND order_type=1,order_money,0)) AS promotionCardRefundsAmountActive,
+            SUM(IF(order_status=13 AND order_type=1,1,0)) AS promotionCardRefundsTotalPassive,
+            SUM(IF(order_status=13 AND order_type=1,order_money,0)) AS promotionCardRefundsAmountPassive,
+            SUM(IF(order_status IN (11) AND order_type=1,1,0)) AS promotionCardsWaitingReleaseTotal,
+            SUM(IF(order_status IN (4,11) AND order_type=1,1,0)) AS promotionCardsWrittenOffTotal,
+            SUM(IF(order_status IN (4,11) AND order_type=1,order_money,0)) AS promotionCardsWrittenOffAmount,
+            SUM(IF(order_status IN (4,11,12) AND order_type=1,1,0)) AS visitorsTotal,
+            SUM(IF(user_type=1 AND order_type=1,1,0)) AS lostUserTotal,
+            SUM(IF(user_type=0 AND order_type=1,1,0)) AS keepOnRecordUserTotal,
+            SUM(IF(user_type=0 AND order_type=1 AND finish_fission_task=1,1,0)) AS keepOnRecordFinishUserTotal,
+            SUM(IF(t.fission_level=1 AND (t.agent_wx_union_id IS NULL OR t.agent_wx_union_id=t.share_wx_union_id) AND t.order_type=1,1,0)) AS primaryFissionTotal,
+            SUM(IF((t.fission_level=1 AND t.agent_wx_union_id IS NOT NULL AND t.agent_wx_union_id!=t.share_wx_union_id) OR t.fission_level >1 AND t.order_type=1,1,0)) AS beyondPrimaryFissionTotal
+        FROM
+            after_sale_order_record t
+        WHERE
+            activity_id IN
+            <foreach collection="activityIds" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+          AND order_status > 2
+        GROUP BY activity_id
+    </select>
+    <!-- 活动渠道数据统计 -->
+    <select id="activityChannelStatistics" resultType="com.tuanche.directselling.model.AfterSaleActivityChannelStatistics">
+        SELECT
+            t.activity_id AS activityId,
+            IFNULL(t1.channel,3) AS channel,
+            SUM(IF(t.order_type=1,1,0)) AS promotionCardTotal,
+            SUM(IF(t.order_type=1,t.order_money,0)) AS promotionCardAmount,
+            SUM(IF(t.order_type=2,1,0)) AS packageCardTotal,
+            SUM(IF(t.order_type=2,t.order_money,0)) AS packageCardAmount,
+            SUM(IF(t.order_status=7 AND t.order_type=1,1,0)) AS promotionCardRefundsTotalActive,
+            SUM(IF(t.order_status=7 AND t.order_type=1,t.order_money,0)) AS promotionCardRefundsAmountActive,
+            SUM(IF(t.order_status=13 AND t.order_type=1,1,0)) AS promotionCardRefundsTotalPassive,
+            SUM(IF(t.order_status=13 AND t.order_type=1,t.order_money,0)) AS promotionCardRefundsAmountPassive,
+            SUM(IF(t.order_status IN (4,11) AND t.order_type=1,1,0)) AS promotionCardsWrittenOffTotal,
+            SUM(IF(t.order_status IN (4,11) AND t.order_type=1,t.order_money,0)) AS promotionCardsWrittenOffAmount,
+            SUM(IF(t.order_status IN (4,11,12) AND t.order_type=1,1,0)) AS visitorsTotal,
+            SUM(IF(t.fission_level=1 AND (t.agent_wx_union_id IS NULL OR t.agent_wx_union_id=t.share_wx_union_id) AND t.order_type=1,1,0)) AS primaryFissionTotal,
+            SUM(IF((t.fission_level=1 AND t.agent_wx_union_id IS NOT NULL AND t.agent_wx_union_id!=t.share_wx_union_id) OR t.fission_level >1 AND t.order_type=1,1,0)) AS beyondPrimaryFissionTotal
+            FROM
+              after_sale_order_record t
+            LEFT JOIN after_sale_order_record t1 ON t1.activity_id=t.activity_id AND t1.user_wx_union_id=t.user_wx_union_id AND t1.order_type=1 AND t1.order_status>2
+        WHERE
+          t.activity_id IN
+            <foreach collection="activityIds" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+          AND t.order_status > 2
+        GROUP BY activityId,channel
+    </select>
+    <!-- 获取用户邀请人数 -->
+    <select id="getShareTotal" resultType="com.tuanche.directselling.dto.AfterSaleOrderRecordShareStatDto">
+        SELECT
+            activity_id AS activityId,
+            share_wx_union_id AS shareWxUnionId,
+            COUNT(1) AS inviteesNum
+        FROM
+            after_sale_order_record
+        WHERE
+                (activity_id,share_wx_union_id) IN
+            <foreach collection="list" item="item" open="(" separator="," close=")">
+                (#{item.activityId},#{item.userWxUnionId})
+            </foreach>
+          AND order_type = 1
+          AND order_status > 2
+        GROUP BY
+            activity_id,share_wx_union_id
+    </select>
+
+    <!-- 获取代理人已经核销了的礼品券 -->
+    <select id="getAgentWriteOffGgiftCertificatesMap" resultType="com.tuanche.directselling.dto.ResultMapDto">
+        SELECT
+            CONCAT(t1.activity_id,'_',t1.agent_wx_union_id) AS mapKey,
+            COUNT(1) AS mapValue
+        FROM
+          after_sale_order_record t1,after_sale_coupon_record t2
+        WHERE
+            (t1.activity_id,t1.agent_wx_union_id) IN
+            <foreach collection="list" item="item" open="(" separator="," close=")">
+                (#{item.activityId},#{item.userWxUnionId})
+            </foreach>
+            AND t2.order_code=t1.order_code
+            AND t2.coupon_type=2
+            AND t2.coupon_status=2
+            AND order_type = 1
+            AND order_status > 2
+        GROUP BY t1.activity_id,t1.agent_wx_union_id
+    </select>
+    <!-- 获取分享人已经核销了的礼品券 -->
+    <select id="getShareWriteOffGgiftCertificatesMap" resultType="com.tuanche.directselling.dto.ResultMapDto">
+        SELECT
+            CONCAT(t1.activity_id,'_',t1.share_wx_union_id) AS mapKey,
+            COUNT(1) AS mapValue
+        FROM
+          after_sale_order_record t1,after_sale_coupon_record t2
+        WHERE
+            (t1.activity_id,t1.share_wx_union_id) IN
+            <foreach collection="list" item="item" open="(" separator="," close=")">
+                (#{item.activityId},#{item.userWxUnionId})
+            </foreach>
+            AND t2.order_code=t1.order_code
+            AND t2.coupon_type=2
+            AND t2.coupon_status=2
+            AND order_type = 1
+            AND order_status > 2
+        GROUP BY t1.activity_id,t1.share_wx_union_id
+    </select>
+
+    <select id="getOrderStatistics" parameterType="com.tuanche.directselling.dto.AfterSaleOrderRecordDto" resultType="java.util.HashMap">
+        select
+          COUNT(*) orderCount                                                                   <!--订单总数-->
+         ,SUM(IF(order_status=3,1,0)) paidOrderCount                                            <!--待核销订单-->
+         ,SUM(IF(order_status=12,1,0)) arriveShopOrderCount                                     <!--已进店订单-->
+         ,SUM(IF(order_status=4 OR order_status=11,1,0)) checkoutOrderCount                     <!--已核销订单-->
+         ,SUM(IF(order_status=7 OR order_status=13,1,0)) refundedOrderCount                     <!--已退款订单-->
+        ,SUM(IF(order_status=3,order_money,0)) paidOrderMoney                                   <!--待核销总金额-->
+        ,SUM(IF(order_status=4 OR order_status=11,order_money,0)) checkoutOrderMoney            <!--已核销总金额-->
+        ,SUM(IF(order_status=7 OR order_status=13,order_money,0)) refundedOrderMoney            <!--退款总金额-->
+        from after_sale_order_record
+        where delete_flag = 0 AND order_status>2
+        <if test="orderCode != null and orderCode!=''">
+            AND LOCATE(#{orderCode,jdbcType=VARCHAR}, order_code)
+        </if>
+        <if test="orderCodeList != null and orderCodeList.size>0">
+            AND order_code in
+            <foreach collection="orderCodeList" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="activityId != null" >
+            AND activity_id = #{activityId,jdbcType=INTEGER}
+        </if>
+        <if test="dealerId != null" >
+            AND dealer_id = #{dealerId,jdbcType=INTEGER}
+        </if>
+        <if test="goodsId != null" >
+            AND goods_id = #{goodsId,jdbcType=INTEGER}
+        </if>
+        <if test="orderMoney != null" >
+            AND order_money = #{orderMoney,jdbcType=DECIMAL}
+        </if>
+        <choose>
+            <when test="orderStatus != null" >
+                AND order_status = #{orderStatus,jdbcType=INTEGER}
+            </when>
+            <when test="orderStatusList != null and orderStatusList.size>0">
+                AND order_status in
+                <foreach collection="orderStatusList" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </when>
+        </choose>
+        <if test="orderType != null" >
+            AND order_type = #{orderType}
+        </if>
+        <if test="userName != null and userName!=''">
+            AND user_name LIKE CONCAT("%",#{userName},"%")
+        </if>
+        <if test="userPhone != null and userPhone!=''" >
+            AND user_phone LIKE CONCAT("%",#{userPhone},"%")
+        </if>
+        <if test="userType != null" >
+            AND user_type = #{userType,jdbcType=INTEGER}
+        </if>
+        <if test="cityId != null" >
+            AND city_id = #{cityId,jdbcType=INTEGER}
+        </if>
+        <if test="cbId != null" >
+            AND cb_id = #{cbId}
+        </if>
+        <if test="csId != null" >
+            AND cs_id = #{csId}
+        </if>
+        <if test="licencePlate != null and licencePlate!=''" >
+            AND licence_plate LIKE CONCAT("%",#{licencePlate},"%")
+        </if>
+        <if test="agentWxUnionId != null" >
+            AND agent_wx_union_id = #{agentWxUnionId,jdbcType=VARCHAR}
+        </if>
+        <if test="shareWxUnionId != null" >
+            AND share_wx_union_id = #{shareWxUnionId,jdbcType=VARCHAR}
+        </if>
+        <if test="userWxUnionId != null" >
+            AND user_wx_union_id = #{userWxUnionId,jdbcType=VARCHAR}
+        </if>
+        <if test="userWxOpenId != null" >
+            AND user_wx_open_id = #{userWxOpenId,jdbcType=VARCHAR}
+        </if>
+        <if test="pageUrl != null" >
+            AND page_url = #{pageUrl,jdbcType=VARCHAR}
+        </if>
+        <if test="ip != null" >
+            AND ip = #{ip,jdbcType=VARCHAR}
+        </if>
+        <if test="channel != null" >
+            AND channel = #{channel}
+        </if>
+        <if test="keepOnRecordUser != null" >
+            AND keep_on_record_user = #{keepOnRecordUser,jdbcType=BIT}
+        </if>
+        <if test="finishFissionTask != null" >
+            AND finish_fission_task = #{finishFissionTask,jdbcType=BIT}
+        </if>
+        <if test="fissionLevel != null" >
+            AND fission_level = #{fissionLevel,jdbcType=INTEGER}
+        </if>
+        <if test="payTime != null" >
+            AND pay_time = #{payTime}
+        </if>
+        <if test="payTimeBegin != null" >
+            AND pay_time &gt;= #{payTimeBegin}
+        </if>
+        <if test="payTimeEnd != null" >
+            AND pay_time &lt;= #{payTimeEnd}
+        </if>
+        <if test="checkedSalesId!=null">
+            and checked_sales_id = #{checkedSalesId}
+        </if>
+        <if test="checkedDealerId!=null">
+            and checked_dealer_id = #{checkedDealerId}
+        </if>
+        <if test="createDt != null" >
+            AND create_dt = #{createDt,jdbcType=DATE}
+        </if>
+        <if test="updateDt != null" >
+            AND update_dt = #{updateDt,jdbcType=DATE}
+        </if>
+        <if test="deleteFlag != null" >
+            AND delete_flag = #{deleteFlag,jdbcType=INTEGER}
+        </if>
+    </select>
+    <!--获取线下兑换前一天到结束未核销的用户信息-->
+    <select id="getNotWrittenOffUserOpenIdList" resultMap="BaseResultMap">
+        SELECT
+            activity_id,
+            licence_plate,
+            user_phone
+        FROM
+            after_sale_order_record
+        WHERE
+            activity_id IN
+        <foreach collection="activityIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+            AND order_status = 3
+            AND order_type=1
+            AND (finish_fission_task IS NULL OR  finish_fission_task = 1)
+    </select>
+    <!--未完成裂变的备案用户-->
+    <select id="getUnfinishedTaskUserList" resultMap="BaseResultMap">
+        SELECT
+            activity_id,
+            licence_plate,
+            user_phone
+        FROM
+            after_sale_order_record
+        WHERE
+            activity_id IN
+        <foreach collection="activityIds" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+            AND order_status = 3
+            AND order_type=1
+            AND keep_on_record_user=1 AND finish_fission_task = 0
+    </select>
+    <!-- 获取订单的分享人和代理人信息列表 -->
+    <select id="getOrderSharerAndAgentList" parameterType="com.tuanche.directselling.dto.AfterSaleOrderRecordDto" resultMap="afterSaleOrderRecordDtoMap">
+        SELECT
+            t3.nick_name AS shareNickName,
+            t2.`name` AS agent_name,
+            t.agent_wx_union_id,t.share_wx_union_id,t.keep_on_record_user,t.user_wx_union_id,
+            t.id, t.order_code, t.activity_id, t.dealer_id, t.goods_id, t.order_status, t.user_name, t.user_phone,
+            t.licence_plate, t.channel, t.fission_level,t.user_type,t.finish_fission_task, t.order_money, t.order_type,
+            t.checked_sales_id, t.checked_dealer_id, t.checked_date,t.cb_id, t.cs_id,t.user_type,t.pay_time,t.user_id,
+            t.sub_account_status, t.sub_account_amount,t.sub_account_time, t.sub_account_transaction_detail_id,
+            t.sub_account_receiver_result,t.sub_account_desc, t.sub_account_return_no, t.sub_account_return_time
+        FROM after_sale_order_record t
+        LEFT JOIN after_sale_agent t2 ON t2.agent_wx_union_id=t.agent_wx_union_id AND t2.activity_id=t.activity_id AND t2.type=0 AND t2.delete_flag=0
+        LEFT JOIN after_sale_user t3 ON t3.activity_id=t.activity_id AND t3.user_wx_union_id=t.share_wx_union_id AND t3.delete_flag=0
+        <where>
+            <if test="activityId != null" >
+                AND t.activity_id = #{activityId,jdbcType=INTEGER}
+            </if>
+            <if test="dealerId != null" >
+                AND t.dealer_id = #{dealerId,jdbcType=INTEGER}
+            </if>
+            <if test="agentWxUnionId != null and agentWxUnionId != ''" >
+                AND t.agent_wx_union_id = #{agentWxUnionId}
+            </if>
+            <if test="userType != null" >
+                AND t.user_type = #{userType,jdbcType=INTEGER}
+            </if>
+            <if test="orderType != null" >
+                AND t.order_type = #{orderType}
+            </if>
+            <if test="userPhone != null and userPhone !='' " >
+                AND t.user_phone LIKE CONCAT("%",#{userPhone},"%")
+            </if>
+            <if test="licencePlate != null and licencePlate!=''" >
+                AND t.licence_plate LIKE CONCAT("%",#{licencePlate},"%")
+            </if>
+            <if test="channel != null" >
+                AND t.channel = #{channel}
+            </if>
+            <if test="keepOnRecordUser != null" >
+                AND t.keep_on_record_user = #{keepOnRecordUser}
+            </if>
+            <if test="finishFissionTask != null" >
+                AND t.finish_fission_task = #{finishFissionTask}
+            </if>
+            <if test="payTimeBegin != null and payTimeEnd != null" >
+                AND t.pay_time BETWEEN #{payTimeBegin} AND #{payTimeEnd}
+            </if>
+            <if test="startTime != null and endTime != null" >
+                AND t.checked_date BETWEEN #{startTime} AND #{endTime}
+            </if>
+            <choose>
+                <when test="orderStatus != null" >
+                    AND t.order_status = #{orderStatus,jdbcType=INTEGER}
+                </when>
+                <when test="orderStatusList != null and orderStatusList.size>0">
+                    AND t.order_status in
+                    <foreach collection="orderStatusList" item="item" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                </when>
+            </choose>
+            <if test="subAccountStatus != null" >
+                AND t.sub_account_status = #{subAccountStatus}
+            </if>
+            <if test="subAccountStartTime != null and subAccountEndTime != null and subAccountStartTime != '' and subAccountEndTime != ''" >
+                AND t.sub_account_time BETWEEN #{subAccountStartTime} AND #{subAccountEndTime}
+            </if>
+            <if test="wwUserId != null and wwUserId!=''" >
+                AND t.order_code in (
+                    SELECT tt_asowc.order_code FROM (
+                        select t_asowc.order_code, t_asowc.ww_user_id from (
+                            select asowc.order_code, asowc.ww_user_id from after_sale_order_wechatwork_concact asowc where asowc.delete_flag = 0
+                            <if test="activityId != null" >
+                                AND asowc.activity_id = #{activityId,jdbcType=INTEGER}
+                            </if>
+                            order by asowc.ww_create_dt desc
+                        ) t_asowc
+                        GROUP BY t_asowc.order_code
+                    ) tt_asowc
+                    WHERE tt_asowc.ww_user_id=#{wwUserId}
+                )
+            </if>
+        </where>
+        ORDER BY t.id DESC
+    </select>
+
+    <select id="selectAfterRedPacketListByPage" parameterType="com.tuanche.directselling.model.AfterSaleOrderRecord" resultType="com.tuanche.directselling.dto.AfterSaleRedPacketListDto">
+        SELECT
+            su.nick_name as nickName,
+            su.user_wx_head as userWxHead,
+            agent.type as agentType,
+            sum(IF(srr.reward_type = 1, 1, 0)) AS shareCount,
+            sum(quantity) as getInviteMoney
+        FROM
+            after_sale_reward_record srr
+          LEFT JOIN after_sale_user su ON srr.user_wx_union_id = su.user_wx_union_id
+          LEFT JOIN after_sale_agent agent ON agent.agent_wx_union_id = srr.user_wx_union_id AND agent.activity_id = #{activityId,jdbcType=INTEGER} and agent.type = 0 and agent.delete_flag = 0
+        WHERE
+           srr.pay_status = 1
+        AND	srr.reward_type in (1,2,4)
+        and srr.activity_id = #{activityId,jdbcType=INTEGER}
+        and su.activity_id =  #{activityId,jdbcType=INTEGER}
+        AND srr.user_wx_union_id  not in (select agent_wx_union_id from after_sale_agent where activity_id = 0 and delete_flag = 0)
+        GROUP BY srr.user_wx_union_id
+        ORDER BY sum(IF(srr.reward_type = 1, 1, 0))  desc
+    </select>
+    <select id="selectAfterSaleListTotal" parameterType="com.tuanche.directselling.model.AfterSaleOrderRecord" >
+        SELECT
+            count(asor.share_wx_union_id) shareCount
+        FROM
+            after_sale_order_record asor
+        WHERE
+            asor.delete_flag = 0
+        AND asor.activity_id =  #{activityId,jdbcType=INTEGER}
+        AND asor.order_status > 2
+    </select>
+
+    <select id="selectAfterRedPacketsByUser" parameterType="com.tuanche.directselling.model.AfterSaleOrderRecord" resultType="com.tuanche.directselling.dto.AfterSaleRedPacketDto">
+       SELECT
+            rr.id as id,
+            asor.licence_plate as licencePlate,
+            rr.pay_status as payStatus,
+            rr.reward_type as rewardType,
+            rr.err_code as errCode,
+            rr.wx_pay_time as wxPayTime,
+            rr.failure_reason AS reasonToast,
+            asor.pay_time as payTime,
+            rr.quantity as quantity
+        FROM
+        after_sale_reward_record rr
+        left join after_sale_order_record asor on asor.order_code = rr.order_code
+        where
+        asor.order_status > 2
+        <if test="id != null" >
+            AND rr.id &lt;= #{id}
+        </if>
+        and rr.reward_type != 3
+        and rr.pay_status in (1,2,4)
+        and asor.activity_id = #{activityId,jdbcType=INTEGER}
+        and rr.activity_id = #{activityId,jdbcType=INTEGER}
+        and asor.delete_flag = 0
+        and rr.user_wx_union_id= #{userWxUnionId}
+        order by rr.id desc
+    </select>
+
+    <select id="selectAfterRedPacketsUserTotal" parameterType="com.tuanche.directselling.vo.AfterSaleActivityVo" resultType="java.math.BigDecimal" >
+        SELECT
+            SUM(rr.quantity)
+        FROM
+            after_sale_reward_record rr
+        WHERE
+            rr.activity_id = #{activityId,jdbcType=INTEGER}
+        AND rr.reward_type IN (1, 2, 4)
+        AND rr.pay_status = 1
+        AND rr.user_wx_union_id = #{userWxUnionId}
+    </select>
+    <select id="selectAfterShareCountByUser" resultType="java.lang.Integer">
+        SELECT
+        count(*)
+        FROM
+        after_sale_reward_record asor
+        WHERE
+        reward_type in(1,2)
+        AND asor.activity_id = #{activityVo.activityId,jdbcType=INTEGER}
+        AND asor.user_wx_union_id = #{activityVo.userWxUnionId}
+    </select>
+
+    <select id="selectAgentSalesPackageCardCount"
+            resultType="com.tuanche.directselling.dto.AfterSaleAgentOrderSalesStatDto">
+        select agent_wx_union_id,count(*) as `value` from after_sale_order_record where
+        agent_wx_union_id is not null and order_type=1 and delete_flag=0 and agent_wx_union_id&lt;&gt;''
+        and fission_level &lt; 3
+        <if test="activityId != null">
+            and activity_id = #{activityId}
+        </if>
+        <if test="startTime != null">
+            and create_dt &gt;=#{startTime}
+        </if>
+        <if test="endTime != null">
+            and create_dt &lt;=#{endTime}
+        </if>
+        group by agent_wx_union_id
+    </select>
+
+    <select id="getAfterSaleOrderTotalToCarByPage" parameterType="com.tuanche.directselling.dto.AfterSaleOrderRecordTotalByCarDto" resultType="com.tuanche.directselling.dto.AfterSaleOrderRecordTotalByCarDto">
+        select
+            activity_id activityId,
+            dealer_id dealerId,
+            cb_id cbId,
+            cs_id csId,
+            COUNT(*) orderCount
+        from
+        after_sale_order_record
+        where delete_flag=0 AND order_status>2
+        <if test="activityId != null" >
+            AND activity_id = #{activityId,jdbcType=INTEGER}
+        </if>
+        <if test="dealerId != null" >
+            AND dealer_id = #{dealerId,jdbcType=INTEGER}
+        </if>
+        <if test="cbId != null">
+            AND cb_id = #{cbId}
+        </if>
+        <if test="csId != null">
+            AND cs_id = #{csId}
+        </if>
+        group by cs_id
+        ORDER BY orderCount DESC
+    </select>
+
+    <select id="selectAgentSalesForwardPackageCardCount"
+            resultType="com.tuanche.directselling.dto.AfterSaleAgentOrderSalesStatDto">
+        select agent_wx_union_id,count(*) as `value` from after_sale_order_record where
+        agent_wx_union_id is not null and order_type=1 and delete_flag=0 and agent_wx_union_id&lt;&gt;''
+        and fission_level = 2
+        <if test="activityId != null">
+            and activity_id = #{activityId}
+        </if>
+        <if test="startTime != null">
+            and create_dt &gt;=#{startTime}
+        </if>
+        <if test="endTime != null">
+            and create_dt &lt;=#{endTime}
+        </if>
+        group by agent_wx_union_id
+    </select>
+
+  <select id="selectPeriodAgentSalesPackageCardCount" resultType="com.tuanche.directselling.dto.AfterSaleAgentOrderSalesStatPeriodDto">
+      select DATE_ADD(
+      date_format(create_dt, '%Y-%m-%d %H:00:00'),
+      INTERVAL (FLOOR(date_format(create_dt, '%i') / 15 + 1) * 15) MINUTE
+      ) date_time,count(*) as `value` from after_sale_order_record where
+      agent_wx_union_id is not null and order_type=1 and delete_flag=0 and agent_wx_union_id&lt;&gt;''
+      and fission_level &lt; 3 and activity_id = #{activityId} and create_dt &gt;=#{startTime} and create_dt &lt;#{endTime}
+      group by date_time
+  </select>
+
+  <select id="selectAgentSalesPackageCardTotal" resultType="int">
+      select count(*) from after_sale_order_record where
+      agent_wx_union_id is not null and order_type=1 and delete_flag=0 and agent_wx_union_id&lt;&gt;''
+      and fission_level &lt; 3 and activity_id = #{activityId} and create_dt &gt;=#{startTime} and create_dt &lt;#{endTime}
+    </select>
+
+  <select id="selectAfterSaleAgentOrderCount" resultType="int">
+      select count(*) from after_sale_order_record where activity_id = #{activityId} and (user_phone=#{userPhone} or licence_plate=#{licencePlate})
+    </select>
+    <!-- 获取未分账的订单 -->
+    <select id="getUndistributeAccountOrderList" parameterType="com.tuanche.directselling.dto.AfterSaleOrderRecordDto" resultMap="BaseResultMap">
+        SELECT
+            id,
+            activity_id,
+            tc_transaction_id,
+            order_code,
+            order_status,
+            order_money,
+            sub_account_status
+        FROM
+            after_sale_order_record
+        WHERE
+            order_type=2
+          AND order_status>2
+          AND sub_account_status IN (2,5)
+          <if test="activityIds != null" >
+              AND activity_id IN
+              <foreach collection="activityIds" item="item" open="(" separator="," close=")">
+                  #{item}
+              </foreach>
+          </if>
+          <if test="payTime != null">
+              AND pay_time &lt; #{payTime}
+          </if>
+          <if test="id != null">
+              AND id>#{id}
+          </if>
+          <if test="orderCode != null">
+              AND order_code=#{orderCode}
+          </if>
+          ORDER BY id
+    </select>
+</mapper>

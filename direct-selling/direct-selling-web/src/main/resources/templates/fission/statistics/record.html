@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>团车直卖-B端数据概览</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.all.js"></script>
+    <script src="/common/js/jquery-1.12.4.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/magnify/css/jquery.magnify.css">
+    <script src="/layui/js/tableSelect.js"></script>
+</head>
+<body class="childrenBody">
+<div style="padding: 20px; background-color: #F2F2F2;">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <form class="layui-form" action="">
+                        <div class="layui-inline" style="width: 100%">
+                            <div class="layui-form-item">
+                                    <label class="layui-form-label" style="width: 100px">活动名称：</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="" placeholder="请输入" autocomplete="off"
+                                               class="layui-input"
+                                               id="acName">
+                                    </div>
+                            </div>
+                        </div>
+                        <div class="layui-inline" style="width: 100%">
+                            <div class="layui-form-item">
+                                    <label class="layui-form-label" style="width: 100px">经销商名称：</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="" placeholder="请输入" autocomplete="off"
+                                               class="layui-input"
+                                               id="companyName">
+                                    </div>
+                                    <label class="layui-form-label" style="width: 100px">销售名称：</label>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="" placeholder="请输入" autocomplete="off"
+                                               class="layui-input"
+                                               id="saleName">
+                                    </div>
+                                    <label class="layui-form-label" style="width: 100px">贡献积分：</label>
+                                    <div class="layui-input-inline">
+                                        <select id="isEffective" lay-verify="">
+                                            <option value="">请选择</option>
+                                            <option value="0">否</option>
+                                            <option value="1">是</option>
+                                        </select>
+                                    </div>
+                                    &nbsp;&nbsp;&nbsp;
+                                    <a class="layui-btn search_btn" data-type="reload" onclick="reload()"><i
+                                            class="layui-icon layui-icon-search"></i>搜索</a>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="layui-tab layui-tab-card" lay-filter="tableTab" id="dataTab">
+                        <ul class="layui-tab-title">
+                            <li class="layui-this">浏览页面</li>
+                            <li>预约直播</li>
+                            <li>购买活动页商品</li>
+                            <li>观看直播</li>
+                            <li>购买直播商品</li>
+                        </ul>
+                        <div class="layui-tab-content">
+                            <div class="layui-tab-item layui-show">
+                                <table id="dataTable1"></table>
+                            </div>
+                            <div class="layui-tab-item">
+                                <table id="dataTable2"></table>
+                            </div>
+                            <div class="layui-tab-item">
+                                <table id="dataTable3"></table>
+                            </div>
+                            <div class="layui-tab-item">
+                                <table id="dataTable4"></table>
+                            </div>
+                            <div class="layui-tab-item">
+                                <table id="dataTable5"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var form = layui.form;
+    var tableSelect = layui.tableSelect;
+    var table = layui.table;
+    var element = layui.element;
+    ;!function () {
+        form.render('select');
+        element.on('tab(tableTab)', function (data) {
+            reload();
+        });
+        tableSelect.render({
+            elem: '#acName',
+            checkedKey: 'id',
+            limits : [10,20,50,100],
+            limit : 10,
+            table: {
+                url: '/fission/data/view/business/activity/select',
+                cols: [
+                    [
+                        {type: 'radio'},
+                        {field: 'id', title: 'ID', width: 50},
+                        {field: 'activityName', title: '活动名称', width: 200},
+                        {field: 'startTime', title: '活动开始时间', width: 300},
+                        {field: 'endTime', title: '活动结束时间', width: 300}
+                    ]
+                ]
+            },
+            done: function (elem, data) {
+                var NEWJSON = []
+                layui.each(data.data, function (index, item) {
+                    NEWJSON.push(item.activityName);
+                })
+                elem.val(NEWJSON.join(","))
+                reload();
+            }
+        })
+        var cols = [
+            [
+                {field: 'id', title: 'ID'},
+                {field: 'nickName', title: '微信昵称', templet: function (d) {
+                        if (d.nickName == null) {
+                            return "匿名";
+                        }
+                        return d.nickName;
+                    }},
+                {field: 'userWxUnionId', title: '微信UnionId', templet: function (d) {
+                        if (d.userWxUnionId == null) {
+                            return "";
+                        }
+                        return d.userWxUnionId;
+                    }},
+                {field: 'createDt', title: '完成时间'},
+                {field: 'saleName', title: '对应销售', templet: function (d) {
+                        if (d.channel == 1) {
+                            return "无";
+                        }else if(d.channel == 3){
+                            return "运营";
+                        }else if(d.saleName == null){
+                            return "";
+                        }else{
+                            return d.saleName;
+                        }
+                    }},
+                {field: 'dealerName', title: '对应经销商名称'},
+                {field: 'integral', title: '贡献积分', templet: function (d) {
+                        if (d.integral == 0) {
+                            return "不贡献";
+                        }
+                        return d.integral
+                    }}
+            ]
+        ];
+        table.render({
+            elem: '#dataTable1',
+            page: true,
+            cellMinWidth: 50,
+            limits : [10,20,50,100],
+            data: [],
+            cols: cols
+        });
+
+        table.render({
+            elem: '#dataTable2',
+            page: true,
+            cellMinWidth: 50,
+            data: [],
+            limits : [10,20,50,100],
+            cols: cols
+        });
+
+        table.render({
+            elem: '#dataTable3',
+            page: true,
+            cellMinWidth: 50,
+            data: [],
+            limits : [10,20,50,100],
+            cols: cols
+        });
+
+        table.render({
+            elem: '#dataTable4',
+            page: true,
+            cellMinWidth: 50,
+            data: [],
+            limits : [10,20,50,100],
+            cols: cols
+        });
+        table.render({
+            elem: '#dataTable5',
+            page: true,
+            cellMinWidth: 50,
+            data: [],
+            limits : [10,20,50,100],
+            cols: cols
+        });
+    }();
+
+    function reload() {
+        if ($("#acName").attr("ts-selected")) {
+            var tabIndex = 0;
+            $.each($("ul[class='layui-tab-title'] li"), function (i, n) {
+                if ($(n).attr("class") == 'layui-this') {
+                    tabIndex = i;
+                    return false;
+                }
+            });
+            table.reload('dataTable'+(tabIndex+1), {
+                url: '/fission/data/view/record',
+                where: {
+                    fissionId: $("#acName").attr("ts-selected"),
+                    taskId:tabIndex+1,
+                    saleName:$("#saleName").val(),
+                    companyName:$("#companyName").val(),
+                    isEffective:$("#isEffective").val()
+                },
+                page: {
+                    curr: 1
+                }
+            });
+        } else {
+            layer.alert("请选择活动", {icon: 5, title: '提示'});
+        }
+
+    }
+</script>
+</body>
+</html>

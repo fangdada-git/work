@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.LiveSceneCityBrandWriteMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.LiveSceneCityBrand">
+    <!--@mbg.generated-->
+    <!--@Table live_scene_city_brand-->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="scene_id" jdbcType="INTEGER" property="sceneId" />
+    <result column="data_id" jdbcType="INTEGER" property="dataId" />
+    <result column="data_value" jdbcType="VARCHAR" property="dataValue" />
+    <result column="data_type" jdbcType="TINYINT" property="dataType" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, scene_id, data_id, data_value, data_type
+  </sql>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    <!--@mbg.generated-->
+    delete from live_scene_city_brand
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.tuanche.directselling.model.LiveSceneCityBrand" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into live_scene_city_brand (scene_id, data_id, data_value,
+      data_type)
+    values (#{sceneId,jdbcType=INTEGER}, #{dataId,jdbcType=INTEGER}, #{dataValue,jdbcType=VARCHAR},
+      #{dataType,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.tuanche.directselling.model.LiveSceneCityBrand" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into live_scene_city_brand
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="sceneId != null">
+        scene_id,
+      </if>
+      <if test="dataId != null">
+        data_id,
+      </if>
+      <if test="dataValue != null">
+        data_value,
+      </if>
+      <if test="dataType != null">
+        data_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="sceneId != null">
+        #{sceneId,jdbcType=INTEGER},
+      </if>
+      <if test="dataId != null">
+        #{dataId,jdbcType=INTEGER},
+      </if>
+      <if test="dataValue != null">
+        #{dataValue,jdbcType=VARCHAR},
+      </if>
+      <if test="dataType != null">
+        #{dataType,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.LiveSceneCityBrand">
+    <!--@mbg.generated-->
+    update live_scene_city_brand
+    <set>
+      <if test="sceneId != null">
+        scene_id = #{sceneId,jdbcType=INTEGER},
+      </if>
+      <if test="dataId != null">
+        data_id = #{dataId,jdbcType=INTEGER},
+      </if>
+      <if test="dataValue != null">
+        data_value = #{dataValue,jdbcType=VARCHAR},
+      </if>
+      <if test="dataType != null">
+        data_type = #{dataType,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tuanche.directselling.model.LiveSceneCityBrand">
+    <!--@mbg.generated-->
+    update live_scene_city_brand
+    set scene_id = #{sceneId,jdbcType=INTEGER},
+      data_id = #{dataId,jdbcType=INTEGER},
+      data_value = #{dataValue,jdbcType=VARCHAR},
+      data_type = #{dataType,jdbcType=TINYINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="deleteNotInDataIdAndType">
+    update live_scene_city_brand set delete_flag=1 where scene_id=#{sceneId} and data_type=#{type}
+    <if test="dataIds != null and dataIds.size() != 0">
+      and data_id not in <foreach item="id" collection="dataIds" separator="," open="(" close=")" index="">
+      #{id}
+    </foreach>
+    </if>
+
+  </update>
+</mapper>

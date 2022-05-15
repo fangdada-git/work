@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.AfterSaleActivityAccountWriteMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.AfterSaleActivityAccount">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="activity_id" jdbcType="INTEGER" property="activityId" />
+    <result column="dealer_id" jdbcType="INTEGER" property="dealerId" />
+    <result column="mch_id" jdbcType="VARCHAR" property="mchId" />
+    <result column="mch_name" jdbcType="VARCHAR" property="mchName" />
+    <result column="sub_account_ratio" jdbcType="DECIMAL" property="subAccountRatio" />
+    <result column="approve_materials" jdbcType="VARCHAR" property="approveMaterials" />
+    <result column="verify_state" jdbcType="VARCHAR" property="verifyState" />
+    <result column="fail_reason" jdbcType="VARCHAR" property="failReason" />
+    <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+    <result column="order_money" jdbcType="DECIMAL" property="orderMoney" />
+    <result column="wx_transaction_id" jdbcType="VARCHAR" property="wxTransactionId" />
+    <result column="sub_account_transaction_detail_id" jdbcType="VARCHAR" property="subAccountTransactionDetailId" />
+    <result column="refund_id" jdbcType="VARCHAR" property="refundId" />
+    <result column="delete_flag" jdbcType="BIT" property="deleteFlag" />
+    <result column="ctreate_by" jdbcType="INTEGER" property="ctreateBy" />
+    <result column="ctreate_dt" jdbcType="TIMESTAMP" property="ctreateDt" />
+    <result column="update_by" jdbcType="INTEGER" property="updateBy" />
+    <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, activity_id, dealer_id, mch_id, mch_name, sub_account_ratio, approve_materials, 
+    verify_state, fail_reason, order_no, order_money, wx_transaction_id, sub_account_transaction_detail_id,
+    refund_id, delete_flag, ctreate_by, ctreate_dt, update_by, update_dt
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from after_sale_activity_account
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from after_sale_activity_account
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tuanche.directselling.model.AfterSaleActivityAccount" useGeneratedKeys="true" keyProperty="id">
+    insert into after_sale_activity_account (id, activity_id, dealer_id, 
+      mch_id, mch_name, sub_account_ratio, 
+      approve_materials, verify_state, fail_reason, 
+      order_no, order_money, wx_transaction_id,
+      sub_account_transaction_detail_id, refund_id,
+      delete_flag, ctreate_by, ctreate_dt,
+      update_by, update_dt)
+    values (#{id,jdbcType=INTEGER}, #{activityId,jdbcType=INTEGER}, #{dealerId,jdbcType=INTEGER},
+      #{mchId,jdbcType=VARCHAR}, #{mchName,jdbcType=VARCHAR}, #{subAccountRatio,jdbcType=DECIMAL},
+      #{approveMaterials,jdbcType=VARCHAR}, #{verifyState,jdbcType=VARCHAR}, #{failReason,jdbcType=VARCHAR},
+      #{orderNo,jdbcType=VARCHAR}, #{orderMoney,jdbcType=DECIMAL}, #{wxTransactionId,jdbcType=VARCHAR},
+      #{subAccountTransactionDetailId,jdbcType=VARCHAR}, #{refundId,jdbcType=VARCHAR},
+      #{deleteFlag,jdbcType=BIT}, #{ctreateBy,jdbcType=INTEGER}, #{ctreateDt,jdbcType=TIMESTAMP},
+      #{updateBy,jdbcType=INTEGER}, #{updateDt,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.tuanche.directselling.model.AfterSaleActivityAccount" useGeneratedKeys="true" keyProperty="id">
+    insert into after_sale_activity_account
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="activityId != null">
+        activity_id,
+      </if>
+      <if test="dealerId != null">
+        dealer_id,
+      </if>
+      <if test="mchId != null">
+        mch_id,
+      </if>
+      <if test="mchName != null">
+        mch_name,
+      </if>
+      <if test="subAccountRatio != null">
+        sub_account_ratio,
+      </if>
+      <if test="approveMaterials != null">
+        approve_materials,
+      </if>
+      <if test="verifyState != null">
+        verify_state,
+      </if>
+      <if test="failReason != null">
+        fail_reason,
+      </if>
+      <if test="orderNo != null">
+        order_no,
+      </if>
+      <if test="orderMoney != null">
+        order_money,
+      </if>
+      <if test="wxTransactionId != null">
+        wx_transaction_id,
+      </if>
+      <if test="subAccountTransactionDetailId != null">
+        sub_account_transaction_detail_id,
+      </if>
+      <if test="refundId != null">
+        refund_id,
+      </if>
+      <if test="deleteFlag != null">
+        delete_flag,
+      </if>
+      <if test="ctreateBy != null">
+        ctreate_by,
+      </if>
+      <if test="ctreateDt != null">
+        ctreate_dt,
+      </if>
+      <if test="updateBy != null">
+        update_by,
+      </if>
+      <if test="updateDt != null">
+        update_dt,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="activityId != null">
+        #{activityId,jdbcType=INTEGER},
+      </if>
+      <if test="dealerId != null">
+        #{dealerId,jdbcType=INTEGER},
+      </if>
+      <if test="mchId != null">
+        #{mchId,jdbcType=VARCHAR},
+      </if>
+      <if test="mchName != null">
+        #{mchName,jdbcType=VARCHAR},
+      </if>
+      <if test="subAccountRatio != null">
+        #{subAccountRatio,jdbcType=DECIMAL},
+      </if>
+      <if test="approveMaterials != null">
+        #{approveMaterials,jdbcType=VARCHAR},
+      </if>
+      <if test="verifyState != null">
+        #{verifyState,jdbcType=VARCHAR},
+      </if>
+      <if test="failReason != null">
+        #{failReason,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNo != null">
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="orderMoney != null">
+        #{orderMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="wxTransactionId != null">
+        #{wxTransactionId,jdbcType=VARCHAR},
+      </if>
+      <if test="subAccountTransactionDetailId != null">
+        #{subAccountTransactionDetailId,jdbcType=VARCHAR},
+      </if>
+      <if test="refundId != null">
+        #{refundId,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null">
+        #{deleteFlag,jdbcType=BIT},
+      </if>
+      <if test="ctreateBy != null">
+        #{ctreateBy,jdbcType=INTEGER},
+      </if>
+      <if test="ctreateDt != null">
+        #{ctreateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateDt != null">
+        #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.AfterSaleActivityAccount">
+    update after_sale_activity_account
+    <set>
+      <if test="activityId != null">
+        activity_id = #{activityId,jdbcType=INTEGER},
+      </if>
+      <if test="dealerId != null">
+        dealer_id = #{dealerId,jdbcType=INTEGER},
+      </if>
+      <if test="mchId != null">
+        mch_id = #{mchId,jdbcType=VARCHAR},
+      </if>
+      <if test="mchName != null">
+        mch_name = #{mchName,jdbcType=VARCHAR},
+      </if>
+      <if test="subAccountRatio != null">
+        sub_account_ratio = #{subAccountRatio,jdbcType=DECIMAL},
+      </if>
+      <if test="approveMaterials != null">
+        approve_materials = #{approveMaterials,jdbcType=VARCHAR},
+      </if>
+      <if test="verifyState != null">
+        verify_state = #{verifyState,jdbcType=VARCHAR},
+      </if>
+      <if test="failReason != null">
+        fail_reason = #{failReason,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNo != null">
+        order_no = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="orderMoney != null">
+        order_money = #{orderMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="wxTransactionId != null">
+        wx_transaction_id = #{wxTransactionId,jdbcType=VARCHAR},
+      </if>
+      <if test="subAccountTransactionDetailId != null">
+        sub_account_transaction_detail_id = #{subAccountTransactionDetailId,jdbcType=VARCHAR},
+      </if>
+      <if test="refundId != null">
+        refund_id = #{refundId,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null">
+        delete_flag = #{deleteFlag,jdbcType=BIT},
+      </if>
+      <if test="ctreateBy != null">
+        ctreate_by = #{ctreateBy,jdbcType=INTEGER},
+      </if>
+      <if test="ctreateDt != null">
+        ctreate_dt = #{ctreateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        update_by = #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateDt != null">
+        update_dt = #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tuanche.directselling.model.AfterSaleActivityAccount">
+    update after_sale_activity_account
+    set activity_id = #{activityId,jdbcType=INTEGER},
+      dealer_id = #{dealerId,jdbcType=INTEGER},
+      mch_id = #{mchId,jdbcType=VARCHAR},
+      mch_name = #{mchName,jdbcType=VARCHAR},
+      sub_account_ratio = #{subAccountRatio,jdbcType=DECIMAL},
+      approve_materials = #{approveMaterials,jdbcType=VARCHAR},
+      verify_state = #{verifyState,jdbcType=VARCHAR},
+      fail_reason = #{failReason,jdbcType=VARCHAR},
+      order_no = #{orderNo,jdbcType=VARCHAR},
+      order_money = #{orderMoney,jdbcType=DECIMAL},
+      wx_transaction_id = #{wxTransactionId,jdbcType=VARCHAR},
+      sub_account_transaction_detail_id = #{subAccountTransactionDetailId,jdbcType=VARCHAR},
+      refund_id = #{refundId,jdbcType=VARCHAR},
+      delete_flag = #{deleteFlag,jdbcType=BIT},
+      ctreate_by = #{ctreateBy,jdbcType=INTEGER},
+      ctreate_dt = #{ctreateDt,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=INTEGER},
+      update_dt = #{updateDt,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

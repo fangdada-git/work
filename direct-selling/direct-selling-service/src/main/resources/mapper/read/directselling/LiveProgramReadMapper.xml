@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.LiveProgramReadMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.LiveProgram">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="scene_id" jdbcType="INTEGER" property="sceneId" />
+    <result column="program_title" jdbcType="VARCHAR" property="programTitle" />
+    <result column="begin_time" jdbcType="TIMESTAMP" property="beginTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="live_address" jdbcType="VARCHAR" property="liveAddress" />
+    <result column="live_qrcode_pic" jdbcType="VARCHAR" property="liveQrcodePic" />
+    <result column="create_user_id" jdbcType="INTEGER" property="createUserId" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="create_dt" jdbcType="TIMESTAMP" property="createDt" />
+    <result column="update_user_id" jdbcType="INTEGER" property="updateUserId" />
+    <result column="update_user_name" jdbcType="VARCHAR" property="updateUserName" />
+    <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
+    <result column="delete_state" jdbcType="INTEGER" property="deleteState" />
+    <result column="program_type" jdbcType="INTEGER" property="programType" />
+  </resultMap>
+  
+    <resultMap id="BaseResultDtoMap" type="com.tuanche.directselling.dto.LiveProgramDto" extends="BaseResultMap"></resultMap>
+  
+  <sql id="Base_Column_List">
+    id, scene_id, program_title, begin_time, end_time, live_address, live_qrcode_pic, 
+    create_user_id, create_user_name, create_dt, update_user_id, update_user_name, update_dt, 
+    delete_state,program_type
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from live_program
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="queryList" resultMap="BaseResultDtoMap">
+    select 
+    <include refid="Base_Column_List" />
+    from live_program
+    where scene_id = #{sceneId,jdbcType=INTEGER}
+    and delete_state = 0
+    <if test="id!=null">
+    	and id !=#{id,jdbcType=INTEGER}
+    </if>
+    <if test="beginTime!=null">
+    	and ((DATE_FORMAT(begin_time,'%Y-%m-%d %H:%i:%s') &lt;= #{beginTime} 
+    			and #{beginTime} &lt;=  DATE_FORMAT(end_time,'%Y-%m-%d %H:%i:%s'))
+		    	or( DATE_FORMAT(begin_time,'%Y-%m-%d %H:%i:%s') &lt;= #{endTime} 
+		    		and #{endTime} &lt;=  DATE_FORMAT(end_time,'%Y-%m-%d %H:%i:%s')
+		    	)
+    	)
+    </if>
+    <if test="sceneBeginTime != null and sceneEndTime != null">
+         and (begin_time &lt; #{sceneBeginTime} or end_time &gt; #{sceneEndTime})
+    </if>
+   order by id desc
+  </select>
+
+  <select id="selectPosterByProgramId" parameterType="java.lang.Integer" resultType="com.tuanche.directselling.dto.PosterDto">
+      SELECT t1.begin_time as beginTime,t1.end_time as endTime,t1.live_address as activeUrl,t1.program_type as type,
+        t3.dealer_id as merchantId,t3.dealer_name as store,t3.brand_id as brandId,t3.brand_name as brandName,t4.city_id as cityId,
+        t2.scene_id as sceneId
+      FROM live_program t1
+      LEFT JOIN live_program_dealer_brand t2 ON t1.id=t2.program_id
+      LEFT JOIN live_scene_dealer_brand t3 ON t2.dealer_brand_id=t3.id
+      LEFT JOIN live_scene t4 ON t1.scene_id=t4.id
+      WHERE t1.delete_state=0 AND t2.delete_state=0 AND t3.delete_state=0 AND t4.delete_state=0 AND t1.id=#{id,jdbcType=INTEGER}
+  </select>
+</mapper>

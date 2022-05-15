@@ -1,0 +1,77 @@
+spring:
+  profiles: dev
+kafka:
+  config:
+    servers: 172.16.70.112:9092,172.16.70.113:9092,172.16.70.114:9092
+    batch-size: 4096
+    buffer-memory: 40960
+    zookeeper-connect: 172.16.70.112:2181,172.16.70.113:2181,172.16.70.114:2181/kafka
+    merchant-order-pay-success-notice: #商品支付完成修改订单状态
+      group-name: direct-selling-order-order-group
+      topic-name: merchant-order-transform-r2p3
+      topic-count: 1
+    merchant-order-submit-refund-notice: #商品下单、退款通知
+      group-name: direct-selling-order-submit-refund
+      topic-name: order-callback
+      topic-count: 1
+    consumer-thread-count: 1
+
+---
+#test
+spring:
+  profiles: test
+kafka:
+  config:
+    servers: 172.16.60.65:9092
+    batch-size: 4096
+    buffer-memory: 40960
+    zookeeper-connect: zookeeper.tuanche.com:2181,zookeeper.tuanche.com:2182,zookeeper.tuanche.com:2183/kafka
+    merchant-order-pay-success-notice: #商品支付完成修改订单状态
+      group-name: direct-selling-order-order-group
+      topic-name: merchant-order-transform-r2p3
+      topic-count: 1
+    merchant-order-submit-refund-notice: #商品下单、退款通知
+      group-name: direct-selling-order-submit-refund
+      topic-name: order-callback
+      topic-count: 1
+    consumer-thread-count: 1
+
+---
+#pre
+spring:
+  profiles: pre
+kafka:
+  config:
+    servers: 172.16.12.92:9092
+    batch-size: 4096
+    buffer-memory: 40960
+    zookeeper-connect: zookeeper.tuanche.com:2181,zookeeper.tuanche.com:2182,zookeeper.tuanche.com:2183/kafka
+    merchant-order-pay-success-notice: #商品支付完成修改订单状态
+      group-name: direct-selling-order-order-group
+      topic-name: merchant-order-transform-r2p3
+      topic-count: 1
+    merchant-order-submit-refund-notice: #商品下单、退款通知
+      group-name: direct-selling-order-submit-refund
+      topic-name: order-callback
+      topic-count: 1
+    consumer-thread-count: 1
+
+---
+#prod
+spring:
+  profiles: prod
+kafka:
+  config:
+    servers: kafka104.srv.other:9092,kafka62.srv.other:9092,kafka63.srv.other:9092
+    batch-size: 4096
+    buffer-memory: 40960
+    zookeeper-connect: zk152.tuanche.com:2181,zk105.tuanche.com:2181,zk103.tuanche.com:2181/kafka
+    merchant-order-pay-success-notice: #商品支付完成修改订单状态
+      group-name: direct-selling-order-order-group
+      topic-name: merchant-order-transform-r2p3
+      topic-count: 1
+    merchant-order-submit-refund-notice: #商品下单、退款通知
+      group-name: direct-selling-order-submit-refund
+      topic-name: order-callback
+      topic-count: 1
+    consumer-thread-count: 1

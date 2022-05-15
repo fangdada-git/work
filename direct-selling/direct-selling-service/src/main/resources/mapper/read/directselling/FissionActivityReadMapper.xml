@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.FissionActivityReadMapper">
+    <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FissionActivity">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="periods_id" jdbcType="INTEGER" property="periodsId"/>
+        <result column="periods_name" jdbcType="VARCHAR" property="periodsName"/>
+        <result column="scene_id" jdbcType="INTEGER" property="sceneId" />
+        <result column="activity_name" jdbcType="VARCHAR" property="activityName"/>
+        <result column="start_time" jdbcType="TIMESTAMP" property="startTime"/>
+        <result column="end_time" jdbcType="TIMESTAMP" property="endTime"/>
+        <result column="on_state" jdbcType="SMALLINT" property="onState"/>
+        <result column="broadcast_room_id" jdbcType="INTEGER" property="broadcastRoomId"/>
+        <result column="head_pic_url" jdbcType="VARCHAR" property="headPicUrl"/>
+        <result column="share_pic_url" jdbcType="VARCHAR" property="sharePicUrl" />
+        <result column="detail_pic_urls" jdbcType="VARCHAR" property="detailPicUrls"/>
+        <result column="poster_url" jdbcType="VARCHAR" property="posterUrl"/>
+        <result column="product_title_url" jdbcType="VARCHAR" property="productTitleUrl" />
+        <result column="reserve_phone" jdbcType="SMALLINT" property="reservePhone"/>
+        <result column="c_award_flag" jdbcType="TINYINT" property="cAwardFlag" />
+        <result column="wechat_title" jdbcType="VARCHAR" property="wechatTitle" />
+        <result column="wechat_description" jdbcType="VARCHAR" property="wechatDescription" />
+        <result column="wechat_pic" jdbcType="VARCHAR" property="wechatPic" />
+        <result column="delete_flag" jdbcType="TINYINT" property="deleteFlag"/>
+        <result column="ctreate_by" jdbcType="INTEGER" property="ctreateBy"/>
+        <result column="ctreate_dt" jdbcType="TIMESTAMP" property="ctreateDt"/>
+        <result column="update_by" jdbcType="INTEGER" property="updateBy"/>
+        <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt"/>
+        <result column="stat_generate" jdbcType="BIT" property="statGenerate" />
+    </resultMap>
+    <resultMap id="BaseExtendDtoResultMap" type="com.tuanche.directselling.dto.FissionActivityDto"
+               extends="BaseResultMap">
+        <association property="fissionActivityData" javaType="com.tuanche.directselling.model.FissionActivityData"
+                     column="id"
+                     select="com.tuanche.directselling.mapper.read.directselling.FissionActivityDataReadMapper.selectByFissionId">
+        </association>
+        <collection property="fissionActivityExtend" javaType="ArrayList"
+                    column="id" ofType="com.tuanche.directselling.model.FissionActivityExtend"
+                    select="com.tuanche.directselling.mapper.read.directselling.FissionActivityExtendReadMapper.selectActivityExtendByFissionId"></collection>
+        <collection property="awardRuleList" javaType="ArrayList"
+                    column="id" ofType="com.tuanche.directselling.model.FissionAwardRule"
+                    select="com.tuanche.directselling.mapper.read.directselling.FissionAwardRuleReadMapper.selectAwardRuleByFissionId"></collection>
+    </resultMap>
+
+    <resultMap id="ActivityDtoResultMap" type="com.tuanche.directselling.dto.FissionActivityDto"
+               extends="BaseResultMap">
+        <collection property="awardRuleList" javaType="ArrayList"
+                    column="id" ofType="com.tuanche.directselling.model.FissionAwardRule"
+                    select="com.tuanche.directselling.mapper.read.directselling.FissionAwardRuleReadMapper.selectAwardRuleByFissionId"></collection>
+    </resultMap>
+
+    <resultMap id="FissionActivitySaleDto" type="com.tuanche.directselling.dto.FissionActivitySaleDto">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="activity_name" jdbcType="VARCHAR" property="activityName"/>
+        <result column="start_time" jdbcType="TIMESTAMP" property="startTime"/>
+        <result column="end_time" jdbcType="TIMESTAMP" property="endTime"/>
+        <result column="sale_id" jdbcType="INTEGER" property="saleId"/>
+        <result column="periods_id" jdbcType="INTEGER" property="periodsId"/>
+        <result column="head_pic_url" jdbcType="VARCHAR" property="headPicUrl"/>
+        <result column="on_state" jdbcType="SMALLINT" property="onState"/>
+    </resultMap>
+    <resultMap id="BaseResultVoMap" type="com.tuanche.directselling.vo.FissionActivityVo">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="periods_id" jdbcType="INTEGER" property="periodsId"/>
+        <result column="periods_name" jdbcType="VARCHAR" property="periodsName"/>
+        <result column="scene_id" jdbcType="INTEGER" property="sceneId" />
+        <result column="activity_name" jdbcType="VARCHAR" property="activityName"/>
+        <result column="start_time" jdbcType="TIMESTAMP" property="startTime"/>
+        <result column="end_time" jdbcType="TIMESTAMP" property="endTime"/>
+        <result column="on_state" jdbcType="SMALLINT" property="onState"/>
+        <result column="broadcast_room_id" jdbcType="INTEGER" property="broadcastRoomId"/>
+        <result column="head_pic_url" jdbcType="VARCHAR" property="headPicUrl"/>
+        <result column="detail_pic_urls" jdbcType="VARCHAR" property="detailPicUrls"/>
+        <result column="poster_url" jdbcType="VARCHAR" property="posterUrl"/>
+        <result column="product_title_url" jdbcType="VARCHAR" property="productTitleUrl" />
+        <result column="reserve_phone" jdbcType="SMALLINT" property="reservePhone"/>
+        <result column="c_award_flag" jdbcType="INTEGER" property="cAwardFlag" />
+        <result column="wechat_title" jdbcType="VARCHAR" property="wechatTitle" />
+        <result column="wechat_description" jdbcType="VARCHAR" property="wechatDescription" />
+        <result column="wechat_pic" jdbcType="VARCHAR" property="wechatPic" />
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, periods_id, periods_name,scene_id, activity_name, start_time, end_time, on_state, broadcast_room_id,
+    head_pic_url, share_pic_url, detail_pic_urls, poster_url, product_title_url, reserve_phone, c_award_flag,wechat_title, wechat_description, wechat_pic, delete_flag, ctreate_by,
+    ctreate_dt, update_by, update_dt,stat_generate
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from fission_activity
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectFissionActivityList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from fission_activity
+        where delete_flag = 0
+        <if test="periodsId !=null">
+            AND periods_id = #{periodsId}
+        </if>
+        <if test="onState !=null">
+            AND on_state = #{onState}
+        </if>
+        <if test="activityName !=null">
+            AND activity_name LIKE CONCAT("%",#{activityName},"%")
+        </if>
+        order by id desc
+    </select>
+    <select id="selectFissionActivityVoList" resultMap="BaseResultVoMap">
+        select
+        id, periods_id, periods_name,scene_id, activity_name, start_time, end_time, on_state, broadcast_room_id,
+        head_pic_url, detail_pic_urls, poster_url, product_title_url, reserve_phone, c_award_flag,wechat_title, wechat_description, wechat_pic
+        from fission_activity
+        where delete_flag = 0
+        <if test="periodsId !=null">
+            AND periods_id = #{periodsId}
+        </if>
+        <if test="onState !=null">
+            AND on_state = #{onState}
+        </if>
+        <if test="activityName !=null">
+            AND activity_name LIKE CONCAT("%",#{activityName},"%")
+        </if>
+        order by start_time desc
+    </select>
+
+    <select id="selectFissionActivityDtoById" resultMap="BaseExtendDtoResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from fission_activity
+        where delete_flag = 0 and id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectActivitySaleByDealerId" parameterType="java.lang.Integer" resultMap="FissionActivitySaleDto">
+    SELECT
+        fa.id,
+        fa.activity_name,
+        fa.start_time,
+        fa.end_time,
+        fa.periods_id,
+        fa.head_pic_url,
+        fa.on_state,
+        fso.sale_id
+    FROM
+        fission_activity fa
+        INNER JOIN fission_activity_extend fae on fae.data_type = 3 AND fae.rel_status = 1 AND fae.data_id = #{dealerId} and fa.id = fae.fission_id
+        LEFT JOIN fission_sales_order fso ON fa.id = fso.fission_id
+        AND fso.delete_flag = 0
+        AND fso.order_type = 1
+        AND fso.sale_id = #{saleId}
+        AND fso.order_status=2
+    WHERE
+        fa.delete_flag = 0 and fa.head_pic_url is not null and EXISTS(select * from fission_award_rule where fission_id=fa.id)
+    ORDER BY
+        fa.start_time DESC
+  </select>
+
+    <select id="selectActivityDetailByFissionId" parameterType="java.lang.Integer"
+            resultType="com.tuanche.directselling.dto.FissionActivityDetailDto">
+        SELECT
+            fa.id,
+            fa.activity_name,
+            fa.start_time,
+            fa.end_time,
+            fa.periods_id,
+            fa.on_state,
+            fso.order_status
+        FROM
+            fission_activity fa
+            INNER JOIN ( SELECT fission_id FROM fission_activity_extend WHERE data_type = 3 AND rel_status = 1 AND data_id = #{dealerId} ) t ON fa.id = t.fission_id
+            LEFT JOIN fission_sales_order fso ON fa.id = fso.fission_id and fso.sale_id=#{saleId} and fso.delete_flag=0
+            where fa.id=#{fissionId} and fa.delete_flag = 0
+    </select>
+
+    <sql id="where_sql">
+        <if test="periodsId !=null">
+            AND periods_id = #{periodsId}
+        </if>
+        <if test="activityName !=null">
+            AND activity_name LIKE CONCAT("%",#{activityName},"%")
+        </if>
+        <if test="onState !=null">
+            AND on_state = #{onState}
+        </if>
+        <if test="activityStatus !=null and activityStatus ==0">
+            AND now() &lt; start_time
+        </if>
+        <if test="activityStatus !=null and activityStatus ==1">
+            AND now() BETWEEN start_time AND end_time
+        </if>
+        <if test="activityStatus !=null and activityStatus ==2">
+            AND now() &gt; end_time
+        </if>
+    </sql>
+    <select id="selectFissionActiveDtoList" parameterType="com.tuanche.directselling.dto.FissionActivityDto" resultMap="ActivityDtoResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from fission_activity
+        where delete_flag = 0
+        <if test="periodsId !=null">
+            AND periods_id = #{periodsId}
+        </if>
+        <if test="activityName !=null">
+            AND activity_name LIKE CONCAT("%",#{activityName},"%")
+        </if>
+        <if test="onState !=null">
+            AND on_state = #{onState}
+        </if>
+        <if test="activityStatus !=null and activityStatus ==0">
+            AND now() &lt; start_time
+        </if>
+        <if test="activityStatus !=null and activityStatus ==1">
+            AND now() BETWEEN start_time AND end_time
+        </if>
+        <if test="activityStatus !=null and activityStatus ==2">
+            AND now() &gt; end_time
+        </if>
+        <if test="sceneId !=null">
+            AND scene_id = #{sceneId}
+        </if>
+        <if test="sceneIdList !=null and sceneIdList.size()>0">
+            AND scene_id in
+            <foreach collection="sceneIdList" item="sceneId" open="(" separator="," close=")">
+                #{sceneId}
+            </foreach>
+        </if>
+        order by id desc;
+    </select>
+
+    <select id="selectFissionActivityBySaleId" resultMap="BaseResultMap">
+        SELECT
+            fa.id,
+            fa.activity_name,
+            fa.start_time,
+            fa.end_time
+        FROM
+            fission_activity fa
+            INNER JOIN fission_sale fs ON fa.id = fs.fission_id
+            AND fa.delete_flag = 0
+            AND fs.delete_flag = 0
+        WHERE
+            fs.sale_id = #{saleId}
+        ORDER BY
+            fs.create_dt DESC
+    </select>
+    <!-- 获取正在进行中且是确认(开启)状态的裂变活动ID列表 -->
+    <select id="getOngoingAndConfirmIds" resultType="java.lang.Integer">
+        SELECT
+            t.id
+        FROM
+            fission_activity t
+        WHERE t.on_state = 1
+          AND NOW() BETWEEN t.start_time AND t.end_time
+          AND t.delete_flag = 0
+    </select>
+    <!-- 获取前一天结束且是确认(开启)状态的裂变活动ID列表 -->
+    <select id="getEndedYesterdayAndConfirmIds" resultType="java.lang.Integer">
+        SELECT
+            t.id
+        FROM
+            fission_activity t
+        WHERE t.on_state = 1
+          AND DATE_FORMAT(end_time,'%Y-%m-%d') = date_sub(curdate(),interval 1 day)
+          AND t.delete_flag = 0
+    </select>
+    <!-- 获取前一天结束且是确认(开启)状态的裂变活动ID列表 -->
+    <select id="getEndAndConfirmActivityIds" resultType="java.lang.Integer" parameterType="string">
+        SELECT
+            t.id
+        FROM
+            fission_activity t
+        WHERE t.on_state = 1
+          AND end_time BETWEEN #{startTime} AND NOW()
+          AND t.delete_flag = 0
+    </select>
+
+    <select id="selectFissionActivityByName" resultMap="BaseResultMap">
+        select
+        id,activity_name,start_time,end_time
+        from fission_activity
+        where delete_flag = 0
+        <if test="name != null and name != ''">
+            and activity_name like CONCAT('%',#{name},'%')
+        </if>
+        order by start_time desc
+    </select>
+</mapper>

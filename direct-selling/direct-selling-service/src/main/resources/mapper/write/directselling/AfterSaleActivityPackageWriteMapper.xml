@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.AfterSaleActivityPackageWriteMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.AfterSaleActivityPackage">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="activity_id" jdbcType="INTEGER" property="activityId" />
+    <result column="goods_id" jdbcType="INTEGER" property="goodsId" />
+    <result column="commodity_name" jdbcType="VARCHAR" property="commodityName" />
+    <result column="commodity_price" jdbcType="DECIMAL" property="commodityPrice" />
+    <result column="commodity_count" jdbcType="INTEGER" property="commodityCount" />
+    <result column="original_price" jdbcType="DECIMAL" property="originalPrice" />
+    <result column="up_shelf_time" jdbcType="TIMESTAMP" property="upShelfTime" />
+    <result column="down_shelf_time" jdbcType="TIMESTAMP" property="downShelfTime" />
+    <result column="rel_status" jdbcType="INTEGER" property="relStatus" />
+    <result column="rel_time" jdbcType="TIMESTAMP" property="relTime" />
+    <result column="operate_user" jdbcType="INTEGER" property="operateUser" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, activity_id, goods_id, commodity_name, commodity_price, commodity_count, original_price, 
+    up_shelf_time, down_shelf_time, rel_status, rel_time, operate_user
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from after_sale_activity_package
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from after_sale_activity_package
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tuanche.directselling.model.AfterSaleActivityPackage">
+    insert into after_sale_activity_package (id, activity_id, goods_id, 
+      commodity_name, commodity_price, commodity_count, 
+      original_price, up_shelf_time, down_shelf_time, 
+      rel_status, rel_time, operate_user
+      )
+    values (#{id,jdbcType=INTEGER}, #{activityId,jdbcType=INTEGER}, #{goodsId,jdbcType=INTEGER}, 
+      #{commodityName,jdbcType=VARCHAR}, #{commodityPrice,jdbcType=DECIMAL}, #{commodityCount,jdbcType=INTEGER}, 
+      #{originalPrice,jdbcType=DECIMAL}, #{upShelfTime,jdbcType=TIMESTAMP}, #{downShelfTime,jdbcType=TIMESTAMP}, 
+      #{relStatus,jdbcType=INTEGER}, #{relTime,jdbcType=TIMESTAMP}, #{operateUser,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.tuanche.directselling.model.AfterSaleActivityPackage">
+    insert into after_sale_activity_package
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="activityId != null">
+        activity_id,
+      </if>
+      <if test="goodsId != null">
+        goods_id,
+      </if>
+      <if test="commodityName != null">
+        commodity_name,
+      </if>
+      <if test="commodityPrice != null">
+        commodity_price,
+      </if>
+      <if test="commodityCount != null">
+        commodity_count,
+      </if>
+      <if test="originalPrice != null">
+        original_price,
+      </if>
+      <if test="upShelfTime != null">
+        up_shelf_time,
+      </if>
+      <if test="downShelfTime != null">
+        down_shelf_time,
+      </if>
+      <if test="relStatus != null">
+        rel_status,
+      </if>
+      <if test="relTime != null">
+        rel_time,
+      </if>
+      <if test="operateUser != null">
+        operate_user,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="activityId != null">
+        #{activityId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsId != null">
+        #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="commodityName != null">
+        #{commodityName,jdbcType=VARCHAR},
+      </if>
+      <if test="commodityPrice != null">
+        #{commodityPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="commodityCount != null">
+        #{commodityCount,jdbcType=INTEGER},
+      </if>
+      <if test="originalPrice != null">
+        #{originalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="upShelfTime != null">
+        #{upShelfTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="downShelfTime != null">
+        #{downShelfTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="relStatus != null">
+        #{relStatus,jdbcType=TINYINT},
+      </if>
+      <if test="relTime != null">
+        #{relTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operateUser != null">
+        #{operateUser,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.AfterSaleActivityPackage">
+    update after_sale_activity_package
+    <set>
+      <if test="activityId != null">
+        activity_id = #{activityId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsId != null">
+        goods_id = #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="commodityName != null">
+        commodity_name = #{commodityName,jdbcType=VARCHAR},
+      </if>
+      <if test="commodityPrice != null">
+        commodity_price = #{commodityPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="commodityCount != null">
+        commodity_count = #{commodityCount,jdbcType=INTEGER},
+      </if>
+      <if test="originalPrice != null">
+        original_price = #{originalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="upShelfTime != null">
+        up_shelf_time = #{upShelfTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="downShelfTime != null">
+        down_shelf_time = #{downShelfTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="relStatus != null">
+        rel_status = #{relStatus,jdbcType=INTEGER},
+      </if>
+      <if test="relTime != null">
+        rel_time = #{relTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operateUser != null">
+        operate_user = #{operateUser,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tuanche.directselling.model.AfterSaleActivityPackage">
+    update after_sale_activity_package
+    set activity_id = #{activityId,jdbcType=INTEGER},
+      goods_id = #{goodsId,jdbcType=INTEGER},
+      commodity_name = #{commodityName,jdbcType=VARCHAR},
+      commodity_price = #{commodityPrice,jdbcType=DECIMAL},
+      commodity_count = #{commodityCount,jdbcType=INTEGER},
+      original_price = #{originalPrice,jdbcType=DECIMAL},
+      up_shelf_time = #{upShelfTime,jdbcType=TIMESTAMP},
+      down_shelf_time = #{downShelfTime,jdbcType=TIMESTAMP},
+      rel_status = #{relStatus,jdbcType=INTEGER},
+      rel_time = #{relTime,jdbcType=TIMESTAMP},
+      operate_user = #{operateUser,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

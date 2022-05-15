@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.FissionGoodsHelperUserWriteMapper" >
+    
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from fission_goods_helper_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insertSelective" parameterType="com.tuanche.directselling.model.FissionGoodsHelperUser" useGeneratedKeys="true" keyProperty="id">
+    insert into fission_goods_helper_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="goodsId != null" >
+        goods_id,
+      </if>
+      <if test="fissionId != null" >
+        fission_id,
+      </if>
+      <if test="userWxUnionId != null" >
+        user_wx_union_id,
+      </if>
+      <if test="helperWxUnionId != null" >
+        helper_wx_union_id,
+      </if>
+      <if test="createDt != null" >
+        create_dt,
+      </if>
+      <if test="updateDt != null" >
+        update_dt,
+      </if>
+      <if test="buyGoods != null" >
+        buy_goods,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="goodsId != null" >
+        #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="fissionId != null" >
+        #{fissionId,jdbcType=INTEGER},
+      </if>
+      <if test="userWxUnionId != null" >
+        #{userWxUnionId,jdbcType=VARCHAR},
+      </if>
+      <if test="helperWxUnionId != null" >
+        #{helperWxUnionId,jdbcType=VARCHAR},
+      </if>
+      <if test="createDt != null" >
+        #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDt != null" >
+        #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="buyGoods != null" >
+        #{buyGoods},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.FissionGoodsHelperUser" >
+    update fission_goods_helper_user
+    <set >
+      <if test="goodsId != null" >
+        goods_id = #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="fissionId != null" >
+        fission_id = #{fissionId,jdbcType=INTEGER},
+      </if>
+      <if test="userWxUnionId != null" >
+        user_wx_union_id = #{userWxUnionId,jdbcType=VARCHAR},
+      </if>
+      <if test="helperWxUnionId != null" >
+        helper_wx_union_id = #{helperWxUnionId,jdbcType=VARCHAR},
+      </if>
+      <if test="createDt != null" >
+        create_dt = #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDt != null" >
+        update_dt = #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="buyGoods != null" >
+        buy_goods = #{buyGoods},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateGoodsHelperUserToBuy" parameterType="com.tuanche.directselling.model.FissionGoodsHelperUser" >
+    update fission_goods_helper_user 
+    SET buy_goods = 1
+    where goods_id = #{goodsId,jdbcType=INTEGER}
+        and fission_id = #{fissionId,jdbcType=INTEGER}
+        and user_wx_union_id = #{userWxUnionId,jdbcType=VARCHAR}
+        and buy_goods = 0
+  </update>
+  
+</mapper>

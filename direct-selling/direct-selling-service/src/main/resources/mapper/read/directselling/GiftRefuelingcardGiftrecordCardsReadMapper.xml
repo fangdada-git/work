@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.GiftRefuelingcardGiftrecordCardsReadMapper" >
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.GiftRefuelingcardGiftrecordCards" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="giftrecord_id" property="giftrecordId" jdbcType="INTEGER" />
+    <result column="refueling_code" property="refuelingCode" jdbcType="VARCHAR" />
+  </resultMap>
+    <sql id="Base_Column_List" >
+        id, giftrecord_id, refueling_code
+    </sql>
+    <!-- 根据赠送油卡记录ID获取赠送的油卡列表 -->
+    <select id="getCardsByGiftrecordId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select
+        <include refid="Base_Column_List" />
+        from gift_refuelingcard_giftrecord_cards
+        where giftrecord_id = #{giftrecordId,jdbcType=INTEGER}
+    </select>
+</mapper>

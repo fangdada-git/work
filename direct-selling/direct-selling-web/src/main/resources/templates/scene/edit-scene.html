@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>团车直卖-场次活动表单</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.js"></script>
+    <script src="/common/js/xm-select.js"></script>
+    <script src="/common/js/tools.js"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <style>
+        .label-close-icon {
+            vertical-align: bottom;
+            margin-left: -8px;
+            font-size: 18px;
+            position: absolute;
+            top: -8px;
+            cursor: pointer;
+            z-index: 100;
+        }
+        .layui-input {
+            width: 300px;
+        }
+        .layui-form-select {
+            width: 300px;
+        }
+        .xm-form-select {
+            min-width: 300px;
+        }
+        .layui-form-label {
+            width: 100px;
+        }
+        .layui-input-block {
+            margin-left: 138px;
+        }
+    </style>
+</head>
+<body class="childrenBody">
+<form class="layui-form" style="background-color:#ffffff" lay-filter="sceneForm">
+    <div class="layui-form-item" style="width: 437px;">
+        <label class="layui-form-label">关联场次</label>
+        <div class="layui-input-block">
+            <div id="scenePeriodsSelect"></div>
+        </div>
+    </div>
+    <div class="layui-form-item" style="width: 437px;">
+        <label class="layui-form-label">关联品牌</label>
+        <div class="layui-input-block">
+            <div id="sceneBrandSelect"></div>
+        </div>
+    </div>
+    <div class="layui-form-item" style="width: 437px;">
+        <label class="layui-form-label">关联城市</label>
+        <div class="layui-input-block">
+            <div id="sceneCitySelect"></div>
+        </div>
+    </div>
+    <div class="layui-form-item" style="width: 437px;">
+        <label class="layui-form-label">日期时间范围</label>
+        <div class="layui-input-block">
+            <input type="hidden" id="beginTime" th:value="${liveScene.beginTime != null ? #dates.format(liveScene.beginTime,'yyyy-MM-dd HH:mm:ss') : ''}"/>
+            <input type="hidden" id="endTime" th:value="${liveScene.endTime != null ? #dates.format(liveScene.endTime,'yyyy-MM-dd HH:mm:ss') : ''}"/>
+            <input type="text" readonly class="layui-input" id="sceneTime" placeholder="请选择日期时间范围">
+        </div>
+    </div>
+    <div class="layui-form-item" style="width: 437px;">
+        <label class="layui-form-label">预热时间范围</label>
+        <div class="layui-input-block">
+            <input type="hidden" id="readyBeginTime"
+                   th:value="${#dates.format(liveScene.readyBeginTime,'yyyy-MM-dd HH:mm:ss')}"/>
+            <input type="hidden" id="readyEndTime"
+                   th:value="${#dates.format(liveScene.readyEndTime,'yyyy-MM-dd HH:mm:ss')}"/>
+            <input type="text" readonly th:disabled="${readyIsOver}"  class="layui-input" id="readyTime" placeholder="请选择预热时间范围">
+        </div>
+    </div>
+    <div class="layui-form-item" style="width: 437px;">
+        <label class="layui-form-label">正式时间范围</label>
+        <div class="layui-input-block">
+            <input type="hidden" id="formalBeginTime"
+                   th:value="${#dates.format(liveScene.formalBeginTime,'yyyy-MM-dd HH:mm:ss')}"/>
+            <input type="hidden" id="formalEndTime"
+                   th:value="${#dates.format(liveScene.formalEndTime,'yyyy-MM-dd HH:mm:ss')}"/>
+            <input type="text" readonly th:disabled="${readyIsOver}" class="layui-input" id="formalTime" placeholder="请选择正式时间范围">
+        </div>
+    </div>
+    <div class="layui-form-item" style="width: 437px;">
+        <label class="layui-form-label required">场次活动主题</label>
+        <div class="layui-input-block">
+            <input type="text" name="sceneTitle" id="sceneTitle" lay-verify="required"
+                   placeholder="请输入场次活动主题" maxlength="30" th:value="${liveScene.sceneTitle}" autocomplete="off" class="layui-input"  style="width: 611px;">
+        </div>
+    </div>
+    <div class="layui-form-item" style="width: 437px;">
+        <label class="layui-form-label">发送服务通知</label>
+        <div class="layui-input-block">
+            <input type="radio" name="sendFlag" value="1" title="是" th:field="${liveScene.sendFlag}" >
+            <input type="radio" name="sendFlag" value="0" title="否" th:field="${liveScene.sendFlag}" >
+        </div>
+    </div>
+    <div class="layui-form-item" style="margin-bottom: 225px;">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" id="submitBtn" lay-submit lay-filter="submitBtn">
+                <i class="layui-icon layui-icon-ok-circle"></i><span th:text="${liveScene.upState==0 ? '重新上架' : '立即提交'}"></span>
+            </button>
+            <button class="layui-btn layui-btn-normal" id="backBtn"><i class="layui-icon layui-icon-close-fill"></i>返回</button>
+        </div>
+    </div>
+</form>
+
+<!-- layui 初始化 -->
+<script type="text/javascript" th:inline="javascript">
+    layui.use(['form','layer','table','upload','laydate','element'],function(){
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            laydate = layui.laydate,
+            upload = layui.upload,
+            table = layui.table,
+            formSelects = layui.formSelects,
+            element = layui.element;
+        element.init();
+
+        var sceneId = [[${liveScene.id}]];
+        var periodsId = [[${liveScene.periodsId}]];
+
+
+        var sceneCitySelect = xmSelect.render({
+            el: '#sceneCitySelect',
+            tips: '请选择城市',
+            autoRow:true,
+            filterable: true,
+            direction: "down",
+            toolbar: { show: true },
+            prop: {
+                name: 'name',
+                value: 'id',
+            },
+            tree: {
+                show: true,
+                showFolderIcon: true,
+                showLine: false,
+                indent: 20,
+                expandedKeys: [],
+                strict: false,
+                simple: false,
+            },
+            data: [
+            ],
+            remoteSearch: true,
+            remoteMethod: function(val, cb, show){
+                if(!val){
+                    return cb([]);
+                }
+
+                $.ajax({
+                    type: "get",
+                    url: "/common/getAllCityTree?name="+val,
+                    success: function (data) {
+                        cb(data);
+                    }
+                })
+            }
+        })
+        $.ajax({
+            type: "get",
+            url: "/common/getAllCityTree",
+            success: function (data) {
+                sceneCitySelect.update({
+                    data: data
+                })
+                sceneCitySelect.setValue([[${cityIds}]]);
+            }
+        })
+
+
+        var sceneBrandSelect = xmSelect.render({
+            el: '#sceneBrandSelect',
+            filterable: true,
+            autoRow:true,
+            direction: "down",
+            tips: '请选择品牌',
+            toolbar: { show: true },
+            prop: {
+                name: 'name',
+                value: 'id',
+            },
+            data: [
+            ]
+        })
+        $.ajax({
+            type: "get",
+            url: "/scene/getAllBrand",
+            success: function (data) {
+                sceneBrandSelect.update({
+                    data: data
+                })
+                sceneBrandSelect.setValue([[${brandIds}]]);
+            }
+        })
+        var scenePeriodsSelect = xmSelect.render({
+            el: '#scenePeriodsSelect',
+            tips: '请选择场次',
+            direction: "down",
+            filterable: true,
+            radio:true,
+            toolbar: { show: true },
+            prop: {
+                name: 'name',
+                value: 'id',
+            },
+            data: [
+            ],
+            on: function(selected){
+                if(selected.arr.length>0){
+                    $.ajax({
+                        type: "get",
+                        url: "/scene/getPeriodById?id="+selected.arr[0].id,
+                        success: function (data) {
+                            var beginTimeStr
+                            if(data!=""){
+                                beginTimeStr = layui.util.toDateString(data.beginTime, 'yyyy-MM-dd HH:mm:ss');
+                                endTimeStr = layui.util.toDateString(data.endTime, 'yyyy-MM-dd HH:mm:ss');
+                            }else{
+                                beginTimeStr = layui.util.toDateString("", 'yyyy-MM-dd HH:mm:ss');
+                                endTimeStr = layui.util.toDateString("", 'yyyy-MM-dd HH:mm:ss');
+                            }
+                            $("#beginTime").val(beginTimeStr);
+                            $("#endTime").val(endTimeStr);
+                            // 场次活动时间范围
+                            laydate.render({
+                                elem: '#sceneTime'
+                                , type: 'datetime'
+                                , range: true
+                                , value: beginTimeStr + ' - ' + endTimeStr
+                            });
+                        }
+                    })
+                }
+
+            },
+        })
+        $.ajax({
+            type: "get",
+            url: "/scene/getAllPeriod",
+            success: function (data) {
+                scenePeriodsSelect.update({
+                    data: data
+                })
+                scenePeriodsSelect.setValue([periodsId]);
+            }
+        })
+
+        // 场次活动时间范围
+        var beginTime = [[${liveScene.beginTime}]];
+        var endTime = [[${liveScene.endTime}]];
+        var readyBeginTime = [[${liveScene.readyBeginTime}]];
+        var readyEndTime = [[${liveScene.readyEndTime}]];
+        var formalBeginTime = [[${liveScene.formalBeginTime}]];
+        var formalEndTime = [[${liveScene.formalEndTime}]];
+        var beginTimeStr = layui.util.toDateString(beginTime, 'yyyy-MM-dd HH:mm:ss');
+        var endTimeStr = layui.util.toDateString(endTime, 'yyyy-MM-dd HH:mm:ss');
+        if(readyBeginTime != null && readyEndTime != null){
+            var readyBeginTimeStr = layui.util.toDateString(readyBeginTime, 'yyyy-MM-dd HH:mm:ss');
+            var readyEndTimeStr = layui.util.toDateString(readyEndTime, 'yyyy-MM-dd HH:mm:ss');
+        }
+        if(formalBeginTime != null && formalEndTime != null){
+            var formalBeginTimeStr = layui.util.toDateString(formalBeginTime, 'yyyy-MM-dd HH:mm:ss');
+            var formalEndTimeStr = layui.util.toDateString(formalEndTime, 'yyyy-MM-dd HH:mm:ss');
+        }
+        laydate.render({
+            elem: '#sceneTime'
+            , type: 'datetime'
+            , range: true
+            , value: beginTimeStr + ' - ' + endTimeStr
+            , done: function(value, date, endDate){
+                if(value == null || value == ""){
+                    $("#beginTime").val("");
+                    $("#endTime").val("");
+                }else{
+                    var time = value.split(" - ");
+                    $("#beginTime").val(time[0]);
+                    $("#endTime").val(time[1]);
+                }
+            }
+        });
+        // 预热时间范围
+        laydate.render({
+            elem: '#readyTime'
+            , type: 'datetime'
+            , range: true
+            , value: readyBeginTimeStr!=null ? readyBeginTimeStr + ' - ' + readyEndTimeStr : ''
+            , done: function(value, date, endDate){
+                if(value == null || value == ""){
+                    $("#readyBeginTime").val("");
+                    $("#readyEndTime").val("");
+                }else{
+                    var time = value.split(" - ");
+                    $("#readyBeginTime").val(time[0]);
+                    $("#readyEndTime").val(time[1]);
+                }
+            }
+        });
+        // 正式时间范围
+        laydate.render({
+            elem: '#formalTime'
+            , type: 'datetime'
+            , range: true
+            , value: formalBeginTimeStr!=null ? formalBeginTimeStr + ' - ' + formalEndTimeStr : ''
+            , done: function(value, date, endDate){
+                if(value == null || value == ""){
+                    $("#formalBeginTime").val("");
+                    $("#formalEndTime").val("");
+                }else{
+                    var time = value.split(" - ");
+                    $("#formalBeginTime").val(time[0]);
+                    $("#formalEndTime").val(time[1]);
+                }
+            }
+        });
+
+        // 设置下拉框 只保留清空按钮
+        // formSelects.btns('sceneCitySelect', ['remove']);
+        // formSelects.btns('periodsSelect', ['remove']);
+        // formSelects.btns('sceneBrandSelect', ['remove']);
+
+        // 监听提交
+        form.on('submit(submitBtn)', function(data){
+            // 获取关联城市
+            var cityIds = sceneCitySelect.getValue("value");
+            var cityNames = sceneCitySelect.getValue("name");
+            var brandIds = sceneBrandSelect.getValue("value");
+            var brandNames = sceneBrandSelect.getValue("name");
+            // 获取关联场次
+            var periodsId = scenePeriodsSelect.getValue("value");
+            var sceneTitle = $("#sceneTitle").val();
+            var beginTime = $("#beginTime").val();
+            var endTime = $("#endTime").val();
+            var readyBeginTime = $("#readyBeginTime").val();
+            var readyEndTime = $("#readyEndTime").val();
+            var formalBeginTime = $("#formalBeginTime").val();
+            var formalEndTime = $("#formalEndTime").val();
+            var nowTime = layui.util.toDateString(new Date().getTime(), 'yyyy-MM-dd HH:mm:ss');
+            var sendFlag = $('input[name="sendFlag"]:checked').val();
+
+
+            if(periodsId == null || periodsId == ""){
+                layer.msg("请选择关联场次！", {icon: 5});
+                return false;
+            }
+            if(brandIds == null || brandIds.length == 0){
+                layer.msg("请选择关联品牌！", {icon: 5});
+                return false;
+            }
+            if(cityIds == null || cityIds.length == 0){
+                layer.msg("请选择城市！", {icon: 5});
+                return false;
+            }
+            if(beginTime == null || beginTime == "" || endTime == null || endTime == ""){
+                layer.msg("请选择时间范围！", {icon: 5});
+                return false;
+            }
+            // else if(beginTime <= nowTime){
+            //     layer.msg("开始时间需要晚于当前时间！", {icon: 5});
+            //     return false;
+            // }
+
+            if(readyBeginTime == null || readyBeginTime == "" || readyEndTime == null || readyEndTime == ""){
+                layer.msg("请选择预热时间范围！", {icon: 5});
+                return false;
+            }else if(readyBeginTime < beginTime){
+                layer.msg("预热开始时间需要晚于活动开始时间！", {icon: 5});
+                return false;
+            }else if(readyEndTime > endTime){
+                layer.msg("预热结束时间需要早于活动结束时间！", {icon: 5});
+                return false;
+            }
+
+            if(formalBeginTime == null || formalBeginTime == "" || formalEndTime == null || formalEndTime == ""){
+                layer.msg("请选择正式时间范围！", {icon: 5});
+                return false;
+            }else if(readyEndTime > formalBeginTime){
+                layer.msg("预热结束时间需要早于正式开始时间或者等于正式开始时间！", {icon: 5});
+                return false;
+            }else if(formalBeginTime < beginTime){
+                layer.msg("正式开始时间需要晚于活动开始时间！", {icon: 5});
+                return false;
+            }else if(formalEndTime > endTime){
+                layer.msg("正式结束时间需要早于活动结束时间！", {icon: 5});
+                return false;
+            }
+
+            if(sceneTitle == null || sceneTitle == ""){
+                layer.msg("请输入场次活动主题！", {icon: 5});
+                return false;
+            }
+
+            if (sendFlag == undefined) {
+                layer.msg("请选择发送服务通知", {icon: 5});
+                return false;
+            }
+            layer.confirm('修改品牌或者城市可能会对已添加的经销商造成影响，请慎重', {icon: 3, title:'提示'}, function(index){
+                $('#submitBtn').attr('disabled','disabled');
+                var loadIndex = layer.load(1,{
+                    shade: [0.5,'#000']
+                })
+                $.ajax({
+                    type: 'POST',
+                    url: '/scene/updateScene',
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        "periodsId": parseInt(periodsId),
+                        "sceneId":sceneId,
+                        "cityIds": cityIds.toString(),
+                        "cityNames": cityNames,
+                        "brandIds": brandIds,
+                        "brandNames": brandNames,
+                        "sceneTitle": sceneTitle,
+                        "beginTime": beginTime,
+                        "readyBeginTime": readyBeginTime,
+                        "readyEndTime": readyEndTime,
+                        "formalBeginTime": formalBeginTime,
+                        "formalEndTime": formalEndTime,
+                        "endTime": endTime,
+                        "sendFlag": sendFlag
+                    }),
+                    success :function(data){
+                        if (data.code == 200) {
+                            layer.msg("保存成功", {
+                                icon: 6, time: 2000, end: function () {
+                                    parent.location.href = "/scene/toLiveSceneListPage"
+                                }
+                            });
+                        } else {
+                            layer.alert(data.msg == null ? "有一丝丝问题，请联系管理员" : data.msg, {icon: 5});
+                            $('#submitBtn').removeAttr('disabled');
+                        }
+                        layer.close(loadIndex);
+                    },
+                    error :function(e){
+                        console.log(e);
+                        layer.close(loadIndex);
+                        layer.msg("有一丝丝问题，请联系管理员", {icon: 5});
+                        $('#submitBtn').removeAttr('disabled');
+                        return false;
+                    }
+                });
+            });
+
+
+
+            return false;
+        });
+
+        $("#backBtn").on("click",function () {
+            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+            parent.layer.close(index);//关闭弹出的子页面窗口
+        })
+    });
+
+</script>
+</body>
+</html>

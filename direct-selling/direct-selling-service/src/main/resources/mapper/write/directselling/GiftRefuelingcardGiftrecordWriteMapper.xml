@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.GiftRefuelingcardGiftrecordWriteMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.GiftRefuelingcardGiftrecord">
+      <id column="id" property="id" jdbcType="INTEGER" />
+      <result column="dealer_id" property="dealerId" jdbcType="INTEGER" />
+      <result column="dealer_name" property="dealerName" jdbcType="VARCHAR" />
+      <result column="periods_id" property="periodsId" jdbcType="INTEGER" />
+      <result column="periods_name" property="periodsName" jdbcType="VARCHAR" />
+      <result column="order_channel" property="orderChannel" jdbcType="VARCHAR" />
+      <result column="platform_order_id" property="platformOrderId" jdbcType="VARCHAR" />
+      <result column="goods_tb_id" property="goodsTbId" jdbcType="VARCHAR" />
+      <result column="phone" property="phone" jdbcType="VARCHAR" />
+      <result column="name" property="name" jdbcType="VARCHAR" />
+      <result column="refuelingcar_id" property="refuelingcarId" jdbcType="INTEGER" />
+      <result column="send_time" property="sendTime" jdbcType="TIMESTAMP" />
+      <result column="cb_id" property="cbId" jdbcType="INTEGER" />
+      <result column="cb_name" property="cbName" jdbcType="VARCHAR" />
+      <result column="cs_id" property="csId" jdbcType="INTEGER" />
+      <result column="cs_name" property="csName" jdbcType="VARCHAR" />
+      <result column="delete_flag" property="deleteFlag" jdbcType="BIT" />
+      <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+      <result column="create_name" property="createName" jdbcType="VARCHAR" />
+      <result column="update_dt" property="updateDt" jdbcType="TIMESTAMP" />
+      <result column="update_name" property="updateName" jdbcType="VARCHAR" />
+  </resultMap>
+    <insert id="insertGiftRefuelingcardGiftrecord" parameterType="com.tuanche.directselling.model.GiftRefuelingcardGiftrecord"  keyProperty="id" useGeneratedKeys="true">
+        insert into gift_refuelingcard_giftrecord
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="dealerId != null" >
+                dealer_id,
+            </if>
+            <if test="dealerName != null" >
+                dealer_name,
+            </if>
+            <if test="periodsId != null" >
+                periods_id,
+            </if>
+            <if test="periodsName != null" >
+                periods_name,
+            </if>
+            <if test="orderChannel != null" >
+                order_channel,
+            </if>
+            <if test="platformOrderId != null" >
+                platform_order_id,
+            </if>
+            <if test="goodsTbId != null" >
+                goods_tb_id,
+            </if>
+            <if test="phone != null" >
+                phone,
+            </if>
+            <if test="name != null" >
+                name,
+            </if>
+            <if test="orderMoney != null" >
+                order_money,
+            </if>
+            <if test="commodityType != null" >
+                commodity_type,
+            </if>
+            <if test="commodityTypeName != null" >
+                commodity_type_name,
+            </if>
+            <if test="sendTime != null" >
+                send_time,
+            </if>
+            <if test="cbId != null" >
+                cb_id,
+            </if>
+            <if test="cbName != null" >
+                cb_name,
+            </if>
+            <if test="csId != null" >
+                cs_id,
+            </if>
+            <if test="csName != null" >
+                cs_name,
+            </if>
+            <if test="deleteFlag != null" >
+                delete_flag,
+            </if>
+            <if test="createDt != null" >
+                create_dt,
+            </if>
+            <if test="createName != null" >
+                create_name,
+            </if>
+            <if test="updateDt != null" >
+                update_dt,
+            </if>
+            <if test="updateName != null" >
+                update_name,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="dealerId != null" >
+                #{dealerId,jdbcType=INTEGER},
+            </if>
+            <if test="dealerName != null" >
+                #{dealerName,jdbcType=VARCHAR},
+            </if>
+            <if test="periodsId != null" >
+                #{periodsId,jdbcType=INTEGER},
+            </if>
+            <if test="periodsName != null" >
+                #{periodsName,jdbcType=VARCHAR},
+            </if>
+            <if test="orderChannel != null" >
+                #{orderChannel,jdbcType=VARCHAR},
+            </if>
+            <if test="platformOrderId != null" >
+                #{platformOrderId,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsTbId != null" >
+                #{goodsTbId,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null" >
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null" >
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="orderMoney != null" >
+                #{orderMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="commodityType != null" >
+                #{commodityType,jdbcType=VARCHAR},
+            </if>
+            <if test="commodityTypeName != null" >
+                #{commodityTypeName,jdbcType=VARCHAR},
+            </if>
+            <if test="sendTime != null" >
+                #{sendTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="cbId != null" >
+                #{cbId,jdbcType=INTEGER},
+            </if>
+            <if test="cbName != null" >
+                #{cbName,jdbcType=VARCHAR},
+            </if>
+            <if test="csId != null" >
+                #{csId,jdbcType=INTEGER},
+            </if>
+            <if test="csName != null" >
+                #{csName,jdbcType=VARCHAR},
+            </if>
+            <if test="deleteFlag != null" >
+                #{deleteFlag,jdbcType=BIT},
+            </if>
+            <if test="createDt != null" >
+                #{createDt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createName != null" >
+                #{createName,jdbcType=VARCHAR},
+            </if>
+            <if test="updateDt != null" >
+                #{updateDt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateName != null" >
+                #{updateName,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateGiftRefuelingcardGiftrecord" parameterType="com.tuanche.directselling.model.GiftRefuelingcardGiftrecord" >
+        update gift_refuelingcard_giftrecord
+        <set >
+            <if test="dealerId != null" >
+                dealer_id = #{dealerId,jdbcType=INTEGER},
+            </if>
+            <if test="dealerName != null" >
+                dealer_name = #{dealerName,jdbcType=VARCHAR},
+            </if>
+            <if test="periodsId != null" >
+                periods_id = #{periodsId,jdbcType=INTEGER},
+            </if>
+            <if test="periodsName != null" >
+                periods_name = #{periodsName,jdbcType=VARCHAR},
+            </if>
+            <if test="orderChannel != null" >
+                order_channel = #{orderChannel,jdbcType=VARCHAR},
+            </if>
+            <if test="platformOrderId != null" >
+                platform_order_id = #{platformOrderId,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsTbId != null" >
+                goods_tb_id = #{goodsTbId,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null" >
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null" >
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="orderMoney != null" >
+                order_money = #{orderMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="commodityType != null" >
+                commodity_type = #{commodityType,jdbcType=VARCHAR},
+            </if>
+            <if test="commodityTypeName != null" >
+                commodity_type_name = #{commodityTypeName,jdbcType=VARCHAR},
+            </if>
+            <if test="sendTime != null" >
+                send_time = #{sendTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="cbId != null" >
+                cb_id = #{cbId,jdbcType=INTEGER},
+            </if>
+            <if test="cbName != null" >
+                cb_name = #{cbName,jdbcType=VARCHAR},
+            </if>
+            <if test="csId != null" >
+                cs_id = #{csId,jdbcType=INTEGER},
+            </if>
+            <if test="csName != null" >
+                cs_name = #{csName,jdbcType=VARCHAR},
+            </if>
+            <if test="deleteFlag != null" >
+                delete_flag = #{deleteFlag,jdbcType=BIT},
+            </if>
+            <if test="createDt != null" >
+                create_dt = #{createDt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createName != null" >
+                create_name = #{createName,jdbcType=VARCHAR},
+            </if>
+            <if test="updateDt != null" >
+                update_dt = #{updateDt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateName != null" >
+                update_name = #{updateName,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

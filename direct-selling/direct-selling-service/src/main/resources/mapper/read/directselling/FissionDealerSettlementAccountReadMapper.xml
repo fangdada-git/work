@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.FissionDealerSettlementAccountReadMapper" >
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FissionDealerSettlementAccount" >
+      <id column="id" property="id" jdbcType="INTEGER" />
+      <result column="fission_id" property="fissionId" jdbcType="INTEGER" />
+      <result column="dealer_id" property="dealerId" jdbcType="INTEGER" />
+      <result column="account_type" property="accountType" jdbcType="TINYINT" />
+      <result column="bank_name" property="bankName" jdbcType="VARCHAR" />
+      <result column="bank_address" property="bankAddress" jdbcType="VARCHAR" />
+      <result column="bank_card_number" property="bankCardNumber" jdbcType="VARCHAR" />
+      <result column="bank_card_name" property="bankCardName" jdbcType="VARCHAR" />
+      <result column="bank_card_phone" property="bankCardPhone" jdbcType="VARCHAR" />
+      <result column="payment_status" property="paymentStatus" jdbcType="BIT" />
+      <result column="personal_account" property="personalAccount" jdbcType="BIT" />
+      <result column="delete_flag" property="deleteFlag" jdbcType="BIT" />
+      <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+      <result column="create_name" property="createName" jdbcType="VARCHAR" />
+      <result column="update_dt" property="updateDt" jdbcType="TIMESTAMP" />
+      <result column="update_name" property="updateName" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="BaseResultMapDto" type="com.tuanche.directselling.dto.FissionDealerSettlementAccountDto" extends="BaseResultMap">
+      <result column="activity_name" jdbcType="VARCHAR" property="activityName"/>
+      <result column="start_time" jdbcType="TIMESTAMP" property="startTime"/>
+      <result column="end_time" jdbcType="TIMESTAMP" property="endTime"/>
+      <result column="real_income" jdbcType="DECIMAL" property="realIncome"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+      id, fission_id, dealer_id, account_type, bank_name, bank_address, bank_card_number,
+      bank_card_name, bank_card_phone, payment_status, personal_account, delete_flag, create_dt,
+      create_name, update_dt, update_name
+  </sql>
+  <!-- 获取单个结算账户 -->
+  <select id="getDealerSettlementAccountById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+        id, fission_id, dealer_id, account_type, bank_name, bank_address, bank_card_number,
+        bank_card_name, bank_card_phone
+    from fission_dealer_settlement_account
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <!-- 获取单个结算账户 -->
+  <select id="getDealerSettlementAccount" resultMap="BaseResultMap" parameterType="com.tuanche.directselling.model.FissionDealerSettlementAccount" >
+    select
+        id, fission_id, dealer_id, account_type, bank_name, bank_address, bank_card_number,
+        bank_card_name, bank_card_phone
+    from fission_dealer_settlement_account
+    WHERE dealer_id = #{dealerId}
+      AND fission_id = #{fissionId}
+      AND delete_flag = 0
+    LIMIT 1
+  </select>
+    <!-- 获取经销商最后一个结算账户 -->
+  <select id="getDealerLastSettlementAccount" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    SELECT
+        id, fission_id, dealer_id, account_type, bank_name, bank_address, bank_card_number,
+        bank_card_name, bank_card_phone
+     FROM fission_dealer_settlement_account
+    WHERE dealer_id = #{dealerId}
+      AND delete_flag = 0
+     ORDER BY id DESC
+      LIMIT 1
+  </select>
+  <!-- 获取结算账户列表 -->
+  <select id="getSettlementAccountList" resultType="com.tuanche.directselling.dto.FissionDealerSettlementAccountDto" parameterType="com.tuanche.directselling.model.FissionDealerSettlementAccount" >
+      SELECT
+          t1.id, t1.fission_id, t1.dealer_id, t1.account_type, t1.bank_name, t1.bank_address, t1.bank_card_number,
+          t1.bank_card_name, t1.bank_card_phone, t1.payment_status,
+          t2.activity_name,
+          t2.start_time,
+          t2.end_time,
+          (select sum(order_amount) from fission_goods_order_record where fission_id=t1.fission_id and cancel_dealer_id=t1.dealer_id and order_status=4 ) real_income
+      FROM fission_dealer_settlement_account t1
+      LEFT JOIN fission_activity t2 ON t2.id = t1.fission_id
+      where t1.delete_flag = 0
+      <if test="dealerId != null">
+          AND t1.dealer_id = #{dealerId}
+      </if>
+      <if test="fissionId != null">
+          AND t1.fission_id = #{fissionId}
+      </if>
+      ORDER BY t2.end_time DESC
+  </select>
+  <!-- 获取经销商结算账户ID -->
+  <select id="getDealerSettlementAccountId" resultType="integer" parameterType="com.tuanche.directselling.model.FissionDealerSettlementAccount">
+      SELECT
+          t1.id
+      FROM fission_dealer_settlement_account t1
+     WHERE t1.dealer_id = #{dealerId}
+       AND t1.fission_id = #{fissionId}
+       AND t1.delete_flag = 0
+      LIMIT 1
+  </select>
+  <!-- 通过裂变ID获取结算账户信息，返回Map<dealerId,id> -->
+  <select id="getMapByFissionId"  resultType="hashmap">
+      SELECT
+          t1.dealer_id AS dealerId,
+          t1.id
+      FROM fission_dealer_settlement_account t1
+      WHERE t1.fission_id = #{fissionId}
+        AND t1.delete_flag = 0
+  </select>
+</mapper>

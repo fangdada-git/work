@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.AfterSaleUserRewardStatisticsReadMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.AfterSaleUserRewardStatistics">
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="activity_id" property="activityId" jdbcType="INTEGER" />
+    <result column="dealer_id" property="dealerId" jdbcType="INTEGER" />
+    <result column="user_wx_union_id" property="userWxUnionId" jdbcType="VARCHAR" />
+    <result column="user_type" property="userType" jdbcType="TINYINT" />
+    <result column="purchase_reward" property="purchaseReward" jdbcType="DECIMAL" />
+    <result column="share_reward" property="shareReward" jdbcType="DECIMAL" />
+    <result column="extra_reward" property="extraReward" jdbcType="DECIMAL" />
+    <result column="write_off_gift_certificates_total" property="writeOffGiftCertificatesTotal" jdbcType="INTEGER" />
+    <result column="invitees_num" property="inviteesNum" jdbcType="INTEGER" />
+    <result column="payment_successful_amount" property="paymentSuccessfulAmount" jdbcType="DECIMAL" />
+    <result column="payment_failure_amount" property="paymentFailureAmount" jdbcType="DECIMAL" />
+    <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+    <result column="update_dt" property="updateDt" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <resultMap id="DtoResultMap" extends="BaseResultMap" type="com.tuanche.directselling.dto.AfterSaleUserRewardStatisticsDto" >
+    <result column="user_phone" property="userPhone" jdbcType="VARCHAR"/>
+    <result column="licence_plate" property="licencePlate" jdbcType="VARCHAR"/>
+    <result column="activity_name" property="activityName" jdbcType="VARCHAR"/>
+    <result column="order_code" property="orderCode" jdbcType="VARCHAR"/>
+    <result column="pay_time" property="payTime"/>
+    <result column="userNickName" property="userNickName"/>
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    t1.id, t1.activity_id, t1.dealer_id, t1.user_wx_union_id, t1.user_type, t1.purchase_reward, t1.share_reward,
+    t1.extra_reward, t1.write_off_gift_certificates_total, t1.invitees_num, t1.payment_successful_amount, t1.payment_failure_amount,
+    t1.create_dt, t1.update_dt
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from after_sale_user_reward_statistics t1
+    where t1.id = #{id,jdbcType=INTEGER}
+  </select>
+
+   <!-- 批量获取用户的id -->
+  <select id="getStatisticsIds" resultMap="BaseResultMap"  >
+    select
+      id,
+      activity_id,
+      user_wx_union_id
+    from after_sale_user_reward_statistics
+    where
+      (activity_id,user_wx_union_id) IN
+      <foreach collection="list" item="item" open="(" separator="," close=")">
+          (#{item.activityId},#{item.userWxUnionId})
+      </foreach>
+  </select>
+
+  <select id="getStatisticsListByPage" resultMap="DtoResultMap" parameterType="com.tuanche.directselling.dto.AfterSaleUserRewardStatisticsDto">
+    select
+    <include refid="Base_Column_List" />
+    ,t.licence_plate
+    ,t.pay_time
+    ,t3.activity_name
+    ,t.order_code
+    ,IF(t1.user_type=3,t5.phone,t.user_phone) AS user_phone
+    ,t6.nick_name AS userNickName
+    from after_sale_user_reward_statistics t1
+    left join after_sale_activity t3 on  t1.activity_id=t3.id
+    left join after_sale_order_record t ON t.order_type=1 and t.order_status>2 AND t.user_wx_union_id=t1.user_wx_union_id AND t1.activity_id=t.activity_id
+    LEFT JOIN after_sale_agent t5 ON t5.activity_id=t1.activity_id AND t5.agent_wx_union_id = t1.user_wx_union_id AND t5.delete_flag=0
+    LEFT JOIN after_sale_user t6 ON t6.activity_id=t1.activity_id AND t6.user_wx_union_id=t1.user_wx_union_id
+      <where>
+      <if test="activityId != null" >
+        and t1.activity_id = #{activityId,jdbcType=INTEGER}
+      </if>
+      <if test="dealerId != null" >
+        and t1.dealer_id = #{dealerId,jdbcType=INTEGER}
+      </if>
+      <if test="userWxUnionId != null" >
+        and t1.user_wx_union_id = #{userWxUnionId,jdbcType=VARCHAR}
+      </if>
+      <if test="userType != null" >
+        and t1.user_type = #{userType,jdbcType=TINYINT}
+      </if>
+      <if test="userPhone != null and userPhone != ''" >
+        and (t.user_phone LIKE CONCAT("%",#{userPhone},"%") OR t5.phone LIKE CONCAT("%",#{userPhone},"%") )
+      </if>
+      <if test="licencePlate != null and licencePlate != ''" >
+        and t.licence_plate LIKE CONCAT("%",#{licencePlate},"%")
+      </if>
+      <choose>
+          <when test="payTimeStart != null and payTimeStart != '' and payTimeEnd != null and payTimeEnd != ''">
+              AND pay_time BETWEEN #{payTimeStart} AND #{payTimeEnd}
+          </when>
+          <when test="payTimeStart != null and payTimeStart != ''">
+              AND pay_time &gt;= #{payTimeStart}
+          </when>
+          <when test="payTimeEnd != null and payTimeEnd != ''">
+              AND pay_time &lt;= #{payTimeEnd}
+          </when>
+      </choose>
+      <!--<if test="searchList != null and searchList.size>0" >
+        and (t1.activity_id, t1.dealer_id, t1.user_wx_union_id) IN
+        <foreach collection="searchList" item="item" open="(" close=")" separator=",">
+          (#{item.activityId}, #{item.dealerId},#{item.userWxUnionId})
+        </foreach>
+      </if>-->
+    </where>
+  </select>
+
+  <select id="getStatisticsCountMap" parameterType="com.tuanche.directselling.dto.AfterSaleUserRewardStatisticsDto" resultType="java.util.HashMap">
+    SELECT
+    COUNT(t1.id) userPaySum,                                                        <!--用户总数-->
+    SUM(t1.purchase_reward) purchaseRewardSum,                                      <!--购买奖励-->
+    SUM(t1.share_reward) shareRewardSum,                                            <!--分享奖励-->
+    SUM(t1.extra_reward) extraReward,                                               <!--额外奖励-->
+    SUM(t1.extra_reward+t1.share_reward+t1.purchase_reward) rewardSun,              <!--累计奖励-->
+    SUM(t1.invitees_num) inviteesNumSum,                                            <!--邀请人数-->
+    SUM(t1.write_off_gift_certificates_total) writeOffGiftCertificatesTotalSum,     <!--核销了的礼品券总数-->
+    SUM(t1.payment_successful_amount) paymentSuccessfulAmountSum,                   <!--支付成功金额-->
+    SUM(t1.payment_failure_amount) paymentFailureAmountSum                          <!--支付失败金额-->
+    FROM after_sale_user_reward_statistics t1
+    left join after_sale_order_record t ON t.order_type=1 and t.order_status>2 AND t.user_wx_union_id=t1.user_wx_union_id AND t1.activity_id=t.activity_id
+    <where>
+      <if test="activityId != null" >
+        AND t1.activity_id = #{activityId,jdbcType=INTEGER}
+      </if>
+      <if test="dealerId != null" >
+        AND t1.dealer_id = #{dealerId,jdbcType=INTEGER}
+      </if>
+      <if test="userWxUnionId != null" >
+        AND t1.user_wx_union_id = #{userWxUnionId,jdbcType=VARCHAR}
+      </if>
+      <if test="userType != null" >
+        AND t1.user_type = #{userType,jdbcType=TINYINT}
+      </if>
+        <if test="userPhone != null and userPhone != ''" >
+            and t.user_phone LIKE CONCAT("%",#{userPhone},"%")
+        </if>
+        <if test="licencePlate != null and licencePlate != ''" >
+            and t.licence_plate LIKE CONCAT("%",#{licencePlate},"%")
+        </if>
+      <!--<if test="searchList != null and searchList.size>0" >
+        and (t1.activity_id, t1.dealer_id, t1.user_wx_union_id) IN
+        <foreach collection="searchList" item="item" open="(" close=")" separator=",">
+          (#{item.activityId}, #{item.dealerId},#{item.userWxUnionId})
+        </foreach>
+      </if>-->
+    </where>
+  </select>
+
+</mapper>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.AfterSaleUserBrowseReadMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.AfterSaleUserBrowse">
+    <!--@mbg.generated-->
+    <!--@Table after_sale_user_browse-->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="activity_id" jdbcType="INTEGER" property="activityId" />
+    <result column="agent_wx_union_id" jdbcType="CHAR" property="agentWxUnionId" />
+    <result column="share_wx_union_id" jdbcType="CHAR" property="shareWxUnionId" />
+    <result column="user_wx_union_id" jdbcType="CHAR" property="userWxUnionId" />
+    <result column="page_url" jdbcType="VARCHAR" property="pageUrl" />
+    <result column="ip" jdbcType="VARCHAR" property="ip" />
+    <result column="chanel" jdbcType="TINYINT" property="chanel" />
+    <result column="create_dt" jdbcType="TIMESTAMP" property="createDt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, activity_id, agent_wx_union_id, share_wx_union_id, user_wx_union_id,
+    page_url, ip, chanel, create_dt
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from after_sale_user_browse
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectLatestIdByTime" resultType="java.lang.Integer">
+    select max(id) from after_sale_user_browse where create_dt &gt;=#{startTime} and create_dt &lt;=#{endTime}
+  </select>
+
+  <select id="selectPageView" resultType="com.tuanche.directselling.dto.AfterSaleUserBrowseStatDto">
+    select agent_wx_union_id,count(*) as `value` from after_sale_user_browse where
+    activity_id=#{activityId} and agent_wx_union_id=share_wx_union_id and agent_wx_union_id is not null and agent_wx_union_id&lt;&gt;''
+    <if test="startTime != null">
+      and create_dt &gt;=#{startTime}
+    </if>
+    <if test="endTime != null">
+      and create_dt &lt;=#{endTime}
+    </if>
+    group by agent_wx_union_id
+  </select>
+
+  <select id="selectUniqueVisit" resultType="com.tuanche.directselling.dto.AfterSaleUserBrowseStatDto">
+    select agent_wx_union_id,count(distinct user_wx_union_id) as `value` from after_sale_user_browse where
+    activity_id=#{activityId} and agent_wx_union_id=share_wx_union_id and agent_wx_union_id is not null and agent_wx_union_id&lt;&gt;''
+    <if test="startTime != null">
+      and create_dt &gt;=#{startTime}
+    </if>
+    <if test="endTime != null">
+      and create_dt &lt;=#{endTime}
+    </if>
+    group by agent_wx_union_id
+  </select>
+
+  <select id="selectPageViewSum" resultType="java.lang.Integer">
+    select count(*) from after_sale_user_browse where
+    user_wx_union_id is not null and user_wx_union_id&lt;&gt;''
+    <if test="dealerId != null">
+      and activity_id in (select id from after_sale_activity where dealer_id=#{dealerId})
+    </if>
+    <if test="activityId != null">
+      and activity_id = #{activityId}
+    </if>
+    <if test="startTime != null">
+      and create_dt &gt;=#{startTime}
+    </if>
+    <if test="endTime != null">
+      and create_dt &lt;=#{endTime}
+    </if>
+    </select>
+
+  <select id="selectUniqueVisitSum" resultType="java.lang.Integer">
+    select count(distinct user_wx_union_id) from after_sale_user_browse where
+    user_wx_union_id is not null and user_wx_union_id&lt;&gt;''
+    <if test="dealerId != null">
+      and activity_id in (select id from after_sale_activity where dealer_id=#{dealerId})
+    </if>
+    <if test="activityId != null">
+      and activity_id = #{activityId}
+    </if>
+    <if test="startTime != null">
+      and create_dt &gt;=#{startTime}
+    </if>
+    <if test="endTime != null">
+      and create_dt &lt;=#{endTime}
+    </if>
+  </select>
+<!--活动的浏览数量统计-->
+    <select id="activityBrowseTotalMap" resultType="com.tuanche.directselling.dto.ResultMapDto">
+      SELECT
+      activity_id as mapKey,
+      COUNT(1) AS mapValue
+      FROM
+      after_sale_user_browse
+      WHERE
+      activity_id IN
+      <foreach collection="activityIds" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+      GROUP BY activity_id
+    </select>
+
+  <select id="selectPeriodUniqueVisit" resultType="com.tuanche.directselling.dto.AfterSaleUserBrowseStatPeriodDto">
+    select DATE_ADD(
+    date_format(create_dt, '%Y-%m-%d %H:00:00'),
+    INTERVAL (FLOOR(date_format(create_dt, '%i') / 15 + 1) * 15) MINUTE
+    ) date_time,
+    (select count(DISTINCT user_wx_union_id) from after_sale_user_browse where activity_id =#{activityId} AND agent_wx_union_id IS NOT NULL AND agent_wx_union_id &lt;&gt; '' and agent_wx_union_id = share_wx_union_id and create_dt&lt;date_time) as `value` from after_sale_user_browse where
+    activity_id=#{activityId} and agent_wx_union_id is not null and agent_wx_union_id&lt;&gt;'' and agent_wx_union_id = share_wx_union_id
+    and create_dt &lt;#{endTime}
+    group by date_time
+  </select>
+
+  <select id="selectUniqueVisitTotal" resultType="int">
+    select count(distinct user_wx_union_id) from after_sale_user_browse where
+    activity_id=#{activityId} and agent_wx_union_id is not null and agent_wx_union_id&lt;&gt;'' and agent_wx_union_id = share_wx_union_id
+    and create_dt &gt;=#{startTime} and create_dt &lt;#{endTime}
+  </select>
+</mapper>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.FissionGoodsHelperWriteMapper" >
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FissionGoodsHelper" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="goods_id" property="goodsId" jdbcType="INTEGER" />
+    <result column="peroids_id" property="peroidsId" jdbcType="INTEGER" />
+    <result column="fission_id" property="fissionId" jdbcType="INTEGER" />
+    <result column="flag" property="flag" jdbcType="BIT" />
+    <result column="helper_num" property="helperNum" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, goods_id, peroids_id, fission_id, flag, helper_num
+  </sql>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from fission_goods_helper
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insertSelective" parameterType="com.tuanche.directselling.model.FissionGoodsHelper" useGeneratedKeys="true" keyProperty="id" >
+    insert into fission_goods_helper
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="goodsId != null" >
+        goods_id,
+      </if>
+      <if test="peroidsId != null" >
+        peroids_id,
+      </if>
+      <if test="fissionId != null" >
+        fission_id,
+      </if>
+      <if test="flag != null" >
+        flag,
+      </if>
+      <if test="helperNum != null" >
+        helper_num,
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="goodsId != null" >
+        #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="peroidsId != null" >
+        #{peroidsId,jdbcType=INTEGER},
+      </if>
+      <if test="fissionId != null" >
+        #{fissionId,jdbcType=INTEGER},
+      </if>
+      <if test="flag != null" >
+        #{flag,jdbcType=BIT},
+      </if>
+      <if test="helperNum != null" >
+        #{helperNum,jdbcType=INTEGER},
+      </if>
+      <if test="deleteFlag != null" >
+        #{deleteFlag},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.FissionGoodsHelper" >
+    update fission_goods_helper
+    <set >
+      <if test="goodsId != null" >
+        goods_id = #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="peroidsId != null" >
+        peroids_id = #{peroidsId,jdbcType=INTEGER},
+      </if>
+      <if test="fissionId != null" >
+        fission_id = #{fissionId,jdbcType=INTEGER},
+      </if>
+      <if test="flag != null" >
+        flag = #{flag,jdbcType=BIT},
+      </if>
+      <if test="helperNum != null" >
+        helper_num = #{helperNum,jdbcType=INTEGER},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

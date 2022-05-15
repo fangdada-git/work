@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>团车直卖-套餐管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.js"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/magnify/css/jquery.magnify.css">
+    <script src="/layui/js/formSelects-v4.js"></script>
+    <link rel="stylesheet" href="/layui/css/formSelects-v4.css" media="all">
+    <script src="/layui/js/tableSelect.js"></script>
+    <style type="text/css">
+        .layui-table-header .layui-table tr {
+            height: auto;
+            line-height: 50px;
+        }
+
+        .layui-table-cell {
+            height: auto;
+        }
+
+        .layui-table-col-special {
+            height: auto;
+        }
+
+        .layui-table tr {
+            height: 65px
+        }
+
+        /*.layui-form-label {
+            width: 120px;
+        }*/
+
+        .layui-input {
+            width: 200px;
+        }
+    </style>
+</head>
+<body class="childrenBody">
+<div class="layui-card-header">活动名称：[[${afterSaleActivity.activityName}]]
+</div>
+<form class="layui-form" style="background-color: #ffffff;">
+    <blockquote class="layui-elem-quote quoteBox">
+        <div class="layui-form-item" >
+            <div class="layui-inline">
+                <label class="layui-form-label">套餐名称：</label>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input commodityName" id="commodityName" placeholder="输入套餐名称"/>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">一级标签：</label>
+                <div class="layui-input-inline" style="margin-left: 10px; width: 180px;">
+                    <select id="primaryLabelId" name="primaryLabelId"  xm-select="primaryLabelId"
+                            xm-select-radio="">
+                        <option value="">请选一级标签</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">二级标签：</label>
+                <div class="layui-input-inline" style="margin-left: 10px; width: 180px;">
+                    <select id="activityId" name="activityId"  xm-select="secondaryLabelId" xm-select-search="" xm-select-search-type="dl"
+                            xm-select-radio="">
+                        <option value="">请选二级标签</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <div class="layui-input-block" style="margin-left: 10px;">
+                    <a class="layui-btn layui-btn-radius add_btn" id="search" href="javascript:;"><i
+                            class="layui-icon layui-icon-search"></i>搜索</a>
+                </div>
+
+            </div>
+            <div class="layui-inline">
+                <button type="button" id="packageGoodsId"  class="layui-btn layui-btn-normal">添加套餐</button>
+                <button type="button" onclick="packageLabel()"  class="layui-btn layui-btn-normal">标签管理</button>
+            </div>
+        </div>
+    </blockquote>
+    <table id="afterSaleActivityPackageList" lay-filter="afterSaleActivityPackageTool"></table>
+</form>
+<!-- 表格操作列按钮 -->
+<script type="text/html" id="barBtn0">
+        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">  <i class="layui-icon layui-icon-edit">编辑抵用券</i></a>
+        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="labelConfig">  <i class="layui-icon layui-icon-edit">设置标签</i></a>
+        <br/>
+        <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="delete"> <i class="layui-icon layui-icon-delete">删除</i></a>
+</script>
+
+
+
+<script type="text/javascript" src="/common/js/tools.js"></script>
+<!-- layui 初始化 -->
+<script type="text/javascript" th:inline="javascript">
+    layui.use(['form', 'layer', 'table', 'laydate', 'upload'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            table = layui.table,
+            tableSelect = layui.tableSelect,
+            laydate = layui.laydate;
+        var activityId = [[${afterSaleActivity.id}]];
+        var onOpen = [[${afterSaleActivity.onState}]];
+
+
+        // 售后特卖卡券列表
+        var tableIns = table.render({
+            elem: '#afterSaleActivityPackageList',
+            url: '/afterSale/activity/getActivityPackageList?activityId=' + activityId,
+            page: true,
+            height: "full-125",
+            limits: [10, 20, 50, 100],
+            limit: 10,
+            id: "afterSalePackageListTable",
+            cols: [
+                [
+                    {field: 'commodityName', title: '套餐名称', minWidth: 180, align: "center"},
+                    {field: 'commodityPrice', title: '售价', minWidth: 40, align: "center"},
+                    {field: 'originalPrice', title: '划线价', minWidth: 40, align: "center"},
+                    {field: 'commodityCount', title: '库存', minWidth: 40, align: "center"},
+                    {field: 'couponCount', title: '包含抵用券数', minWidth: 120, align: "center"},
+                    {
+                        field: 'relTime', title: '所属标签', minWidth: 160, align: 'center',templet:function(d){
+                            if(d.labels && d.labels.length > 0){
+                                var lab='';
+                                for (var i = 0; i < d.labels.length; i++) {
+                                    var secondaryLabelName = d.labels[i].secondaryLabelName;
+                                    lab+=d.labels[i].primaryLabelName+(secondaryLabelName?"/"+secondaryLabelName:"")+"；";
+                                }
+                                return lab;
+                            }else{
+                                return "-";
+                            }
+                        }
+                    },
+                    {
+                        field: 'relTime', title: '上架时间', minWidth: 260, align: 'center',templet:function(d){
+                            return layui.util.toDateString(d.upShelfTime, "yyyy-MM-dd HH:mm:ss");
+                        }
+                    },
+                    {
+                        field: 'relTime', title: '下架时间', minWidth: 260, align: 'center',templet:function(d){
+                            return layui.util.toDateString(d.downShelfTime, "yyyy-MM-dd HH:mm:ss");
+                        }
+                    },
+                    {fixed: 'right', title: '操作', minWidth: 260, align: 'center', toolbar: '#barBtn0'}
+                ]
+            ]
+        });
+        tableSelect.render({
+            elem: '#packageGoodsId',
+            checkedKey: 'commodityId',
+            table: {
+                url: '/afterSale/activity/getAfterSaleProductList?commodityType=PACKAGE_CARD',
+                cols: [
+                    [
+                        {type: 'radio'},
+                        {field: 'commodityId', title: 'Id', width: 100},
+                        {field: 'commodityName', title: '名称', width: 200},
+                        {
+                            field: 'commodityType', title: '类型', width: 120, align: "center", templet: function (d) {
+                                if (d.commodityType != null) {
+                                    if (d.commodityType == 'VOUCHER') return '代金券';
+                                    if (d.commodityType == 'STORE_GIFT') return '到店礼';
+                                    if (d.commodityType == 'FIXED_PRICE') return '一口价';
+                                    if (d.commodityType == 'PREFERENTIAL') return '购车优惠';
+                                    if (d.commodityType == 'GENERAL') return '普通商品';
+                                    if (d.commodityType == 'SECKILL') return '秒杀商品';
+                                    if (d.commodityType == 'GROUP_BUYING') return '拼团商品';
+                                    if (d.commodityType == 'CAR_GIFT') return '购车礼';
+                                    if (d.commodityType == 'CAR_COUPON') return '购车抵扣券';
+                                    if (d.commodityType == 'FLOW_CARD') return '引流卡';
+                                    if (d.commodityType == 'PACKAGE_CARD') return '套餐卡';
+                                }
+                                return '其他';
+                            }
+                        },
+                        {field: 'commodityCount', title: '库存', minWidth: 100, align: "center"},
+                        {field: 'commodityPrice', title: '售价', minWidth: 100, align: "center"},
+                        {
+                            field: '', title: '商品状态', minWidth: 100, align: 'center', templet: function (d) {
+                                if (d.statusEnum != null && d.statusEnum == 'ONSALE') {
+                                    return '上架中';
+                                } else if (d.statusEnum != null && d.statusEnum == 'STORAGE') {
+                                    return '未上架';
+                                }
+                                return '未知';
+                            }
+                        }
+                    ]
+                ]
+            },
+            done: function (elem, data) {
+                layui.each(data.data, function (index, item) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/afterSale/activity/addActivityPackage?goodsId=' + item.commodityId + "&activityId=" + activityId,
+                        contentType: "application/json",
+                        success: function (data) {
+                            if (data.code == 200) {
+                                layer.msg("保存成功", {
+                                    icon: 6, time: 2000, end: function () {
+                                        reloadTable();
+                                    }
+                                });
+                            } else {
+                                layer.alert(data.msg == null ? "有一丝丝问题，请联系管理员" : data.msg, {icon: 5});
+                                reloadTable();
+                            }
+                        }
+                    });
+                })
+            },
+
+
+        })
+
+        // 操作事件
+        table.on('tool(afterSaleActivityPackageTool)', function (obj) {
+            var data = obj.data;
+            if (obj.event == 'labelConfig') {
+                commOpen("设置标签", "/afterSale/packageLabel/package/config?packageId=" + data.id+ "&activityId=" + activityId,'90%','400px');
+            } else if (obj.event == 'edit') {
+                commOpen("套餐抵用券管理", "/afterSale/activity/toActivityCouponList?type=2&packageId=" + data.id + "&activityId=" + activityId,'100%','100%');
+            } else if (obj.event == 'delete') {
+                //产品同意开启中可以修改删除
+                /*if(onOpen == 1){
+                    layer.msg("活动开启中，不允许此操作", {icon: 5});
+                    return false;
+                }*/
+                layer.confirm('确定删除该套餐吗?', {icon: 3, title: '提示'}, function (index) {
+                    $.ajax({
+                        type: 'post',
+                        url: '/afterSale/activity/deleteActivityPackage',
+                        dataType: 'json',
+                        data: {packageId: data.id},
+                        success: function (s) {
+                            var icon = 5;
+                            layer.alert(s.msg, {icon: icon, title: '提示'}, function (i) {
+                                //关闭弹窗
+                                layer.close(i);
+                                reloadTable();
+                            });
+                        },
+                        error: function (e) {
+                            layer.alert('网络繁忙', {icon: 5, title: '提示'});
+                        }
+                    })
+                    layer.close(index);
+                })
+            }
+            });
+        getLabels();
+        function getLabels(){
+            layui.formSelects.data('secondaryLabelId', 'local', {
+                arr: {}
+            });
+            layui.formSelects.data('secondaryLabelId', 'local', {
+                arr: {}
+            });
+            $.ajax({
+                url:'/afterSale/packageLabel/config/getLabel',
+                data:{activityId:activityId},
+                success:function(data){
+                    if(data&&data.length > 0){
+                        var arr = [];
+                        for (var i = 0; i < data.length; i++) {
+                            arr.push({"name": data[i].labelName, "value": data[i].id,"secondaryLabels":data[i].secondaryLabels});
+                        }
+                        layui.formSelects.data('primaryLabelId', 'local', {
+                            arr: arr
+                        });
+                    }
+                }
+            });
+        }
+        layui.formSelects.on('primaryLabelId', function (id, vals, val, isAdd, isDisabled) {
+            if(isAdd && val.secondaryLabels && val.secondaryLabels.length>0){
+                var arr = [];
+                var data = val.secondaryLabels;
+                for (var i = 0; i < data.length; i++) {
+                    arr.push({"name": data[i].labelName, "value": data[i].id});
+                }
+                layui.formSelects.data('secondaryLabelId', 'local', {
+                    arr: arr
+                });
+            }else{
+                layui.formSelects.data('secondaryLabelId', 'local', {
+                    arr: {}
+                });
+            }
+        });
+        //添加卡券
+        window.addActivityCoupon = function() {
+            commOpen('添加抵用券','/afterSale/activity/toAddCouponPage?activityId=' + activityId ,'780px','490px')
+        }
+        //管理标签
+        window.packageLabel = function() {
+            layer.open({
+                title: '标签管理',
+                type: 2,
+                shadeClose: true,
+                content: '/afterSale/packageLabel/config/index?activityId=' + activityId,
+                area: ['90%', '400px'],
+                end:function(){
+                    getLabels();
+                    reloadTable();
+                }
+            });
+        }
+
+        window.commOpen = function (title, url, width, height) {
+            layer.open({
+                title: title,
+                type: 2,
+                shadeClose: true,
+                content: url,
+                area: [width, height]
+            });
+        }
+        function getData (){
+            var commodityName = $("#commodityName").val();
+            var primaryLabelId = layui.formSelects.value("primaryLabelId", "val");
+            var secondaryLabelId = layui.formSelects.value("secondaryLabelId", "val");
+            return {
+                "activityId": activityId,
+                "commodityName": commodityName,
+                "primaryLabelId": primaryLabelId != "" ? parseInt(primaryLabelId) : null,
+                "secondaryLabelId": secondaryLabelId != "" ? parseInt(secondaryLabelId) : null,
+            }
+        }
+        window.reloadTable = function(){
+
+            table.reload("afterSalePackageListTable", {
+                /*page: {
+                    curr: 1 //重新从第 1 页开始
+                },*/
+                where: getData()
+            })
+        }
+        window.setOnOpen=function(data){
+            onOpen=data;
+        }
+        //搜索
+        $("#search").on("click", function () {
+            reloadTable();
+        });
+    })
+
+</script>
+</body>
+</html>

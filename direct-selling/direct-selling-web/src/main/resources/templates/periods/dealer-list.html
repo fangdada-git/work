@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>团车直卖-场次经销商列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.js"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/magnify/css/jquery.magnify.css" >
+    <script src="/layui/js/formSelects-v4.js"></script>
+    <link rel="stylesheet" href="/layui/css/formSelects-v4.css" media="all">
+    <style type="text/css">
+        .layui-table-header .layui-table tr {
+            height: auto;
+            line-height: 50px;
+        }
+        .layui-table-cell {
+            height: auto;
+        }
+        .layui-table-col-special {
+            height: auto;
+        }
+        .layui-table tr{height: 65px}
+        /*#addtmp .layui-input,#addtmp .layui-textarea, #addtmp .layui-form-select, #addtmp .layui-select-title{width: 50%}*/
+    </style>
+</head>
+<body class="childrenBody">
+<form class="layui-form" style="background-color: #ffffff;">
+    <blockquote class="layui-elem-quote quoteBox">
+        <form class="layui-form">
+            <div class="layui-inline">
+                <div class="layui-input-inline" style="width: 260px;">
+                    <select name="periodsSelect" xm-select="periodsSelect" xm-select-search="" xm-select-search-type="dl" xm-select-radio="">
+                        <option value="">请选择直播场次</option>
+                        <option th:each="scene : ${periodsList}" th:value="${scene.id}" th:text="${scene.name}"></option>
+                    </select>
+                </div>
+
+                <div class="layui-input-inline" style="width: 260px;">
+                    <select name="sceneSelect" xm-select="sceneSelect" xm-select-search="" xm-select-search-type="dl" xm-select-radio="">
+                    </select>
+                </div>
+
+                <div class="layui-input-inline" style="width: 260px;">
+                    <input type="text" class="layui-input dealerName" id="dealerName" placeholder="请输入经销商名称"/>
+                </div>
+            </div>
+            <div style="padding-left: 220px" class="layui-inline">
+                <a class="layui-btn search_btn" data-type="reload"><i class="layui-icon layui-icon-search"></i>查询</a>
+                <a class="layui-btn export_btn" data-type="reload"><i class="layui-icon layui-icon-search"></i>导出数据</a>
+            </div>
+        </form>
+    </blockquote>
+    <table id="dealerList" lay-filter="dealerTool"></table>
+</form>
+
+<script type="text/javascript" src="/common/js/tools.js"></script>
+
+<!-- layui 初始化 -->
+<script type="text/javascript" th:inline="javascript">
+    layui.use(['form','layer','table'],function(){
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            table = layui.table,
+            formSelects = layui.formSelects
+
+        var tableIns = table.render({
+            elem: '#dealerList',
+            url : '/periods/searchdealerlist',
+            cellMinWidth : 95,
+            page : true,
+            height : "full-125",
+            limits : [10,20,50,100],
+            limit : 10,
+            id : "dealerListTable",
+            cols: [
+                [
+                    {field: 'periodsName', title: '直播场次', minWidth: 100, align: "center"},
+                    {field: 'sceneTitle', title: '直播活动', minWidth: 100, align: "center"},
+                    {field: 'brandNames', title: '直播品牌', minWidth: 100, align: "center"},
+                    {field: 'cityName', title: '城市', minWidth: 100, align: "center"},
+                    {field: 'dealerName', title: '经销商名称', minWidth: 160, align: "center"},
+                    {field: 'contractDealerName', title: '合同全称', minWidth: 160, align: "center"},
+                ]
+            ]
+        });
+
+
+        // 获取搜索表单
+        function getSearchInput(){
+            // 获取场次活动名称
+            var dealerName = $("#dealerName").val();
+            if (dealerName != null && dealerName != undefined) {
+                dealerName = dealerName.trim();
+            }
+            var periodsId = layui.formSelects.value("periodsSelect","val");
+            var sceneId = layui.formSelects.value("sceneSelect","val");
+            var params = {"dealerName":dealerName, "periodsId": periodsId!="" ? parseInt(periodsId) : null, "sceneId": sceneId!="" ? parseInt(sceneId) : null};
+            return params;
+        }
+
+        //搜索
+        $(".search_btn").on("click",function(){
+            var params = getSearchInput();
+            table.reload("dealerListTable",{
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: params
+            })
+        });
+
+        //导出
+        $(".export_btn").on("click",function(){
+            var url = '/periods/dealerlist/export';
+            var dealerName = $("#dealerName").val();
+            if (dealerName != null && dealerName != undefined && dealerName != "") {
+                url += '?dealerName='+dealerName.trim();
+            }
+            var periodsId = layui.formSelects.value("periodsSelect","val");
+            if(periodsId != null && periodsId != undefined){
+                if (url.indexOf("?")>-1) url += '&periodsId='+periodsId;
+                if (url.indexOf("?")==-1) url += '?periodsId='+periodsId;
+            }
+
+            var sceneId = layui.formSelects.value("sceneSelect","val");
+            if(sceneId != null && sceneId != undefined){
+                if (url.indexOf("?")>-1) url += '&sceneId='+sceneId;
+                if (url.indexOf("?")==-1) url += '?sceneId='+sceneId;
+            }
+
+            window.location.href = url;
+        });
+
+        // 场次下拉框选择事件
+        formSelects.on('periodsSelect', function(id, vals, val, isAdd, isDisabled){
+            // 加载活动列表
+            layui.formSelects.render('sceneSelect');
+            //选中值才会触发
+            if(vals.length >0){
+                layui.formSelects.config('sceneSelect', {
+                    beforeSuccess: function(id, url, searchVal, result){
+                        var sceneList = new Array();
+                        $.each(result, function(index, item) {
+                            var sceneJson = {"name":item.sceneTitle,"value":item.id};
+                            sceneList.push(sceneJson);
+                        });
+                        return sceneList;
+                    },
+                    success: function(){
+                    }
+                }).data('sceneSelect', 'server', {
+                    url: '/scene/selectlist',
+                    data: {periodsId: val.value}
+                });
+            }
+        },true);
+
+        function alterError(msg){
+            layer.msg(msg,{icon : 2,time : 2000});
+        }
+        function alterSuccess(msg){
+            layer.msg(msg,{icon : 1,time : 2000});
+        }
+    })
+
+</script>
+</body>
+</html>

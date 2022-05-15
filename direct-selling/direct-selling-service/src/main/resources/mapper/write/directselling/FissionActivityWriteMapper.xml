@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.FissionActivityWriteMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FissionActivity">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="periods_id" jdbcType="INTEGER" property="periodsId" />
+    <result column="periods_name" jdbcType="VARCHAR" property="periodsName" />
+    <result column="scene_id" jdbcType="INTEGER" property="sceneId" />
+    <result column="activity_name" jdbcType="VARCHAR" property="activityName" />
+    <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="on_state" jdbcType="SMALLINT" property="onState" />
+    <result column="broadcast_room_id" jdbcType="INTEGER" property="broadcastRoomId" />
+    <result column="head_pic_url" jdbcType="VARCHAR" property="headPicUrl" />
+    <result column="share_pic_url" jdbcType="VARCHAR" property="sharePicUrl" />
+    <result column="detail_pic_urls" jdbcType="VARCHAR" property="detailPicUrls" />
+    <result column="poster_url" jdbcType="VARCHAR" property="posterUrl" />
+    <result column="product_title_url" jdbcType="VARCHAR" property="productTitleUrl" />
+    <result column="reserve_phone" jdbcType="SMALLINT" property="reservePhone" />
+    <result column="c_award_flag" jdbcType="TINYINT" property="cAwardFlag" />
+    <result column="wechat_title" jdbcType="VARCHAR" property="wechatTitle" />
+    <result column="wechat_description" jdbcType="VARCHAR" property="wechatDescription" />
+    <result column="wechat_pic" jdbcType="VARCHAR" property="wechatPic" />
+    <result column="delete_flag" jdbcType="TINYINT" property="deleteFlag" />
+    <result column="ctreate_by" jdbcType="INTEGER" property="ctreateBy" />
+    <result column="ctreate_dt" jdbcType="TIMESTAMP" property="ctreateDt" />
+    <result column="update_by" jdbcType="INTEGER" property="updateBy" />
+    <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, periods_id, periods_name,scene_id, activity_name, start_time, end_time, on_state, broadcast_room_id,
+    head_pic_url,share_pic_url, detail_pic_urls, poster_url, product_title_url, reserve_phone,c_award_flag,wechat_title, wechat_description, wechat_pic, delete_flag, ctreate_by,
+    ctreate_dt, update_by, update_dt
+  </sql>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from fission_activity
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tuanche.directselling.model.FissionActivity">
+    insert into fission_activity (id, periods_id, periods_name,  scene_id,
+      activity_name, start_time, end_time, 
+      on_state, broadcast_room_id, head_pic_url, share_pic_url,
+      detail_pic_urls, poster_url, product_title_url, reserve_phone,c_award_flag,
+      wechat_title, wechat_description, wechat_pic,
+      delete_flag, ctreate_by, ctreate_dt, 
+      update_by, update_dt)
+    values (#{id,jdbcType=INTEGER}, #{periodsId,jdbcType=INTEGER}, #{periodsName,jdbcType=VARCHAR},  #{sceneId,jdbcType=INTEGER},
+      #{activityName,jdbcType=VARCHAR}, #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, 
+      #{onState,jdbcType=SMALLINT}, #{broadcastRoomId,jdbcType=INTEGER}, #{headPicUrl,jdbcType=VARCHAR}, #{sharePicUrl,jdbcType=VARCHAR},
+      #{detailPicUrls,jdbcType=VARCHAR}, #{posterUrl,jdbcType=VARCHAR}, #{productTitleUrl,jdbcType=VARCHAR},
+      #{reservePhone,jdbcType=SMALLINT},#{cAwardFlag,jdbcType=TINYINT},
+      #{wechatTitle,jdbcType=VARCHAR}, #{wechatDescription,jdbcType=VARCHAR}, #{wechatPic,jdbcType=VARCHAR},
+      #{deleteFlag,jdbcType=TINYINT}, #{ctreateBy,jdbcType=INTEGER}, #{ctreateDt,jdbcType=TIMESTAMP}, 
+      #{updateBy,jdbcType=INTEGER}, #{updateDt,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.tuanche.directselling.model.FissionActivity"  keyProperty="id" useGeneratedKeys="true">
+    insert into fission_activity
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="periodsId != null">
+        periods_id,
+      </if>
+      <if test="periodsName != null">
+        periods_name,
+      </if>
+      <if test="sceneId != null">
+        scene_id,
+      </if>
+      <if test="activityName != null">
+        activity_name,
+      </if>
+      <if test="startTime != null">
+        start_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+      <if test="onState != null">
+        on_state,
+      </if>
+      <if test="broadcastRoomId != null">
+        broadcast_room_id,
+      </if>
+      <if test="headPicUrl != null">
+        head_pic_url,
+      </if>
+      <if test="sharePicUrl != null">
+        share_pic_url,
+      </if>
+      <if test="detailPicUrls != null">
+        detail_pic_urls,
+      </if>
+      <if test="posterUrl != null">
+        poster_url,
+      </if>
+      <if test="productTitleUrl != null">
+        product_title_url,
+      </if>
+      <if test="reservePhone != null">
+        reserve_phone,
+      </if>
+      <if test="cAwardFlag != null">
+        c_award_flag,
+      </if>
+      <if test="wechatTitle != null">
+        wechat_title,
+      </if>
+      <if test="wechatDescription != null">
+        wechat_description,
+      </if>
+      <if test="wechatPic != null">
+        wechat_pic,
+      </if>
+      <if test="deleteFlag != null">
+        delete_flag,
+      </if>
+      <if test="ctreateBy != null">
+        ctreate_by,
+      </if>
+      <if test="ctreateDt != null">
+        ctreate_dt,
+      </if>
+      <if test="updateBy != null">
+        update_by,
+      </if>
+      <if test="updateDt != null">
+        update_dt,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="periodsId != null">
+        #{periodsId,jdbcType=INTEGER},
+      </if>
+      <if test="periodsName != null">
+        #{periodsName,jdbcType=VARCHAR},
+      </if>
+      <if test="sceneId != null">
+        #{sceneId,jdbcType=INTEGER},
+      </if>
+      <if test="activityName != null">
+        #{activityName,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null">
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="onState != null">
+        #{onState,jdbcType=SMALLINT},
+      </if>
+      <if test="broadcastRoomId != null">
+        #{broadcastRoomId,jdbcType=INTEGER},
+      </if>
+      <if test="headPicUrl != null">
+        #{headPicUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="sharePicUrl != null">
+        #{sharePicUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="detailPicUrls != null">
+        #{detailPicUrls,jdbcType=VARCHAR},
+      </if>
+      <if test="posterUrl != null">
+        #{posterUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="productTitleUrl != null">
+        #{productTitleUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="reservePhone != null">
+        #{reservePhone,jdbcType=SMALLINT},
+      </if>
+      <if test="cAwardFlag != null">
+        #{cAwardFlag,jdbcType=TINYINT},
+      </if>
+      <if test="wechatTitle != null">
+        #{wechatTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="wechatDescription != null">
+        #{wechatDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="wechatPic != null">
+        #{wechatPic,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null">
+        #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="ctreateBy != null">
+        #{ctreateBy,jdbcType=INTEGER},
+      </if>
+      <if test="ctreateDt != null">
+        #{ctreateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateDt != null">
+        #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.FissionActivity">
+    update fission_activity
+    <set>
+      <if test="periodsId != null">
+        periods_id = #{periodsId,jdbcType=INTEGER},
+      </if>
+      <if test="periodsName != null">
+        periods_name = #{periodsName,jdbcType=VARCHAR},
+      </if>
+      <if test="sceneId != null">
+        scene_id = #{sceneId,jdbcType=INTEGER},
+      </if>
+      <if test="activityName != null">
+        activity_name = #{activityName,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null">
+        start_time = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="onState != null">
+        on_state = #{onState,jdbcType=SMALLINT},
+      </if>
+      <if test="broadcastRoomId != null">
+        broadcast_room_id = #{broadcastRoomId,jdbcType=INTEGER},
+      </if>
+      <if test="headPicUrl != null">
+        head_pic_url = #{headPicUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="sharePicUrl != null">
+        share_pic_url = #{sharePicUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="detailPicUrls != null">
+        detail_pic_urls = #{detailPicUrls,jdbcType=VARCHAR},
+      </if>
+      <if test="posterUrl != null">
+        poster_url = #{posterUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="productTitleUrl != null">
+        product_title_url = #{productTitleUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="reservePhone != null">
+        reserve_phone = #{reservePhone,jdbcType=SMALLINT},
+      </if>
+      <if test="cAwardFlag != null">
+        c_award_flag = #{cAwardFlag,jdbcType=TINYINT},
+      </if>
+      <if test="wechatTitle != null">
+        wechat_title = #{wechatTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="wechatDescription != null">
+        wechat_description = #{wechatDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="wechatPic != null">
+        wechat_pic = #{wechatPic,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null">
+        delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      </if>
+      <if test="ctreateBy != null">
+        ctreate_by = #{ctreateBy,jdbcType=INTEGER},
+      </if>
+      <if test="ctreateDt != null">
+        ctreate_dt = #{ctreateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        update_by = #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateDt != null">
+        update_dt = #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="statGenerate != null">
+        stat_generate =stat_generate+#{statGenerate},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tuanche.directselling.model.FissionActivity">
+    update fission_activity
+    set periods_id = #{periodsId,jdbcType=INTEGER},
+      periods_name = #{periodsName,jdbcType=VARCHAR},
+      scene_id = #{sceneId,jdbcType=INTEGER},
+      activity_name = #{activityName,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      on_state = #{onState,jdbcType=SMALLINT},
+      broadcast_room_id = #{broadcastRoomId,jdbcType=INTEGER},
+      head_pic_url = #{headPicUrl,jdbcType=VARCHAR},
+      share_pic_url = #{sharePicUrl,jdbcType=VARCHAR},
+      detail_pic_urls = #{detailPicUrls,jdbcType=VARCHAR},
+      poster_url = #{posterUrl,jdbcType=VARCHAR},
+      product_title_url = #{productTitleUrl,jdbcType=VARCHAR},
+      reserve_phone = #{reservePhone,jdbcType=SMALLINT},
+      c_award_flag = #{cAwardFlag,jdbcType=TINYINT},
+      wechat_title = #{wechatTitle,jdbcType=VARCHAR},
+      wechat_description = #{wechatDescription,jdbcType=VARCHAR},
+      wechat_pic = #{wechatPic,jdbcType=VARCHAR},
+      delete_flag = #{deleteFlag,jdbcType=TINYINT},
+      ctreate_by = #{ctreateBy,jdbcType=INTEGER},
+      ctreate_dt = #{ctreateDt,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=INTEGER},
+      update_dt = #{updateDt,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

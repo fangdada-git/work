@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>半价车-中奖用户</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.js"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/magnify/css/jquery.magnify.css">
+    <script src="/layui/js/formSelects-v4.js"></script>
+    <link rel="stylesheet" href="/layui/css/formSelects-v4.css" media="all">
+    <script src="/layui/js/tableSelect.js"></script>
+    <style type="text/css">
+        .layui-table-header .layui-table tr {
+            height: auto;
+            line-height: 50px;
+        }
+
+        .layui-table-cell {
+            height: auto;
+        }
+
+        .layui-table-col-special {
+            height: auto;
+        }
+
+        .layui-table tr {
+            height: 65px
+        }
+
+        .layui-form-label {
+            width: 120px;
+        }
+
+        .layui-input {
+            width: 200px;
+        }
+    </style>
+</head>
+<body class="childrenBody">
+<div class="layui-card-header">活动名称：[[${carFashionName}]]
+</div>
+<form class="layui-form" style="background-color: #ffffff;">
+    <blockquote class="layui-elem-quote quoteBox">
+        <form class="layui-form">
+            <div class="layui-inline">
+                <label class="layui-form-label">用户名：</label>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input commodityName" id="nickName" placeholder="输入用户名称"/>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">手机号：</label>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input commodityName" id="userPhone" placeholder="输入用户手机号"/>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <div class="layui-input-block" style="margin-left: 10px;">
+                    <a class="layui-btn layui-btn-radius" id="search" href="javascript:;"><i
+                            class="layui-icon layui-icon-search"></i>搜索</a>
+                </div>
+
+            </div>
+        </form>
+    </blockquote>
+    <table id="halfPriceWinnerUserTable" lay-filter="halfPriceWinnerUserTool"></table>
+</form>
+
+
+
+<script type="text/javascript" src="/common/js/tools.js"></script>
+<!-- layui 初始化 -->
+<script type="text/javascript" th:inline="javascript">
+    layui.use(['form', 'layer', 'table', 'laydate', 'upload'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            table = layui.table,
+            tableSelect = layui.tableSelect,
+            laydate = layui.laydate;
+        var carFashionId = [[${carFashionId}]];
+        var periodsId = [[${periodsId}]];
+        // 半价车中奖用户列表
+        var tableIns = table.render({
+            elem: '#halfPriceWinnerUserTable',
+            url: '/fashion/halfprice/winnerList?periodsId=' + periodsId + "&carFashionId=" + carFashionId,
+            cellMinWidth: 60,
+            page: true,
+            height: "full-125",
+            limits: [10, 20, 50, 100],
+            limit: 10,
+            id: "halfPriceWinnerUserTable",
+            cols: [
+                [
+                    {field: 'nickName', title: '用户名称', minWidth: 100, align: "center"},
+                    {field: 'userPhone', title: '用户手机号', minWidth: 60, align: "center"},
+                    {field: 'winNum', title: '中奖号码', minWidth: 120, align: "center"},
+                    {field: 'brandName', title: '中奖品牌', minWidth: 120, align: "center"},
+                    {
+                        field: 'activityDate', title: '中奖时间', minWidth: 260, align: 'center',templet:function(d){
+                            return layui.util.toDateString(d.activityDate, "yyyy-MM-dd");
+                        }
+                    }
+                ]
+            ]
+        });
+
+        reloadTable = function(){
+            var nickName = $("#nickName").val();
+            var userPhone = $("#userPhone").val();
+            table.reload("halfPriceWinnerUserTable", {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: {
+                    "carFashionId": carFashionId,
+                    "nickName": nickName,
+                    "userPhone": userPhone
+                }
+            })
+        }
+        //搜索
+        $("#search").on("click", function () {
+            reloadTable();
+        });
+    })
+
+</script>
+</body>
+</html>

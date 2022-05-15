@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.LiveDealerAnchorWriteMapper" >
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.LiveDealerAnchor" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="dealer_id" property="dealerId" jdbcType="INTEGER" />
+    <result column="dealer_name" property="dealerName" jdbcType="VARCHAR" />
+    <result column="anchor_id" property="anchorId" jdbcType="BIGINT" />
+    <result column="anchor_url" property="anchorUrl" jdbcType="VARCHAR" />
+    <result column="anchor_name" property="anchorName" jdbcType="VARCHAR" />
+    <result column="anchor_phone" property="anchorPhone" jdbcType="VARCHAR" />
+    <result column="head_img" property="headImg" jdbcType="VARCHAR" />
+    <result column="tb_nick" property="tbNick" jdbcType="VARCHAR" />
+    <result column="desc" property="desc" jdbcType="VARCHAR" />
+    <result column="fans" property="fans" jdbcType="INTEGER" />
+    <result column="content_count" property="contentCount" jdbcType="INTEGER" />
+    <result column="praise_count" property="praiseCount" jdbcType="INTEGER" />
+    <result column="anchor_type" property="anchorType" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="BIT" />
+    <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+    <result column="update_dt" property="updateDt" jdbcType="TIMESTAMP" />
+    <result column="city_id" property="cityId" jdbcType="INTEGER" />
+    <result column="city_name" property="cityName" jdbcType="VARCHAR" />
+    <result column="brand_id" property="brandId" jdbcType="INTEGER" />
+    <result column="brand_name" property="brandName" jdbcType="VARCHAR" />
+    <result column="enterprise_alipay" property="enterpriseAlipay" jdbcType="VARCHAR" />
+    <result column="operator_user_id" property="operatorUserId" jdbcType="INTEGER" />
+    <result column="province_id" property="provinceId" jdbcType="INTEGER" />
+    <result column="province_name" property="provinceName" jdbcType="VARCHAR" />
+    <result column="dealer_landline" property="dealerLandline" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="charge_name" property="chargeName" jdbcType="VARCHAR" />
+    <result column="charge_phone" property="chargePhone" jdbcType="VARCHAR" />
+    <result column="enterprise_alipay_name" property="enterpriseAlipayName" jdbcType="VARCHAR" />
+    <result column="store_name" property="storeName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, dealer_id, dealer_name, anchor_id, anchor_url, anchor_name, anchor_phone, head_img, 
+    tb_nick, `desc`, fans, content_count, praise_count, status, delete_flag, create_dt,
+    update_dt, city_id, city_name, brand_id, brand_name, anchor_type, enterprise_alipay, province_id, province_name,
+    address, dealer_landline, charge_name, charge_phone, enterprise_alipay_name, store_name
+  </sql>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from live_dealer_anchor
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.tuanche.directselling.model.LiveDealerAnchor" >
+    insert into live_dealer_anchor
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="dealerId != null" >
+        dealer_id,
+      </if>
+      <if test="dealerName != null" >
+        dealer_name,
+      </if>
+      <if test="anchorId != null" >
+        anchor_id,
+      </if>
+      <if test="anchorUrl != null" >
+        anchor_url,
+      </if>
+      <if test="anchorName != null" >
+        anchor_name,
+      </if>
+      <if test="anchorType != null" >
+        anchor_type,
+      </if>
+      <if test="anchorPhone != null" >
+        anchor_phone,
+      </if>
+      <if test="headImg != null" >
+        head_img,
+      </if>
+      <if test="tbNick != null" >
+        tb_nick,
+      </if>
+      <if test="desc != null" >
+        `desc`,
+      </if>
+      <if test="fans != null" >
+        fans,
+      </if>
+      <if test="contentCount != null" >
+        content_count,
+      </if>
+      <if test="praiseCount != null" >
+        praise_count,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag,
+      </if>
+      <if test="createDt != null" >
+        create_dt,
+      </if>
+      <if test="updateDt != null" >
+        update_dt,
+      </if>
+      <if test="cityId != null" >
+        city_id,
+      </if>
+      <if test="cityName != null" >
+        city_name,
+      </if>
+      <if test="brandId != null" >
+        brand_id,
+      </if>
+      <if test="brandName != null" >
+        brand_name,
+      </if>
+      <if test="enterpriseAlipay != null" >
+        enterprise_alipay,
+      </if>
+      <if test="operatorUserId != null" >
+        operator_user_id,
+      </if>
+      <if test="provinceId != null" >
+        province_id,
+      </if>
+      <if test="provinceName != null" >
+        province_name,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+      <if test="dealerLandline != null" >
+        dealer_landline,
+      </if>
+      <if test="chargeName != null" >
+        charge_name,
+      </if>
+      <if test="chargePhone != null" >
+        charge_phone,
+      </if>
+      <if test="enterpriseAlipayName != null" >
+        enterprise_alipay_name,
+      </if>
+      <if test="storeName != null" >
+        store_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="dealerId != null" >
+        #{dealerId,jdbcType=INTEGER},
+      </if>
+      <if test="dealerName != null" >
+        #{dealerName,jdbcType=VARCHAR},
+      </if>
+      <if test="anchorId != null" >
+        #{anchorId,jdbcType=BIGINT},
+      </if>
+      <if test="anchorUrl != null" >
+        #{anchorUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="anchorName != null" >
+        #{anchorName,jdbcType=VARCHAR},
+      </if>
+      <if test="anchorType != null" >
+        #{anchorType,jdbcType=INTEGER},
+      </if>
+      <if test="anchorPhone != null" >
+        #{anchorPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="headImg != null" >
+        #{headImg,jdbcType=VARCHAR},
+      </if>
+      <if test="tbNick != null" >
+        #{tbNick,jdbcType=VARCHAR},
+      </if>
+      <if test="desc != null" >
+        #{desc,jdbcType=VARCHAR},
+      </if>
+      <if test="fans != null" >
+        #{fans,jdbcType=INTEGER},
+      </if>
+      <if test="contentCount != null" >
+        #{contentCount,jdbcType=INTEGER},
+      </if>
+      <if test="praiseCount != null" >
+        #{praiseCount,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="deleteFlag != null" >
+        #{deleteFlag,jdbcType=BIT},
+      </if>
+      <if test="createDt != null" >
+        #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDt != null" >
+        #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cityId != null" >
+        #{cityId,jdbcType=INTEGER},
+      </if>
+      <if test="cityName != null" >
+        #{cityName,jdbcType=VARCHAR},
+      </if>
+      <if test="brandId != null" >
+        #{brandId,jdbcType=INTEGER},
+      </if>
+      <if test="brandName != null" >
+        #{brandName,jdbcType=VARCHAR},
+      </if>
+      <if test="enterpriseAlipay != null" >
+        #{enterpriseAlipay,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorUserId != null" >
+        #{operatorUserId,jdbcType=INTEGER},
+      </if>
+      <if test="provinceId != null" >
+        #{provinceId,jdbcType=INTEGER},
+      </if>
+      <if test="provinceName != null" >
+        #{provinceName,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="dealerLandline != null" >
+        #{dealerLandline,jdbcType=VARCHAR},
+      </if>
+      <if test="chargeName != null" >
+        #{chargeName,jdbcType=VARCHAR},
+      </if>
+      <if test="chargePhone != null" >
+        #{chargePhone,jdbcType=VARCHAR},
+      </if>
+      <if test="enterpriseAlipayName != null" >
+        #{enterpriseAlipayName,jdbcType=VARCHAR},
+      </if>
+      <if test="storeName != null" >
+        #{storeName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.LiveDealerAnchor" >
+    update live_dealer_anchor
+    <set >
+      <if test="dealerId != null" >
+        dealer_id = #{dealerId,jdbcType=INTEGER},
+      </if>
+      <if test="dealerName != null" >
+        dealer_name = #{dealerName,jdbcType=VARCHAR},
+      </if>
+      <if test="anchorId != null" >
+        anchor_id = #{anchorId,jdbcType=BIGINT},
+      </if>
+      <if test="anchorUrl != null" >
+        anchor_url = #{anchorUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="anchorName != null" >
+        anchor_name = #{anchorName,jdbcType=VARCHAR},
+      </if>
+      <if test="anchorType != null" >
+        anchor_type = #{anchorType,jdbcType=VARCHAR},
+      </if>
+      <if test="anchorPhone != null" >
+        anchor_phone = #{anchorPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="headImg != null" >
+        head_img = #{headImg,jdbcType=VARCHAR},
+      </if>
+      <if test="tbNick != null" >
+        tb_nick = #{tbNick,jdbcType=VARCHAR},
+      </if>
+      <if test="desc != null" >
+        `desc` = #{desc,jdbcType=VARCHAR},
+      </if>
+      <if test="fans != null" >
+        fans = #{fans,jdbcType=INTEGER},
+      </if>
+      <if test="contentCount != null" >
+        content_count = #{contentCount,jdbcType=INTEGER},
+      </if>
+      <if test="praiseCount != null" >
+        praise_count = #{praiseCount,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="deleteFlag != null" >
+        delete_flag = #{deleteFlag,jdbcType=BIT},
+      </if>
+      <if test="createDt != null" >
+        create_dt = #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDt != null" >
+        update_dt = #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cityId != null" >
+        city_id = #{cityId,jdbcType=INTEGER},
+      </if>
+      <if test="cityName != null" >
+        city_name = #{cityName,jdbcType=VARCHAR},
+      </if>
+      <if test="brandId != null" >
+        brand_id = #{brandId,jdbcType=INTEGER},
+      </if>
+      <if test="brandName != null" >
+        brand_name = #{brandName,jdbcType=VARCHAR},
+      </if>
+      <if test="enterpriseAlipay != null" >
+        enterprise_alipay = #{enterpriseAlipay,jdbcType=VARCHAR},
+      </if>
+      <if test="operatorUserId != null" >
+        operator_user_id = #{operatorUserId,jdbcType=INTEGER},
+      </if>
+      <if test="provinceId != null" >
+        province_id = #{provinceId,jdbcType=INTEGER},
+      </if>
+      <if test="provinceName != null" >
+        province_name = #{provinceName,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="dealerLandline != null" >
+        dealer_landline = #{dealerLandline,jdbcType=VARCHAR},
+      </if>
+      <if test="chargeName != null" >
+        charge_name = #{chargeName,jdbcType=VARCHAR},
+      </if>
+      <if test="chargePhone != null" >
+        charge_phone = #{chargePhone,jdbcType=VARCHAR},
+      </if>
+      <if test="enterpriseAlipayName != null" >
+        enterprise_alipay_name = #{enterpriseAlipayName,jdbcType=VARCHAR},
+      </if>
+      <if test="storeName != null" >
+        store_name = #{storeName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

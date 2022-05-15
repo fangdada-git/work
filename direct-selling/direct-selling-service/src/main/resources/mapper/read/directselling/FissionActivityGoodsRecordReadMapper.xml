@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.FissionActivityGoodsRecordReadMapper" >
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FissionActivityGoodsRecord" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="fission_id" property="fissionId" jdbcType="INTEGER" />
+    <result column="goods_id" property="goodsId" jdbcType="INTEGER" />
+    <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+    <result column="update_dt" property="updateDt" jdbcType="TIMESTAMP" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="BIT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    t1.id, t1.fission_id, t1.goods_id, t1.create_dt, t1.update_dt, t1.delete_flag
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from fission_activity_goods_record t1
+    where t1.id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="getFissionActivityGoodsRecordList" resultMap="BaseResultMap" parameterType="com.tuanche.directselling.model.FissionActivityGoodsRecord" >
+    select
+    <include refid="Base_Column_List" />
+    ,t2.periods_id periodsId
+    from fission_activity_goods_record t1
+    left join fission_activity t2 on t1.fission_id=t2.id
+    where t1.delete_flag=0
+    <if test="fissionId !=null">
+      and t1.fission_id=#{fissionId}
+    </if>
+    <if test="goodsId !=null">
+      and t1.goods_id=#{goodsId}
+    </if>
+    <if test="periodsId !=null">
+      and t2.periods_id=#{periodsId}
+    </if>
+    group by t1.id
+  </select>
+
+</mapper>

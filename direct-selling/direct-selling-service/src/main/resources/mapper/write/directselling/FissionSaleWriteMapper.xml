@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.FissionSaleWriteMapper">
+    <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FissionSale" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="fission_id" property="fissionId" jdbcType="INTEGER" />
+        <result column="dealer_id" property="dealerId" jdbcType="INTEGER" />
+        <result column="sale_id" property="saleId" jdbcType="INTEGER" />
+        <result column="sale_name" property="saleName" jdbcType="VARCHAR" />
+        <result column="sale_wx_open_id" property="saleWxOpenId" jdbcType="CHAR" />
+        <result column="sale_wx_union_id" property="saleWxUnionId" jdbcType="CHAR" />
+        <result column="pay_amount" property="payAmount" jdbcType="DECIMAL" />
+        <result column="task_integral" property="taskIntegral" jdbcType="INTEGER" />
+        <result column="estimated_income" property="estimatedIncome" jdbcType="DECIMAL" />
+        <result column="real_income" property="realIncome" jdbcType="DECIMAL" />
+        <result column="calculation_real_income" property="calculationRealIncome" jdbcType="BIT" />
+        <result column="whether_complete_task" property="whetherCompleteTask" jdbcType="BIT" />
+        <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+        <result column="financial_audit_status" property="financialAuditStatus" jdbcType="TINYINT" />
+        <result column="withdrawal_state" property="withdrawalState" jdbcType="BIT" />
+        <result column="withdrawal_time" property="withdrawalTime" jdbcType="TIMESTAMP" />
+        <result column="trade_record_id" property="tradeRecordId" jdbcType="BIGINT" />
+        <result column="delete_flag" property="deleteFlag" jdbcType="BIT" />
+        <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+        <result column="create_name" property="createName" jdbcType="VARCHAR" />
+        <result column="update_dt" property="updateDt" jdbcType="TIMESTAMP" />
+        <result column="update_name" property="updateName" jdbcType="VARCHAR" />
+        <result column="audit_name" property="auditName" jdbcType="VARCHAR" />
+        <result column="pay_name" property="payName" jdbcType="VARCHAR" />
+    </resultMap>
+    <!-- 是否销售有 -->
+    <select id="hasSale" resultType="integer" parameterType="com.tuanche.directselling.model.FissionSale">
+        SELECT
+            1
+        FROM
+            fission_sale
+        WHERE
+          sale_wx_union_id = #{saleWxUnionId}
+          AND fission_id=#{fissionId}
+          AND delete_flag = 0
+        LIMIT 1
+    </select>
+    <!-- 获取销售单个实体 -->
+    <select id="getFissionSale" resultMap="BaseResultMap" parameterType="com.tuanche.directselling.model.FissionSale">
+        SELECT
+        id, fission_id, dealer_id, sale_id, sale_name, sale_wx_open_id,sale_wx_union_id, pay_amount, order_no,
+        estimated_income, real_income, whether_complete_task, financial_audit_status, withdrawal_state,
+        withdrawal_time, trade_record_id, task_integral, audit_name, pay_name
+        FROM fission_sale
+        <where>
+            <if test="id != null">
+                AND id = #{id}
+            </if>
+            <if test="fissionId != null">
+                AND fission_id = #{fissionId}
+            </if>
+            <if test="saleWxOpenId != null">
+                AND sale_wx_open_id = #{saleWxOpenId}
+            </if>
+            <if test="saleWxUnionId != null">
+                AND sale_wx_union_id = #{saleWxUnionId}
+            </if>
+            <if test="saleId != null">
+                AND sale_id = #{saleId}
+            </if>
+        </where>
+        LIMIT 1
+    </select>
+    <insert id="insertSelective" parameterType="com.tuanche.directselling.model.FissionSale" >
+        insert into fission_sale
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="fissionId != null" >
+                fission_id,
+            </if>
+            <if test="dealerId != null" >
+                dealer_id,
+            </if>
+            <if test="saleId != null" >
+                sale_id,
+            </if>
+            <if test="saleName != null" >
+                sale_name,
+            </if>
+            <if test="saleWxOpenId != null" >
+                sale_wx_open_id,
+            </if>
+            <if test="saleWxUnionId != null" >
+                sale_wx_union_id,
+            </if>
+            <if test="payAmount != null" >
+                pay_amount,
+            </if>
+            <if test="taskIntegral != null" >
+                task_integral,
+            </if>
+            <if test="estimatedIncome != null" >
+                estimated_income,
+            </if>
+            <if test="realIncome != null" >
+                real_income,
+            </if>
+            <if test="calculationRealIncome != null" >
+                calculation_real_income,
+            </if>
+            <if test="whetherCompleteTask != null" >
+                whether_complete_task,
+            </if>
+            <if test="orderNo != null" >
+                order_no,
+            </if>
+            <if test="financialAuditStatus != null" >
+                financial_audit_status,
+            </if>
+            <if test="withdrawalState != null" >
+                withdrawal_state,
+            </if>
+            <if test="withdrawalTime != null" >
+                withdrawal_time,
+            </if>
+            <if test="tradeRecordId != null" >
+                trade_record_id,
+            </if>
+            <if test="createName != null" >
+                create_name,
+            </if>
+            <if test="auditName != null" >
+                audit_name,
+            </if>
+            <if test="payName != null" >
+                pay_name,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="fissionId != null" >
+                #{fissionId,jdbcType=INTEGER},
+            </if>
+            <if test="dealerId != null" >
+                #{dealerId,jdbcType=INTEGER},
+            </if>
+            <if test="saleId != null" >
+                #{saleId,jdbcType=INTEGER},
+            </if>
+            <if test="saleName != null" >
+                #{saleName,jdbcType=VARCHAR},
+            </if>
+            <if test="saleWxOpenId != null" >
+                #{saleWxOpenId,jdbcType=CHAR},
+            </if>
+            <if test="saleWxUnionId != null" >
+                #{saleWxUnionId,jdbcType=CHAR},
+            </if>
+            <if test="payAmount != null" >
+                #{payAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="taskIntegral != null" >
+                #{taskIntegral,jdbcType=INTEGER},
+            </if>
+            <if test="estimatedIncome != null" >
+                #{estimatedIncome,jdbcType=DECIMAL},
+            </if>
+            <if test="realIncome != null" >
+                #{realIncome,jdbcType=DECIMAL},
+            </if>
+            <if test="calculationRealIncome != null" >
+                #{calculationRealIncome,jdbcType=BIT},
+            </if>
+            <if test="whetherCompleteTask != null" >
+                #{whetherCompleteTask,jdbcType=BIT},
+            </if>
+            <if test="orderNo != null" >
+                #{orderNo,jdbcType=VARCHAR},
+            </if>
+            <if test="financialAuditStatus != null" >
+                #{financialAuditStatus,jdbcType=TINYINT},
+            </if>
+            <if test="withdrawalState != null" >
+                #{withdrawalState,jdbcType=BIT},
+            </if>
+            <if test="withdrawalTime != null" >
+                #{withdrawalTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="tradeRecordId != null" >
+                #{tradeRecordId,jdbcType=BIGINT},
+            </if>
+            <if test="createName != null" >
+                #{createName,jdbcType=VARCHAR},
+            </if>
+            <if test="auditName != null" >
+                #{auditName,jdbcType=VARCHAR},
+            </if>
+            <if test="payName != null" >
+                #{payName,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.FissionSale">
+        update fission_sale
+        <set >
+            <if test="fissionId != null" >
+                fission_id = #{fissionId,jdbcType=INTEGER},
+            </if>
+            <if test="dealerId != null" >
+                dealer_id = #{dealerId,jdbcType=INTEGER},
+            </if>
+            <if test="saleId != null" >
+                sale_id = #{saleId,jdbcType=INTEGER},
+            </if>
+            <if test="saleName != null" >
+                sale_name = #{saleName,jdbcType=VARCHAR},
+            </if>
+            <if test="saleWxOpenId != null" >
+                sale_wx_open_id = #{saleWxOpenId,jdbcType=CHAR},
+            </if>
+            <if test="saleWxUnionId != null" >
+                sale_wx_union_id = #{saleWxUnionId,jdbcType=CHAR},
+            </if>
+            <if test="payAmount != null" >
+                pay_amount = #{payAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="taskIntegral != null" >
+                task_integral = #{taskIntegral,jdbcType=INTEGER},
+            </if>
+            <if test="estimatedIncome != null" >
+                estimated_income = #{estimatedIncome,jdbcType=DECIMAL},
+            </if>
+            <if test="realIncome != null" >
+                real_income = #{realIncome,jdbcType=DECIMAL},
+            </if>
+            <if test="calculationRealIncome != null" >
+                calculation_real_income = #{calculationRealIncome,jdbcType=BIT},
+            </if>
+            <if test="whetherCompleteTask != null" >
+                whether_complete_task = #{whetherCompleteTask,jdbcType=BIT},
+            </if>
+            <if test="orderNo != null" >
+                order_no = #{orderNo,jdbcType=VARCHAR},
+            </if>
+            <if test="financialAuditStatus != null" >
+                financial_audit_status = #{financialAuditStatus,jdbcType=TINYINT},
+            </if>
+            <if test="withdrawalState != null" >
+                withdrawal_state = #{withdrawalState,jdbcType=BIT},
+            </if>
+            <if test="withdrawalTime != null" >
+                withdrawal_time = #{withdrawalTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="tradeRecordId != null" >
+                trade_record_id = #{tradeRecordId,jdbcType=BIGINT},
+            </if>
+            <if test="deleteFlag != null" >
+                delete_flag = #{deleteFlag,jdbcType=BIT},
+            </if>
+            <if test="createDt != null" >
+                create_dt = #{createDt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createName != null" >
+                create_name = #{createName,jdbcType=VARCHAR},
+            </if>
+            <if test="updateDt != null" >
+                update_dt = #{updateDt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateName != null" >
+                update_name = #{updateName,jdbcType=VARCHAR},
+            </if>
+            <if test="auditName != null" >
+                audit_name = #{auditName,jdbcType=VARCHAR},
+            </if>
+            <if test="payName != null" >
+                pay_name = #{payName,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--审核/打款操作-->
+    <update id="financialAuditSalePay" parameterType="com.tuanche.directselling.dto.FissionSalePayDto">
+        UPDATE fission_sale
+        SET
+        financial_audit_status = #{financialAuditStatus},
+        <if test="auditName != null">
+            audit_name = #{auditName},
+        </if>
+        <if test="payName != null">
+            pay_name = #{payName},
+        </if>
+        update_dt= NOW()
+        WHERE
+        fission_id = #{fissionId}
+        AND financial_audit_status != #{financialAuditStatus}
+        AND delete_flag = 0
+        AND whether_complete_task =1
+    </update>
+    <!--冻结/解冻操作-->
+    <update id="freezeOrUnFreezeFissionSale" parameterType="com.tuanche.directselling.dto.FissionSalePayDto">
+        UPDATE fission_sale
+        SET delete_flag = #{deleteFlag},
+        real_income = 0,
+        update_name = #{updateName},
+        update_dt = NOW()
+        WHERE whether_complete_task = 1
+        AND financial_audit_status = 0
+        AND fission_id = #{fissionId}
+        AND sale_id IN
+        <foreach collection="saleIdList" item="saleId" open="(" separator="," close=")">
+            #{saleId}
+        </foreach>
+    </update>
+    <!--销售提现-->
+    <update id="saleWithDrawal" parameterType="com.tuanche.directselling.dto.FissionSalePayDto">
+        UPDATE fission_sale
+        SET withdrawal_time = #{withdrawalTime},
+        withdrawal_state = 1,
+        trade_record_id = #{tradeRecordId}
+        WHERE
+        id IN
+        <foreach collection="idList" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+    <!-- 批量更新销售收入 -->
+    <update id="batchUpdateSaleIncome"  parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            UPDATE fission_sale
+            <set>
+                whether_complete_task = #{item.whetherCompleteTask,jdbcType=BIT},
+                task_integral = #{item.taskIntegral,jdbcType=INTEGER}
+              <if test="item.estimatedIncome != null">
+                  ,estimated_income = #{item.estimatedIncome,jdbcType=DECIMAL}
+              </if>
+              <if test="item.realIncome != null">
+                  ,real_income = #{item.realIncome,jdbcType=DECIMAL}
+              </if>
+              <if test="item.calculationRealIncome != null">
+                  ,calculation_real_income = #{item.calculationRealIncome,jdbcType=BIT}
+              </if>
+            </set>
+            WHERE sale_wx_union_id = #{item.saleWxUnionId} AND fission_id = #{item.fissionId}
+        </foreach>
+    </update>
+
+    <!--销售已确认打款列表-->
+    <select id="selectPayListByFissionId" resultMap="BaseResultMap" parameterType="com.tuanche.directselling.dto.FissionSalePayDto">
+        SELECT *
+        FROM
+        fission_sale
+        WHERE
+        delete_flag = 0
+        AND whether_complete_task = 1
+        AND withdrawal_state = 0
+        AND fission_id = #{fissionId}
+        AND financial_audit_status = 2
+    </select>
+</mapper>

@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>团车直卖-裂变活动表单</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.js"></script>
+    <script src="/layui/js/formSelects-v4.js"></script>
+    <script src="/common/js/tools.js"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/layui/css/formSelects-v4.css" media="all">
+    <style>
+        .label-close-icon {
+            vertical-align: bottom;
+            margin-left: -8px;
+            font-size: 18px;
+            position: absolute;
+            top: -8px;
+            cursor: pointer;
+            z-index: 100;
+        }
+        .layui-input {
+            width: 600px;
+        }
+        .layui-form-select {
+            width: 300px;
+        }
+        .xm-form-select {
+            min-width: 300px;
+            max-width: 400px;
+        }
+        .layui-form-label {
+            width: 100px;
+        }
+        .layui-input-block {
+            margin-left: 138px;
+        }
+        .layui-upload-img{
+            width: 200px;
+            height: 200px;
+        }
+    </style>
+</head>
+<body class="childrenBody">
+<form class="layui-form" style="background-color:#ffffff" lay-filter="fissionGoodsForm">
+    <input type="hidden" id="commodityId" th:value="${goods.commodityId}">
+    <div class="layui-form-item" >
+        <div class="layui-inline">
+            <label class="layui-form-label">商品类型：</label>
+            <div class="layui-input-block">
+                <input type="radio" value="0" name="seckill" lay-filter="seckill" title="普通商品" th:field="${goods.seckill}"/>
+                <input type="radio" value="1" name="seckill" lay-filter="seckill" title="秒杀商品" th:field="${goods.seckill}"/>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">是否需要邮寄：</label>
+            <div class="layui-input-block">
+                <input type="radio" value="1" name="isPost" title="是" th:field="${goods.isPost}"/>
+                <input type="radio" value="0" name="isPost" title="否" th:field="${goods.isPost}"/>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">商品名称：</label>
+            <div class="layui-input-block">
+                <input type="text" id="commodityName" name="commodityName" placeholder="99抵2000代金券" lay-verify="required" style="width: 396px;" autocomplete="off"
+                       class="layui-input" th:value="${goods.commodityName}" maxlength="60">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">库存：</label>
+            <div class="layui-input-block">
+                <input type="number" id="commodityCount" name="commodityCount" lay-verify="required" style="width: 100px;" autocomplete="off"
+                       class="layui-input" th:value="${goods.commodityCount}">
+            </div>
+        </div>
+        <div class="layui-inline" style="width: 300px;">
+            <label class="layui-form-label" style="width: 150px">展示已售基础数据：</label>
+            <div class="layui-input-block">
+                <input type="number" id="virtualSoldNumber" name="virtualSoldNumber" lay-verify="required" style="width: 100px;" autocomplete="off"
+                       class="layui-input" th:value="${goods.virtualSoldNumber}">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">商品标价：</label>
+            <div class="layui-input-block">
+                <input type="number" name="originalPrice" id="originalPrice" lay-verify="required"  style="width: 100px;" autocomplete="off"
+                       class="layui-input" th:value="${goods.originalPrice}">
+            </div>
+        </div>
+        <div class="layui-inline seckill" th:style="${goods.seckill==0} ? 'display: none' : ''">
+            <label class="layui-form-label">秒杀售价：</label>
+            <div class="layui-input-block">
+                <input type="number" name="commodityPrice" id="commodityPrice" th:lay-verify="${goods.seckill==1} ? 'required' : ''" style="width: 100px;" autocomplete="off"
+                       class="layui-input" th:value="${goods.commodityPrice}">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline addBannerUrl" style="">
+            <label class="layui-form-label">头图：</label>
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" id="addBannerUrl">
+                    <i class="layui-icon layui-icon-ok-circle"></i>添加头图
+                </button>
+            </div>
+            <div class="layui-input-block" th:if="${goods.headImages == null}">
+                <div class="layui-upload-drag" id="bannerUrl1">
+                    <i class="layui-icon"></i>
+                    <p>点击上传，或将文件拖拽到此处</p>
+                    <div  class="layui-hide" id="bannerUrlImg1">
+                        <hr>
+                        <img  alt="上传成功后渲染"  style="max-width: 196px">
+                        <p id="bannerUrlText1"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-input-block" th:if="${goods.headImages != null}" th:each="bannerUrl, bannerUrlStat : ${goods.headImages}">
+                <div class="layui-upload-drag" th:id="bannerUrl+${bannerUrlStat.count}">
+                    <div th:id="bannerUrlImg+${bannerUrlStat.count}">
+                        <img alt="上传成功后渲染" style="max-width: 196px" th:src="${bannerUrl.path}">
+                        <p th:id="bannerUrlText+${bannerUrlStat.count}"></p>
+                    </div>
+                </div>
+                <span th:if="${bannerUrlStat.count !=  1}">
+                    <button type="button"  lay-filter="delPic" class="layui-btn layui-btn-primary layui-btn del_advert"><i class="layui-icon"></i></button>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div  class="layui-form-item">
+        <div class="layui-inline addDetailsUrl">
+            <label class="layui-form-label">详情图：</label>
+            <div class="layui-input-block ">
+                <button class="layui-btn layui-btn-normal" id="addDetailsUrl">
+                    <i class="layui-icon layui-icon-ok-circle"></i>添加详情图
+                </button>
+            </div>
+            <div class="layui-input-block" th:if="${goods.descpritionImages == null}">
+                <div class="layui-upload-drag" id="detailsUrl1">
+                    <i class="layui-icon"></i>
+                    <p>点击上传，或将文件拖拽到此处</p>
+                    <div  class="layui-hide" id="detailsUrlImg1">
+                        <hr>
+                        <img  alt="上传成功后渲染"  style="max-width: 196px">
+                        <p id="detailsUrlText1"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-input-block" th:if="${goods.descpritionImages != null}" th:each="detailsUrl, detailsUrlStat : ${goods.descpritionImages}">
+                <div class="layui-upload-drag" th:id="detailsUrl+${detailsUrlStat.count}">
+                    <div th:id="detailsUrlImg+${detailsUrlStat.count}">
+                        <img  alt="上传成功后渲染"  style="max-width: 196px" th:src="${detailsUrl.path}">
+                        <p th:id="detailsUrlText+${detailsUrlStat.count}"></p>
+                    </div>
+                </div>
+                <span th:if="${detailsUrlStat.count !=  1}">
+                    <button type="button"  lay-filter="delPic" class="layui-btn layui-btn-primary layui-btn del_advert"><i class="layui-icon"></i></button>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item seckill" th:style="${goods.seckill==0} ? 'display: none' : ''">
+        <div class="layui-inline">
+            <label class="layui-form-label">是否需要助力：</label>
+            <div class="layui-input-block">
+                <input type="radio" name="isHelper" lay-filter="isHelper" value="1" title="是" th:field="${goods.isHelper}"/>
+                <input type="radio" name="isHelper" lay-filter="isHelper" value="0" title="否" th:field="${goods.isHelper}"/>
+            </div>
+        </div>
+        <div class="layui-inline isHelper" th:style="${goods.isHelper==0} ? 'display: none' : ''">
+            <label class="layui-form-label">助力人数：</label>
+            <div class="layui-input-block">
+                <input type="number" name="helperNum" id="helperNum" style="width: 60px;" autocomplete="off"
+                       class="layui-input" th:value="${goods.helperNum}">
+            </div>
+        </div>
+    </div>
+    <label class="layui-form-label">上下架说明：</label>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">上架时间：</label>
+            <div class="layui-input-block">
+                <input type="text" placeholder="不得晚于活动结束时间" name="upShelfTime" id="upShelfTime" autocomplete="off" class="layui-input"
+                       th:value="${#dates.format(goods.upShelfTime,'yyyy-MM-dd HH:mm:ss')}" style="width: 200px;">
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">下架时间：</label>
+            <div class="layui-input-block">
+                <input type="text" placeholder="不得晚于活动结束时间" name="downShelfTime" id="downShelfTime" autocomplete="off" class="layui-input"
+                       th:value="${#dates.format(goods.downShelfTime,'yyyy-MM-dd HH:mm:ss')}" style="width: 200px;">
+            </div>
+        </div>
+    </div>
+<!--    <div class="layui-form-item">-->
+<!--        <label class="layui-form-label">品牌：</label>-->
+<!--        <div class="layui-input-block" style="width: 200px;">-->
+<!--            <select id="brandId" name="brandId" xm-select="brandSelect" xm-select-search="" xm-select-search-type="dl" xm-select-radio="">-->
+<!--                <option th:each="brand : ${brandList}" th:value="${brand.id}" th:text="${brand.name}"></option>-->
+<!--            </select>-->
+<!--        </div>-->
+<!--    </div>-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">车型：</label>
+        <div class="layui-input-block" style="width: 200px;">
+            <select id="styleId" name="styleId" xm-select="styleSelect" xm-select-search="" xm-select-search-type="dl">
+                <optgroup th:each="brandStyle : ${brandStyleList}" th:label="${brandStyle.brandName}">
+                    <option th:data-brandid="${brandStyle.brandId}" th:each="style : ${brandStyle.styleList}" th:value="${style.styleId}" th:text="${style.styleName}"></option>
+                </optgroup>
+            </select>
+        </div>
+    </div>
+    <br>
+    <div class="layui-form-item" style="margin-bottom: 225px;">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" id="submitBtn" lay-submit lay-filter="submitBtn">
+                <i class="layui-icon layui-icon-ok-circle"></i>立即提交
+            </button>
+            <button class="layui-btn layui-btn-normal" id="backBtn"><i class="layui-icon layui-icon-close-fill"></i>返回</button>
+        </div>
+    </div>
+</form>
+<!-- layui 初始化 -->
+<script type="text/javascript" th:inline="javascript">
+    layui.use(['form', 'layer', 'table', 'upload', 'laydate', 'element'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            laydate = layui.laydate,
+            formSelects = layui.formSelects,
+            upload = layui.upload,
+            element = layui.element;
+        element.init();
+        form.render();
+
+        var fissionId = [[${fissionId}]];
+        var peroidsId = [[${peroidsId}]];
+        var goodsEndDate = [[${goodsEndDate}]];
+        var goodsUpShelfTime = [[${goods.upShelfTime}]];
+        var goodsDownShelfTime = [[${goods.downShelfTime}]];
+
+        setTimeout(function () {
+            //回显车型
+            var styleDtoList = [[${goods.styleDtoList}]];
+            if (styleDtoList!=null && styleDtoList.length>0) {
+                var styleIds = new Array();
+                $.each(styleDtoList, function (index, val) {
+                    styleIds.push(val.styleId);
+                })
+                formSelects.value('styleSelect', styleIds);
+            }
+        }, 200);
+
+        //上架日期
+        var startDate = laydate.render({
+            elem: '#upShelfTime',
+            type : 'datetime',
+            trigger: 'click',
+            max : goodsDownShelfTime,
+            done: function(value, date) {
+                endDate.config.min = {
+                    year : date.year,
+                    month : date.month - 1,
+                    date : date.date,
+                    hours : date.hours,
+                    minutes : date.minutes,
+                    seconds : date.seconds
+                };
+            }
+        });
+        //下架日期
+        var endDate = laydate.render({
+            elem: '#downShelfTime',
+            type : 'datetime',
+            trigger: 'click',
+            max : goodsEndDate,
+            min : goodsUpShelfTime,
+            done: function(value, date) {
+                startDate.config.max = {
+                    year : date.year,
+                    month : date.month - 1,
+                    date : date.date,
+                    hours : date.hours,
+                    minutes : date.minutes,
+                    seconds : date.seconds
+                };
+            }
+        });
+
+        // //头图上传
+        upload.render({
+            elem: '#bannerUrl1'
+            ,url: '/upload/image?type=zhuanti'
+            ,size: 10240
+            ,exts: 'img|jpg|png|jpeg' //只允许上传图片
+            ,done: function(res){
+                layer.msg('上传成功');
+                // $("#headPicUrl").val(res.location);
+                $("#headPicUrl").val(res.location);
+                layui.$('#bannerUrlImg1').removeClass('layui-hide').find('img').attr('src', res.location);
+                layui.$('#bannerUrlImg1').removeClass('layui-icon');
+                layui.$('#bannerUrl1').find('i').remove();
+                layui.$('#bannerUrl1').find('p').remove();
+            }
+            ,error: function(res){
+                layer.alert('上传失败', {icon: 5});
+            }
+        });
+        upload.render({
+            elem: '#detailsUrl1'
+            ,url: '/upload/image?type=zhuanti'
+            ,size: 10240
+            ,exts: 'img|jpg|png|jpeg' //只允许上传图片
+            ,done: function(res){
+                layer.msg('上传成功');
+                // $("#headPicUrl").val(res.location);
+                $("#headPicUrl").val(res.location);
+                layui.$('#detailsUrlImg1').removeClass('layui-hide').find('img').attr('src', res.location);
+                layui.$('#detailsUrlImg1').removeClass('layui-icon');
+                layui.$('#detailsUrl1').find('i').remove();
+                layui.$('#detailsUrl1').find('p').remove();
+            }
+            ,error: function(res){
+                layer.alert('上传失败', {icon: 5});
+            }
+        });
+        // 监听提交
+        form.on('submit(submitBtn)', function(data){
+            $("#submitBtn").attr("disabled", "disabled");
+            var commodityId = $("#commodityId").val();
+            var commodityName = $("#commodityName").val();
+            if (commodityName.trim().length<5 || commodityName.trim().length>500) {
+                layer.alert('商品名称长度5-500', {icon: 5});
+                $('#submitBtn').removeAttr('disabled');
+                return false;
+            }
+            var commodityPrice = $("#commodityPrice").val();
+            var commodityCount = $("#commodityCount").val();
+            var originalPrice = $("#originalPrice").val();
+            var helperNum = $("#helperNum").val();
+            var isHelper = $("input[name='isHelper']:checked").val();
+            if (isHelper==1 && helperNum.trim()=="") {
+                layer.alert('助力人数不能为空', {icon: 5});
+                $('#submitBtn').removeAttr('disabled');
+                return false;
+            }
+            var seckill = $("input[name='seckill']:checked").val();
+            var isPost = $("input[name='isPost']:checked").val();
+            // var upShelf = $("input[name='upShelf']:checked").val();
+            var upShelfTime = $("#upShelfTime").val();
+            // var downShelf = $("input[name='downShelf']:checked").val();
+            var downShelfTime = $("#downShelfTime").val();
+            var virtualSoldNumber = $("#virtualSoldNumber").val();
+            if (seckill==1 && isHelper==1 && helperNum.trim()=="") {
+                layer.alert('填写助力人数', {icon: 5});
+                $('#submitBtn').removeAttr('disabled');
+                return false;
+            }
+
+            var data = {
+                peroidsId : peroidsId,
+                fissionId : fissionId,
+                commodityId : commodityId,
+                commodityName : commodityName,
+                commodityPrice : commodityPrice,
+                commodityCount : commodityCount,
+                originalPrice : originalPrice,
+                isHelper : isHelper,
+                helperNum : helperNum,
+                seckill : seckill,
+                isPost : isPost,
+                // downShelf : downShelf,
+                downShelfTime : downShelfTime,
+                // upShelf : upShelf,
+                upShelfTime : upShelfTime,
+                virtualSoldNumber : virtualSoldNumber,
+                commoditySource : 2,
+            }
+            var styleIds = layui.formSelects.value('styleSelect', 'val');
+            console.log(styleIds);
+            $.each(styleIds, function(index, val) {
+                data["styleDtoList["+index+"].styleId"] = val;
+            });
+            console.log(data);
+            //头图list
+            var bannerUrls = $('div[id^="bannerUrlImg"]');
+            var barnnerImg1Src = $("#bannerUrlImg1").find("img").attr("src");
+            if(barnnerImg1Src == null || barnnerImg1Src == ''){
+                layer.alert('请上传商品头图', {icon: 5});
+                $('#submitBtn').removeAttr('disabled');
+                return false;
+            }
+            $.each(bannerUrls, function(index, val) {
+                data["headImages["+index+"].path"] = $(val).find("img").attr("src");
+            });
+            //详情图list
+            var detailsUrls = $('div[id^="detailsUrlImg"]');
+            var detailsUrlImg1Src = $("#detailsUrlImg1").find("img").attr("src");
+            if(detailsUrlImg1Src == null || detailsUrlImg1Src == ''){
+                layer.alert('请上传商品详情图', {icon: 5});
+                $('#submitBtn').removeAttr('disabled');
+                return false;
+            }
+            $.each(detailsUrls, function(index, val) {
+                data["descpritionImages["+index+"].path"] = $(val).find("img").attr("src");
+            });
+            $.ajax({
+                type : 'post',
+                url : '/fission/goods/editFissionGoods',
+                data : data,
+                dataType : 'json',
+                success :function(data){
+                    if (data.code == 200) {
+                        layer.msg("保存成功", {
+                            icon: 6, time: 2000, end: function () {
+                                parent.location.href = "/fission/goods/toFissionGoodsList?fissionId="+fissionId+"&periodsId="+peroidsId;
+                            }
+                        });
+                    } else {
+                        layer.alert(data.msg == null ? "有一丝丝问题，请联系管理员" : data.msg, {icon: 5});
+                        $('#submitBtn').removeAttr('disabled');
+                    }
+                },
+                error :function(e){
+                    console.log(e);
+                    layer.msg("有一丝丝问题，请联系管理员", {icon: 5});
+                    $('#submitBtn').removeAttr('disabled');
+                    return false;
+                }
+            });
+            return false;
+        });
+
+        $("#backBtn").on("click",function () {
+            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+            parent.layer.close(index);//关闭弹出的子页面窗口
+        });
+        //秒杀商品关联项
+        form.on('radio(seckill)', function(data){
+            if(data.value == 1){
+                $(".seckill").show();
+            } else {
+                $(".seckill").hide();
+            }
+        });
+        //是否助力关联
+        form.on('radio(isHelper)', function(data){
+            if(data.value == 1){
+                $(".isHelper").show();
+            } else {
+                $(".isHelper").hide();
+            }
+        });
+        //添加头图
+        $("#addBannerUrl").on("click",function () {
+            var num = $('div[id^="bannerUrlImg"]').length +1;
+            var html = '<div class="layui-input-block"><div class="layui-upload-drag" id="bannerUrl'+num+'">' +
+                '                <i class="layui-icon"></i>' +
+                '                <p>点击上传，或将文件拖拽到此处</p>\n' +
+                '                <div  class="layui-hide" id="bannerUrlImg'+num+'">\n' +
+                '                    <hr>\n' +
+                '                    <img  alt="上传成功后渲染"  style="max-width: 196px">\n' +
+                '                    <p id="bannerUrlText'+num+'"></p>\n' +
+                '                </div>\n' +
+                '            </div>' +
+                '<button type="button" lay-filter="delPic" class="layui-btn layui-btn-primary layui-btn del_advert"><i class="layui-icon"></i></button></div>';
+            $(".addBannerUrl").append(html);
+            //加载上传组件
+            uploadFunc("bannerUrl", num);
+            //加载删除方法
+            $('.del_advert').click(function () {
+                $(this).parents('.layui-input-block').remove();
+            });
+            return false;
+        });
+        //添加详情图
+        $("#addDetailsUrl").on("click",function () {
+            var num = $('div[id^="detailsUrlImg"]').length +1;
+            var html = '<div class="layui-input-block">\n' +
+                '                <div class="layui-upload-drag" id="detailsUrl'+num+'">\n' +
+                '                    <i class="layui-icon"></i>\n' +
+                '                    <p>点击上传，或将文件拖拽到此处</p>\n' +
+                '                    <div  class="layui-hide" id="detailsUrlImg'+num+'">\n' +
+                '                        <hr>\n' +
+                '                        <img  alt="上传成功后渲染"  style="max-width: 196px">\n' +
+                '                        <p id="detailsUrlText'+num+'"></p>\n' +
+                '                    </div>\n' +
+                '                </div>\n' +
+                '            <button type="button"  lay-filter="delPic" class="layui-btn layui-btn-primary layui-btn del_advert"><i class="layui-icon"></i></button></div>';
+            $(".addDetailsUrl").append(html);
+            //加载上传组件
+            uploadFunc("detailsUrl", num);
+            //加载删除方法
+            $('.del_advert').click(function () {
+                $(this).parents('.layui-input-block').remove();
+            });
+            return false;
+        });
+
+        $('.del_advert').click(function () {
+            $(this).parents('.layui-input-block').remove();
+        });
+
+
+        var uploadFunc = function (id, num) {
+            upload.render({
+                elem: '#'+id+num
+                ,url: '/upload/image?type=zhuanti'
+                ,size: 10240
+                ,exts: 'img|jpg|png|jpeg' //只允许上传图片
+                ,done: function(res){
+                    layer.msg('上传成功');
+                    // $("#headPicUrl").val(res.location);
+                    $("#headPicUrl").val(res.location);
+                    layui.$('#'+id+'Img'+num).removeClass('layui-hide').find('img').attr('src', res.location);
+                    layui.$('#'+id+'Img'+num).removeClass('layui-icon');
+                    layui.$('#'+id+num).find('i').remove();
+                    layui.$('#'+id+num).find('p').remove();
+                }
+                ,error: function(res){
+                    layer.alert('上传失败', {icon: 5});
+                }
+            });
+        }
+
+
+        //选择品牌关联车型
+        formSelects.on('brandSelect', function(id, vals, val, isAdd, isDisabled){
+            layui.formSelects.render('styleSelect');
+            //选中值才会触发
+            if(vals.length >0){
+                layui.formSelects.config('styleSelect', {
+                    beforeSuccess: function(id, url, searchVal, result){
+                        var styleList = new Array();
+                        if (result.code == 200) {
+                            $.each(result.result, function(index, item) {
+                                styleList.push({"name":item.csName,"value":item.csId});
+                            });
+                        }
+                        return styleList;
+                    },
+                    success: function(){
+                    }
+                }).data('styleSelect', 'server', {
+                    url: '/common/getStyleListByBrandId',
+                    data: {brandId: val.value}
+                });
+            }
+        },true);
+
+    });
+
+</script>
+</body>
+</html>

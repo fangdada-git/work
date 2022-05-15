@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.FissionGoodsOrderRecordReadMapper" >
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FissionGoodsOrderRecord" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="peroids_id" property="peroidsId" jdbcType="INTEGER" />
+    <result column="fission_id" property="fissionId" jdbcType="INTEGER" />
+    <result column="goods_id" property="goodsId" jdbcType="INTEGER" />
+    <result column="dealer_id" property="dealerId" jdbcType="INTEGER" />
+    <result column="sale_id" property="saleId" jdbcType="INTEGER" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+    <result column="order_status" property="orderStatus" jdbcType="TINYINT" />
+    <result column="cancel_dealer_id" property="cancelDealerId" jdbcType="INTEGER" />
+    <result column="cancel_sale" property="cancelSale" jdbcType="INTEGER" />
+    <result column="user_source" property="userSource" jdbcType="BIT" />
+    <result column="page_source" property="pageSource" jdbcType="TINYINT" />
+    <result column="user_wx_union_id" property="userWxUnionId" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="opt_user_id" property="optUserId" jdbcType="INTEGER" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="BIT" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, peroids_id, fission_id, goods_id, dealer_id, sale_id, order_no, order_status, 
+    cancel_dealer_id, cancel_sale, user_source, page_source, user_wx_union_id, user_id, 
+    create_dt, update_dt,opt_user_id, delete_flag
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from fission_goods_order_record t1
+    where t1.id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="getFissionGoodsOrderRecordByInfo" resultMap="BaseResultMap" parameterType="com.tuanche.directselling.model.FissionGoodsOrderRecord" >
+    select 
+    <include refid="Base_Column_List" />
+    from fission_goods_order_record t1
+    where t1.delete_flag=0
+    <choose>
+      <when test="id!=null">
+        and t1.id = #{id,jdbcType=INTEGER}
+      </when>
+      <otherwise>
+        <if test="peroidsId!=null">
+          and t1.peroids_id = #{peroidsId,jdbcType=INTEGER}
+        </if>
+        <if test="fissionId!=null">
+          and t1.fission_id = #{fissionId,jdbcType=INTEGER}
+        </if>
+        <if test="goodsId!=null">
+          and t1.goods_id = #{goodsId,jdbcType=INTEGER}
+        </if>
+        <if test="orderNo!=null">
+          and t1.order_no = #{orderNo,jdbcType=VARCHAR}
+        </if>
+        <if test="orderStatus!=null">
+          and t1.order_status = #{orderStatus,jdbcType=INTEGER}
+        </if>
+        <if test="pageSource!=null">
+          and t1.page_source = #{pageSource,jdbcType=INTEGER}
+        </if>
+        <if test="userWxUnionId!=null">
+          and t1.user_wx_union_id = #{userWxUnionId,jdbcType=VARCHAR}
+        </if>
+        <if test="userId!=null">
+          and t1.user_id = #{userId,jdbcType=INTEGER}
+        </if>
+        <if test="dealerId != null" >
+          and t1.dealer_id = #{dealerId,jdbcType=INTEGER}
+        </if>
+        <if test="saleId != null" >
+          and t1.sale_id = #{saleId,jdbcType=INTEGER}
+        </if>
+        <if test="cancelDealerId != null" >
+          and t1.cancel_dealer_id = #{cancelDealerId,jdbcType=INTEGER}
+        </if>
+        <if test="cancelSale != null" >
+          and t1.cancel_sale = #{cancelSale,jdbcType=INTEGER}
+        </if>
+      </otherwise>
+    </choose>
+    limit 1
+  </select>
+  
+  <select id="getFissionGoodsOrderRecordList" resultMap="BaseResultMap" parameterType="com.tuanche.directselling.model.FissionGoodsOrderRecord" >
+    select 
+    <include refid="Base_Column_List" />
+    from fission_goods_order_record t1
+    where t1.delete_flag=0
+    <choose>
+      <when test="id!=null">
+        and t1.id = #{id,jdbcType=INTEGER}
+      </when>
+      <otherwise>
+        <if test="peroidsId!=null">
+          and t1.peroids_id = #{peroidsId,jdbcType=INTEGER}
+        </if>
+        <if test="fissionId!=null">
+          and t1.fission_id = #{fissionId,jdbcType=INTEGER}
+        </if>
+        <if test="goodsId!=null">
+          and t1.goods_id = #{goodsId,jdbcType=INTEGER}
+        </if>
+        <if test="orderNo!=null">
+          and t1.order_no = #{orderNo,jdbcType=VARCHAR}
+        </if>
+        <if test="orderStatus!=null">
+          and t1.order_status = #{orderStatus,jdbcType=INTEGER}
+        </if>
+        <if test="pageSource!=null">
+          and t1.page_source = #{pageSource,jdbcType=INTEGER}
+        </if>
+        <if test="userWxUnionId!=null">
+          and t1.user_wx_union_id = #{userWxUnionId,jdbcType=VARCHAR}
+        </if>
+        <if test="userId!=null">
+          and t1.user_id = #{userId,jdbcType=INTEGER}
+        </if>
+        <if test="dealerId != null" >
+          and t1.dealer_id = #{dealerId,jdbcType=INTEGER}
+        </if>
+        <if test="dealerIdList != null and dealerIdList.size()>0" >
+          and t1.dealer_id in
+          <foreach collection="dealerIdList" item="dealerId" open="(" separator="," close=")">
+            #{dealerId}
+          </foreach>
+        </if>
+        <if test="saleId != null" >
+          and t1.sale_id = #{saleId,jdbcType=INTEGER}
+        </if>
+        <if test="cancelDealerId != null" >
+          and t1.cancel_dealer_id = #{cancelDealerId,jdbcType=INTEGER}
+        </if>
+        <if test="cancelDealerIdList != null and cancelDealerIdList.size()>0" >
+          and t1.cancel_dealer_id in
+          <foreach collection="cancelDealerIdList" item="dealerId" open="(" separator="," close=")">
+            #{dealerId}
+          </foreach>
+        </if>
+        <if test="cancelSale != null" >
+          and t1.cancel_sale = #{cancelSale,jdbcType=INTEGER}
+        </if>
+      </otherwise>
+    </choose>
+  </select>
+  <select id="getFissionGoodsOrderRecordCount" resultType="int" parameterType="com.tuanche.directselling.model.FissionGoodsOrderRecord" >
+    select  count(t1.id)
+    from fission_goods_order_record t1
+    where t1.delete_flag=0
+    <choose>
+      <when test="id!=null">
+        and t1.id = #{id,jdbcType=INTEGER}
+      </when>
+      <otherwise>
+        <if test="peroidsId!=null">
+          and t1.peroids_id = #{peroidsId,jdbcType=INTEGER}
+        </if>
+        <if test="fissionId!=null">
+          and t1.fission_id = #{fissionId,jdbcType=INTEGER}
+        </if>
+        <if test="goodsId!=null">
+          and t1.goods_id = #{goodsId,jdbcType=INTEGER}
+        </if>
+        <if test="orderNo!=null">
+          and t1.order_no = #{orderNo,jdbcType=VARCHAR}
+        </if>
+        <if test="orderStatus!=null">
+          and t1.order_status = #{orderStatus,jdbcType=INTEGER}
+        </if>
+        <if test="pageSource!=null">
+          and t1.page_source = #{pageSource,jdbcType=INTEGER}
+        </if>
+        <if test="userWxUnionId!=null">
+          and t1.user_wx_union_id = #{userWxUnionId,jdbcType=VARCHAR}
+        </if>
+        <if test="userId!=null">
+          and t1.user_id = #{userId,jdbcType=INTEGER}
+        </if>
+        <if test="dealerId != null" >
+          and t1.dealer_id = #{dealerId,jdbcType=INTEGER}
+        </if>
+        <if test="saleId != null" >
+          and t1.sale_id = #{saleId,jdbcType=INTEGER}
+        </if>
+        <if test="cancelDealerId != null" >
+          and t1.cancel_dealer_id = #{cancelDealerId,jdbcType=INTEGER}
+        </if>
+        <if test="cancelSale != null" >
+          and t1.cancel_sale = #{cancelSale,jdbcType=INTEGER}
+        </if>
+      </otherwise>
+    </choose>
+  </select>
+
+  <select id="getFissionGoodsOrderRecordListByOrderNos" resultType="com.tuanche.directselling.dto.FissionGoodsOrderDto" parameterType="com.tuanche.directselling.dto.FissionGoodsOrderDto" >
+    select
+    t1.peroids_id                       peroidsId
+    ,t1.fission_id                      fissionActivityId
+    ,t2.activity_name                   fissionActivityName
+    ,t1.goods_id                        goodsId
+    ,t1.dealer_id                       dealerId
+    ,t1.sale_id                         saleId
+    ,t1.order_no                        orderNo
+    ,t1.order_status                    orderStatusInt
+    ,t1.cancel_dealer_id                cancelDealerId
+    ,t1.cancel_sale                     cancelSaleId
+    ,t1.user_id                         userId
+    ,t1.user_wx_union_id                userWxUnionId
+    <!--,(SELECT IFNULL((SELECT t3.id FROM fission_user_task_record t3 WHERE t3.task_id=4 AND t1.fission_id=t3.fission_id AND t1.user_wx_union_id=t3.user_wx_union_id LIMIT 1),0)) watchLive-->
+    from fission_goods_order_record t1
+    left join fission_activity t2 on t1.fission_id=t2.id
+    where t1.delete_flag=0
+    and t2.delete_flag=0
+    and t1.order_no in
+    <foreach collection="oederNos" item="oederNo" open="(" separator="," close=")">
+      #{oederNo}
+    </foreach>
+  </select>
+  
+  <select id="getOrderByOrderTradeId" resultType="com.tuanche.directselling.dto.FissionGoodsOrderDto">
+    select
+    t1.id                               orderId
+    ,t1.peroids_id                       peroidsId
+    ,t1.fission_id                      fissionActivityId
+    ,t1.goods_id                        goodsId
+    ,t1.dealer_id                       dealerId
+    ,t1.sale_id                         saleId
+    ,t1.order_no                        orderNo
+    ,t1.order_status                    orderStatusInt
+    ,t1.cancel_dealer_id                cancelDealerId
+    ,t1.cancel_sale                     cancelSaleId
+    ,t1.user_id                         userId
+    from fission_goods_order_record t1
+    left join fission_trade_record t2 on t1.order_no = t2.order_no
+    where t2.order_trade_id = #{orderTradeId} and t2.trade_type = #{tradeType}
+    <if test="tradeType == 2">
+      t2.trade_status=1
+    </if>
+  </select>
+
+  <select id="getFissionGoodsListByFissionIdAndDealerId" resultType="com.tuanche.directselling.dto.FissionDealerSettlementAccountDto">
+    SELECT
+        fission_id                      fissionId,
+        dealer_id                       dealerId,
+        COUNT(id)                       orderSum,
+        0     orderCheckoutSum,
+        SUM(IF(order_status=7,1,0))     orderRefundSum
+    FROM fission_goods_order_record
+    WHERE
+        delete_flag=0 AND order_status IN (3,4,5,7)
+        AND (fission_id, dealer_id) IN
+        <foreach collection="recordList" item="item" open="(" separator="," close=")">
+          (#{item.fissionId}, #{item.dealerId})
+        </foreach>
+        GROUP BY fission_id, dealer_id;
+  </select>
+  <!-- 根据裂变活动ID获取经销商的已核销的订单金额 -->
+  <select id="getDealerWriteOffOrderAmountByFissionId" resultMap="BaseResultMap">
+      SELECT
+          cancel_dealer_id AS dealerId,
+          SUM(order_amount) AS orderAmount
+      FROM
+          fission_goods_order_record
+      WHERE cancel_dealer_id = #{fissionId}
+        AND order_status = 4
+      GROUP BY cancel_dealer_id
+  </select>
+  <!-- 获取经销商的核销信息（核销订单数，核销订单金额等） -->
+  <select id="getDealerWriteOffData" resultType="com.tuanche.directselling.dto.FissionGoodsOrderRecordDto">
+      SELECT
+          fission_id                      fissionId,
+          cancel_dealer_id                cancelDealerId,
+          SUM(1)                          orderCheckoutSum,
+          SUM(order_amount)               orderAmount
+      FROM fission_goods_order_record
+      WHERE
+          delete_flag=0 AND order_status =4
+          AND (fission_id, cancel_dealer_id) IN
+          <foreach collection="recordList" item="item" open="(" separator="," close=")">
+              (#{item.fissionId}, #{item.dealerId})
+          </foreach>
+      GROUP BY fission_id, cancel_dealer_id;
+  </select>
+</mapper>

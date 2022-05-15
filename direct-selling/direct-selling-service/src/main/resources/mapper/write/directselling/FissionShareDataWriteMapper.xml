@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.FissionShareDataWriteMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FissionShareData">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="fission_id" jdbcType="INTEGER" property="fissionId" />
+    <result column="sale_wx_union_id" jdbcType="CHAR" property="saleWxUnionId" />
+    <result column="user_wx_union_id" jdbcType="CHAR" property="userWxUnionId" />
+    <result column="user_wx_nick" jdbcType="VARCHAR" property="userWxNick" />
+    <result column="share_url" jdbcType="VARCHAR" property="shareUrl" />
+    <result column="share_poster_url" jdbcType="VARCHAR" property="sharePosterUrl" />
+    <result column="delete_flag" jdbcType="BIT" property="deleteFlag" />
+    <result column="create_dt" jdbcType="TIMESTAMP" property="createDt" />
+    <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, fission_id, user_wx_union_id, user_wx_union_id, user_wx_nick, share_url, share_poster_url,
+    delete_flag, create_dt, update_dt
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from fission_share_data
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from fission_share_data
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.tuanche.directselling.model.FissionShareData">
+    insert into fission_share_data
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="fissionId != null">
+        fission_id,
+      </if>
+      <if test="saleWxUnionId != null">
+        sale_wx_union_id,
+      </if>
+      <if test="userWxUnionId != null">
+        user_wx_union_id,
+      </if>
+      <if test="userWxNick != null">
+        user_wx_nick,
+      </if>
+      <if test="shareUrl != null">
+        share_url,
+      </if>
+      <if test="sharePosterUrl != null">
+        share_poster_url,
+      </if>
+      <if test="deleteFlag != null">
+        delete_flag,
+      </if>
+      <if test="createDt != null">
+        create_dt,
+      </if>
+      <if test="updateDt != null">
+        update_dt,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="fissionId != null">
+        #{fissionId,jdbcType=INTEGER},
+      </if>
+      <if test="saleWxUnionId != null">
+        #{saleWxUnionId,jdbcType=CHAR},
+      </if>
+      <if test="userWxUnionId != null">
+        #{userWxUnionId,jdbcType=CHAR},
+      </if>
+      <if test="userWxNick != null">
+        #{userWxNick,jdbcType=VARCHAR},
+      </if>
+      <if test="shareUrl != null">
+        #{shareUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="sharePosterUrl != null">
+        #{sharePosterUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null">
+        #{deleteFlag,jdbcType=BIT},
+      </if>
+      <if test="createDt != null">
+        #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDt != null">
+        #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.FissionShareData">
+    update fission_share_data
+    <set>
+      <if test="fissionId != null">
+        fission_id = #{fissionId,jdbcType=INTEGER},
+      </if>
+      <if test="saleWxUnionId != null">
+        sale_wx_union_id = #{saleWxUnionId,jdbcType=CHAR},
+      </if>
+      <if test="userWxUnionId != null">
+        user_wx_union_id = #{userWxUnionId,jdbcType=CHAR},
+      </if>
+      <if test="userWxNick != null">
+        user_wx_nick = #{userWxNick,jdbcType=VARCHAR},
+      </if>
+      <if test="shareUrl != null">
+        share_url = #{shareUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="sharePosterUrl != null">
+        share_poster_url = #{sharePosterUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="deleteFlag != null">
+        delete_flag = #{deleteFlag,jdbcType=BIT},
+      </if>
+      <if test="createDt != null">
+        create_dt = #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDt != null">
+        update_dt = #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="deleteShareDataByFId" parameterType="java.lang.Integer">
+    update fission_share_data
+    set  delete_flag = 1
+    where fission_id = #{fissionId,jdbcType=INTEGER}
+  </update>
+</mapper>

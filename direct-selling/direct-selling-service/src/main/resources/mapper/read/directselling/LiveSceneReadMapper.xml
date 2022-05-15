@@ -1,0 +1,520 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.LiveSceneReadMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.LiveScene">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="scene_title" jdbcType="VARCHAR" property="sceneTitle" />
+    <result column="city_id" jdbcType="INTEGER" property="cityId" />
+    <result column="periods_id" jdbcType="INTEGER" property="periodsId" />
+    <result column="begin_time" jdbcType="TIMESTAMP" property="beginTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="ready_begin_time" jdbcType="TIMESTAMP" property="readyBeginTime" />
+    <result column="ready_end_time" jdbcType="TIMESTAMP" property="readyEndTime" />
+    <result column="formal_begin_time" jdbcType="TIMESTAMP" property="formalBeginTime" />
+    <result column="formal_end_time" jdbcType="TIMESTAMP" property="formalEndTime" />
+    <result column="up_state" jdbcType="INTEGER" property="upState" />
+    <result column="host_code" jdbcType="VARCHAR" property="hostCode" />
+    <result column="plan_id" jdbcType="VARCHAR" property="planId" />
+    <result column="preview_address" jdbcType="VARCHAR" property="previewAddress" />
+    <result column="live_address" jdbcType="VARCHAR" property="liveAddress" />
+    <result column="director_id" jdbcType="INTEGER" property="directorId" />
+    <result column="director_name" jdbcType="VARCHAR" property="directorName" />
+    <result column="create_user_id" jdbcType="INTEGER" property="createUserId" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="create_dt" jdbcType="TIMESTAMP" property="createDt" />
+    <result column="update_user_id" jdbcType="INTEGER" property="updateUserId" />
+    <result column="update_user_name" jdbcType="VARCHAR" property="updateUserName" />
+    <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
+    <result column="delete_state" jdbcType="BIT" property="deleteState" />
+    <result column="send_flag" jdbcType="TINYINT" property="sendFlag" />
+  </resultMap>
+  <resultMap id="BaseResultDtoMap" type="com.tuanche.directselling.dto.LiveSceneDto" extends="BaseResultMap"></resultMap>
+  <resultMap id="cityDtoResultMap" type="com.tuanche.directselling.dto.LiveSceneCityDto"></resultMap>
+  <resultMap id="brandVoResultMap" type="com.tuanche.directselling.vo.LiveSceneBrandVo"></resultMap>
+  <resultMap id="dataReportDtoResultMap" type="com.tuanche.directselling.dto.LiveSceneDataReportDto"></resultMap>
+  <sql id="Base_Column_List">
+    id, scene_title, city_id, begin_time, end_time, up_state, host_code, plan_id, preview_address,
+    live_address, director_id, director_name, create_user_id, create_user_name, create_dt, update_user_id,
+    update_user_name, update_dt, delete_state, ready_begin_time, ready_end_time, formal_begin_time, formal_end_time, periods_id, send_flag
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from live_scene
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <!--  1.4修改 去掉live_scene表的city_id-->
+  <select id="selectLiveSceneDtoList" resultMap="BaseResultDtoMap">
+    SELECT
+    ls.id,
+    ls.periods_id,
+    CONCAT(lscb.data_value,'-',ls.scene_title) scene_title,
+    lscb.data_id as city_id,
+    ls.begin_time,
+    ls.end_time,
+    ls.up_state,
+    ls.create_user_id,
+    ls.create_user_name,
+    ls.create_dt,
+    ls.update_user_id,
+    ls.update_user_name,
+    ls.update_dt,
+    ls.delete_state,
+    ls.ready_begin_time,
+    ls.ready_end_time,
+    ls.formal_begin_time,
+    ls.formal_end_time
+    FROM
+    live_scene AS ls
+    RIGHT JOIN live_scene_city_brand AS lscb ON ls.id = lscb.scene_id and lscb.delete_flag=0
+    WHERE
+    lscb.data_type = 0
+    and ls.delete_state = 0
+    <if test="periodsId !=null">
+      AND ls.periods_id = #{periodsId}
+    </if>
+    <if test="sceneId !=null">
+      AND ls.id = #{sceneId}
+    </if>
+    <if test="sceneTitle !=null">
+      AND ls.scene_title LIKE CONCAT("%",#{sceneTitle},"%")
+    </if>
+    <if test="upState !=null">
+      AND ls.up_state = #{upState}
+    </if>
+    <if test="cityId !=null">
+      AND lscb.data_id = #{cityId}
+    </if>
+    <if test="sceneState == 0">
+      AND ls.begin_time &gt; SYSDATE()
+    </if>
+    <if test="sceneState == 1">
+      AND ls.begin_time &lt;= SYSDATE() and end_time &gt;= SYSDATE()
+    </if>
+    <if test="sceneState == 2">
+      AND ls.end_time &lt; SYSDATE()
+    </if>
+    <if test="dealerIdList != null and dealerIdList.size() > 0">
+      AND ls.id in (select DISTINCT scene_id from live_scene_dealer_brand where delete_state = 0 and dealer_id in
+      <foreach collection="dealerIdList" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+      )
+    </if>
+    <if test="periodsIdList != null and periodsIdList.size() > 0">
+      AND ls.periods_id in
+      <foreach collection="periodsIdList" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+  </select>
+
+  <select id="selectLiveSceneTitleList" resultMap="BaseResultDtoMap">
+    SELECT
+    ls.id,
+    ls.scene_title scene_title
+    FROM
+    live_scene AS ls
+    WHERE
+    ls.delete_state = 0
+    <if test="periodsId !=null">
+      AND ls.periods_id = #{periodsId}
+    </if>
+    <if test="sceneId !=null">
+      AND ls.id = #{sceneId}
+    </if>
+    <if test="sceneTitle !=null">
+      AND ls.scene_title LIKE CONCAT("%",#{sceneTitle},"%")
+    </if>
+    <if test="upState !=null">
+      AND ls.up_state = #{upState}
+    </if>
+    <if test="sceneState == 0">
+      AND ls.begin_time &gt; SYSDATE()
+    </if>
+    <if test="sceneState == 1">
+      AND ls.begin_time &lt;= SYSDATE() and end_time &gt;= SYSDATE()
+    </if>
+    <if test="sceneState == 2">
+      AND ls.end_time &lt; SYSDATE()
+    </if>
+    <if test="dealerIdList != null and dealerIdList.size() > 0">
+      AND ls.id in (select DISTINCT scene_id from live_scene_dealer_brand where delete_state = 0 and dealer_id in
+      <foreach collection="dealerIdList" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+      )
+    </if>
+    <if test="periodsIdList != null and periodsIdList.size() > 0">
+      AND ls.periods_id in
+      <foreach collection="periodsIdList" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+  </select>
+
+  <select id="getLiveSceneListByLiveScene" resultMap="BaseResultMap">
+    SELECT
+    ls.id,
+    ls.periods_id,
+    ls.scene_title scene_title,
+    ls.begin_time,
+    ls.end_time,
+    ls.up_state,
+    ls.send_flag
+    FROM
+    live_scene AS ls
+    WHERE
+    ls.delete_state = 0
+    <if test="periodsId !=null">
+      AND ls.periods_id = #{periodsId}
+    </if>
+    <if test="sceneId !=null">
+      AND ls.id = #{sceneId}
+    </if>
+    <if test="upState !=null">
+      AND ls.up_state = #{upState}
+    </if>
+    <if test="sceneState == 0">
+      AND ls.begin_time &gt; SYSDATE()
+    </if>
+    <if test="sceneState == 1">
+      AND ls.begin_time &lt;= SYSDATE() and end_time &gt;= SYSDATE()
+    </if>
+    <if test="sceneState == 2">
+      AND ls.end_time &lt; SYSDATE()
+    </if>
+    <if test="cityId != null">
+      AND ls.id IN (SELECT scene_id from live_scene_city_brand where data_id=#{cityId} and data_type=0  and delete_flag=0)
+    </if>
+    <if test="brandId != null">
+      AND ls.id IN (SELECT scene_id from live_scene_city_brand where data_id=#{brandId} and data_type=1  and delete_flag=0)
+    </if>
+  </select>
+
+
+
+  <select id="selectLiveSceneList" resultMap="BaseResultMap">
+    SELECT
+    ls.id,
+    ls.periods_id,
+    CONCAT(lscb.data_value,'-',ls.scene_title) scene_title,
+    lscb.data_id as city_id,
+    ls.begin_time,
+    ls.end_time,
+    ls.up_state,
+    ls.create_user_id,
+    ls.create_user_name,
+    ls.create_dt,
+    ls.update_user_id,
+    ls.update_user_name,
+    ls.update_dt,
+    ls.delete_state,
+    ls.ready_begin_time,
+    ls.ready_end_time,
+    ls.formal_begin_time,
+    ls.formal_end_time
+    FROM
+    live_scene AS ls
+    RIGHT JOIN live_scene_city_brand AS lscb ON ls.id = lscb.scene_id and lscb.delete_flag=0
+    WHERE
+    lscb.data_type = 0
+    and ls.delete_state = 0
+    <if test="excludeId !=null">
+      AND ls.id != #{excludeId}
+    </if>
+    <if test="cityId !=null">
+      AND lscb.data_id = #{cityId}
+    </if>
+    <if test="cityIds !=null">
+      AND lscb.data_id in (${cityIds})
+    </if>
+    <if test="beginTime != null and endTime != null">
+      AND((ls.begin_time &lt;= #{beginTime} and ls.end_time &gt;= #{beginTime})
+            or (ls.begin_time &lt;= #{endTime} and ls.end_time &gt;= #{endTime}))
+    </if>
+    <if test="periodsGroup == 1">
+      and ls.periods_id is not null
+      group by ls.periods_id
+    </if>
+  </select>
+
+  <!--  1.4修改 去掉live_scene表的city_id-->
+  <select id="getLiveSceneCityDtoList" resultMap="cityDtoResultMap">
+    SELECT
+    lscb.data_id AS id
+    FROM
+    live_scene s
+    LEFT JOIN live_scene_dealer_brand b ON s.id = b.scene_id
+    right join live_scene_city_brand lscb on s.id=lscb.scene_id and lscb.data_type=0
+    WHERE
+    s.delete_state = 0
+    AND b.delete_state = 0
+    AND s.up_state = 1
+    AND lscb.delete_flag = 0
+    <if test="liveSceneVo != null">
+      <if test="liveSceneVo.cityId !=null">
+        AND lscb.data_id =#{liveSceneVo.cityId,jdbcType=INTEGER}
+      </if>
+      <if test="liveSceneVo.cityIds !=null">
+        AND lscb.data_id in (${liveSceneVo.cityIds})
+      </if>
+      <if test="liveSceneVo.brandId !=null">
+        AND b.brand_id = #{liveSceneVo.brandId}
+      </if>
+      <if test="liveSceneVo.periodsId !=null">
+        AND s.periods_id = #{liveSceneVo.periodsId}
+      </if>
+    </if>
+    GROUP BY lscb.data_id
+  </select>
+  
+  <select id="getLiveInfoByPeriodsId" parameterType="java.lang.Integer" resultType="java.util.HashMap">
+    select ready_begin_time,ready_end_time,MIN(formal_begin_time) formal_begin_time,MAX(formal_end_time) formal_end_time
+    from live_scene
+    where delete_state=0 and periods_id=#{periodsId} AND ready_begin_time IS NOT NULL AND ready_end_time IS NOT NULL AND formal_begin_time IS NOT NULL AND formal_end_time IS NOT NULL LIMIT 1
+  </select>
+
+  <!--取进行中场次-->
+  <select id="getLastLiveScenePeriodsId" resultMap="BaseResultMap">
+    SELECT ls.*
+    FROM live_scene ls
+    JOIN live_scene_dealer_brand lsdb ON ls.id = lsdb.scene_id AND lsdb.delete_state = 0
+    WHERE
+    ls.delete_state = 0 AND ls.up_state = 1
+    GROUP BY periods_id
+    ORDER BY begin_time DESC
+    LIMIT 1
+  </select>
+
+  <select id="getSceneDataReportByPeriodsId" resultMap="dataReportDtoResultMap">
+   SELECT
+     lsdb.city_id as cityId ,
+     lsdc.dealer_id as dealerId,
+     lsdc.dealer_name as dealerName ,
+     lsdc.ensure_size as ensureSize,
+     GROUP_CONCAT(DISTINCT lsdb.brand_name) AS brandNames
+    FROM
+     live_scene_dealer_config lsdc
+    LEFT JOIN live_scene ls ON lsdc.scene_id = ls.id and lsdc.periods_id = ls.periods_id
+    left join live_scene_dealer_brand lsdb on lsdb.scene_id = ls.id and lsdc.dealer_id = lsdb.dealer_id
+    WHERE
+     lsdc.delete_state = 0 and ls.delete_state = 0 and lsdb.delete_state = 0
+    AND  lsdc.periods_id = #{periodsId}
+    <if test="cityId !=null">
+      AND ((lsdb.city_id=#{cityId} and lsdb.join_city_id is null)  or lsdb.join_city_id=#{cityId})
+    </if>
+    <if test="brandId !=null">
+      AND  lsdb.brand_id = #{brandId}
+    </if>
+    GROUP BY lsdc.dealer_id
+  </select>
+
+
+  <select id="getPeriodsCityListByPeriodsId" resultMap="cityDtoResultMap">
+    SELECT
+		lsdb.data_id AS id
+    FROM
+        live_scene_city_brand lsdb
+    LEFT JOIN live_scene ls ON lsdb.scene_id = ls.id
+    WHERE  lsdb.data_type = 0
+    AND ls.periods_id = #{periodsId}
+    GROUP BY lsdb.data_id
+  </select>
+
+  <!--取场次下的品牌-->
+  <select id="getPeriodsBrandListByPeriodsId" resultMap="brandVoResultMap">
+    SELECT
+        lsdb.brand_id as id,
+        lsdb.brand_name as name
+    FROM
+        live_scene_dealer_brand lsdb
+    LEFT JOIN live_scene ls ON ls.id = lsdb.scene_id
+    WHERE
+        ls.delete_state = 0
+    AND lsdb.delete_state = 0
+    AND ls.periods_id =  #{periodsId}
+    GROUP BY lsdb.brand_id
+  </select>
+
+  <!--查询场次活动下经销商列表-->
+  <select id="getPeriodSceneDealerList" resultType="com.tuanche.directselling.dto.LivePeriodDealerDto">
+    SELECT
+      ls.periods_id,
+      ls.id as scene_id,
+      ls.scene_title,
+      lsdb.city_id,
+      lsdb.dealer_id,
+      lsdb.dealer_name,
+      lsdc.contract_dealer_name,
+      GROUP_CONCAT(lsdb.brand_name) AS brandNames
+    FROM
+        live_scene_dealer_brand lsdb
+        JOIN live_scene ls ON lsdb.scene_id = ls.id AND ls.up_state = 1 AND ls.delete_state = 0
+        LEFT JOIN live_scene_dealer_config lsdc ON lsdc.scene_id = lsdb.scene_id AND lsdc.dealer_id = lsdb.dealer_id
+    WHERE
+        lsdc.delete_state = 0
+        AND lsdb.delete_state = 0
+        <if test="periodsId !=null">
+          AND ls.periods_id = #{periodsId}
+        </if>
+        <if test="sceneId !=null">
+          AND ls.id = #{sceneId}
+        </if>
+        <if test="dealerName !=null and dealerName !='' ">
+          AND lsdb.dealer_name like concat("%",#{dealerName},"%")
+        </if>
+    GROUP BY
+        lsdb.scene_id,lsdb.dealer_id
+  </select>
+  <!-- 获取裂变经销商列表 -->
+  <select id="getFissionDealerList" resultType="com.tuanche.directselling.dto.LivePeriodDealerDto">
+    SELECT
+      ls.periods_id,
+      ls.id as scene_id,
+      ls.scene_title,
+      lsdb.city_id,
+      lsdb.dealer_id,
+      lsdb.dealer_name,
+      lsdc.contract_dealer_name,
+      GROUP_CONCAT(lsdb.brand_name) AS brandNames,
+      fdsa.id AS dealerSttlementAccountId,
+      fdsa.bank_card_number as bankCardNumber,
+      fdsa.bank_name as bankName,
+      fdsa.bank_address as bankAddress,
+      fdsa.bank_card_name as bankCardName,
+      fdsa.duty_paragraph as dutyParagraph,
+      fdsa.account_type AS accountType,
+      fdsa.payment_status AS paymentStatus
+    FROM
+        live_scene_dealer_brand lsdb
+        JOIN live_scene ls ON lsdb.scene_id = ls.id AND ls.up_state = 1 AND ls.delete_state = 0
+        LEFT JOIN live_scene_dealer_config lsdc ON lsdc.scene_id = lsdb.scene_id AND lsdc.dealer_id = lsdb.dealer_id
+        LEFT JOIN fission_dealer_settlement_account fdsa ON fdsa.fission_id = #{fissionId} AND fdsa.dealer_id = lsdb.dealer_id and fdsa.delete_flag=0
+    WHERE
+        lsdc.delete_state = 0
+        AND lsdb.delete_state = 0
+        <if test="periodsId !=null">
+          AND ls.periods_id = #{periodsId}
+        </if>
+        <if test="sceneId !=null">
+          AND ls.id = #{sceneId}
+        </if>
+        <if test="dealerName !=null and dealerName !='' ">
+          AND lsdb.dealer_name like concat("%",#{dealerName},"%")
+        </if>
+        <choose>
+            <!-- 无结算账户 -->
+            <when test="hasSttlementAccount == 0">
+                AND fdsa.id IS NULL
+            </when>
+            <!-- 有结算账户 -->
+            <when test="hasSttlementAccount == 1">
+                AND fdsa.id IS NOT NULL
+            </when>
+        </choose>
+    GROUP BY
+        lsdb.scene_id,lsdb.dealer_id
+  </select>
+
+  <select id="selectLiveSceneDtoPage" resultMap="BaseResultDtoMap">
+    SELECT
+    ls.id,
+    ls.periods_id,
+    ls.scene_title,
+    ls.begin_time,
+    ls.end_time,
+    ls.up_state,
+    ls.create_user_id,
+    ls.create_user_name,
+    ls.create_dt,
+    ls.update_user_id,
+    ls.update_user_name,
+    ls.update_dt,
+    ls.delete_state,
+    ls.ready_begin_time,
+    ls.ready_end_time,
+    ls.formal_begin_time,
+    ls.formal_end_time
+    FROM
+    live_scene AS ls
+    WHERE
+    ls.delete_state = 0
+    <if test="periodsId !=null">
+      AND ls.periods_id = #{periodsId}
+    </if>
+    <if test="sceneId !=null">
+      AND ls.id = #{sceneId}
+    </if>
+    <if test="sceneTitle !=null">
+      AND ls.scene_title LIKE CONCAT("%",#{sceneTitle},"%")
+    </if>
+    <if test="upState !=null">
+      AND ls.up_state = #{upState}
+    </if>
+    <if test="cityId !=null">
+      AND ls.id in (select scene_id from live_scene_city_brand where data_type=0 and data_id=#{cityId} and delete_flag=0)
+    </if>
+    <if test="sceneState == 0">
+      AND ls.begin_time &gt; SYSDATE()
+    </if>
+    <if test="sceneState == 1">
+      AND ls.begin_time &lt;= SYSDATE() and end_time &gt;= SYSDATE()
+    </if>
+    <if test="sceneState == 2">
+      AND ls.end_time &lt; SYSDATE()
+    </if>
+    <if test="dealerIdList != null and dealerIdList.size() > 0">
+      AND ls.id in (select DISTINCT scene_id from live_scene_dealer_brand where delete_state = 0 and dealer_id in
+      <foreach collection="dealerIdList" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+      )
+    </if>
+    <if test="periodsIdList != null and periodsIdList.size() > 0">
+      AND ls.periods_id in
+      <foreach collection="periodsIdList" index="index" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    <if test="brandId != null">
+      AND ls.id in (select scene_id from live_scene_city_brand where data_type=1 and data_id=#{brandId} and delete_flag=0)
+    </if>
+  </select>
+
+  <select id="getLiveSceneNotFinished" resultMap="BaseResultMap">
+    SELECT
+        ls.id,
+        ls.periods_id,
+        ls.scene_title,
+        ls.begin_time,
+        ls.end_time,
+        ls.up_state,
+        ls.create_user_id,
+        ls.create_user_name,
+        ls.create_dt,
+        ls.update_user_id,
+        ls.update_user_name,
+        ls.update_dt,
+        ls.delete_state,
+        ls.ready_begin_time,
+        ls.ready_end_time,
+        ls.formal_begin_time,
+        ls.formal_end_time
+    FROM
+        live_scene AS ls where ls.delete_state = 0 and ls.up_state=1 and (ls.begin_time &gt;#{timeNow} or (#{timeNow}&gt;=ls.begin_time and #{timeNow}&lt;=ls.end_time)) ;
+  </select>
+  <!-- 获取经销商参加的小场次列表 -->
+  <select id="getDealerSceneList" resultMap="BaseResultMap">
+      SELECT
+          id,
+          scene_title,
+          periods_id
+      FROM
+          live_scene
+      WHERE
+          id IN (SELECT scene_id FROM live_scene_dealer_config WHERE dealer_id=#{dealerId} AND delete_state=0)
+  </select>
+</mapper>

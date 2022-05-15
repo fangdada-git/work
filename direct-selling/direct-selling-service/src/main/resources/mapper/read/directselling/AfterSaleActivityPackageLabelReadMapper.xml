@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.AfterSaleActivityPackageLabelReadMapper" >
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.AfterSaleActivityPackageLabel" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="package_id" property="packageId" jdbcType="INTEGER" />
+    <result column="primary_label_id" property="primaryLabelId" jdbcType="INTEGER" />
+    <result column="secondary_label_id" property="secondaryLabelId" jdbcType="INTEGER" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="BIT" />
+    <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+    <result column="create_name" property="createName" jdbcType="VARCHAR" />
+    <result column="update_dt" property="updateDt" jdbcType="TIMESTAMP" />
+    <result column="update_name" property="updateName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, package_id, primary_label_id, secondary_label_id, delete_flag, create_dt, create_name, 
+    update_dt, update_name
+  </sql>
+  <sql id="Concise_Column_List" >
+    id, package_id, primary_label_id, secondary_label_id
+  </sql>
+
+    <select id="getPackageLabels" parameterType="integer" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Concise_Column_List"></include>
+        FROM after_sale_activity_package_label
+        WHERE delete_flag=0
+          AND package_id=#{packageId}
+    </select>
+    <select id="getLabelIds" parameterType="integer" resultType="integer">
+        SELECT
+          id
+        FROM after_sale_activity_package_label
+        WHERE delete_flag=0
+          AND package_id=#{packageId}
+    </select>
+    <select id="getPackageLabelNames"  parameterType="integer" resultType="com.tuanche.directselling.dto.AfterSaleActivityPackageLabelDto">
+        SELECT
+          t1.package_id,
+          t1.primary_label_id,
+          t2.label_name AS primaryLabelName,
+          t1.secondary_label_id
+          t3.label_name AS secondaryLabelName
+        FROM after_sale_activity_package_label t1
+        LEFT JOIN after_sale_activity_package_primary_label t2 ON t2.id=t1.primary_label_id
+        LEFT JOIN after_sale_activity_package_secondary_label t3 ON t3.id=t1.secondary_label_id
+        WHERE delete_flag=0
+          AND package_id=#{packageId}
+    </select>
+    <!--根据套餐IDS获取其标签-->
+    <select id="getPackageLabelNamesByPackageIds"   resultType="com.tuanche.directselling.dto.AfterSaleActivityPackageLabelDto">
+        SELECT
+          t1.package_id AS packageId,
+          t1.primary_label_id AS primaryLabelId,
+          t2.label_name AS primaryLabelName,
+          t1.secondary_label_id AS secondaryLabelId,
+          t3.label_name AS secondaryLabelName
+        FROM after_sale_activity_package_label t1
+        LEFT JOIN after_sale_activity_package_primary_label t2 ON t2.id=t1.primary_label_id
+        LEFT JOIN after_sale_activity_package_secondary_label t3 ON t3.id=t1.secondary_label_id
+        WHERE t1.delete_flag=0
+          AND t1.package_id IN
+        <foreach collection="packageIds" item="packageId" open="(" separator="," close=")">
+            #{packageId}
+        </foreach>
+    </select>
+</mapper>

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.AfterSaleKeepOnRecordReadMapper">
+    <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.AfterSaleKeepOnRecord">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="activity_id" jdbcType="INTEGER" property="activityId"/>
+        <result column="dealer_id" jdbcType="INTEGER" property="dealerId"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="licence_plate" jdbcType="VARCHAR" property="licencePlate"/>
+        <result column="user_phone" jdbcType="VARCHAR" property="userPhone"/>
+        <result column="original_brand_name" jdbcType="VARCHAR" property="originalBrandName"/>
+        <result column="brand_id" jdbcType="INTEGER" property="brandId"/>
+        <result column="brand_name" jdbcType="VARCHAR" property="brandName"/>
+        <result column="original_car_series_name" jdbcType="VARCHAR" property="originalCarSeriesName"/>
+        <result column="car_series_id" jdbcType="INTEGER" property="carSeriesId"/>
+        <result column="car_series_name" jdbcType="VARCHAR" property="carSeriesName"/>
+        <result column="buy_car_time" jdbcType="TIMESTAMP" property="buyCarTime"/>
+        <result column="latest_enter_time" jdbcType="TIMESTAMP" property="latestEnterTime"/>
+        <result column="user_type" jdbcType="TINYINT" property="userType"/>
+        <result column="sync_status" jdbcType="TINYINT" property="syncStatus"/>
+        <result column="sync_time" jdbcType="TIMESTAMP" property="syncTime"/>
+        <result column="matching_time" jdbcType="TIMESTAMP" property="matchingTime"/>
+        <result column="delete_flag" jdbcType="BOOLEAN" property="deleteFlag"/>
+        <result column="create_dt" jdbcType="TIMESTAMP" property="createDt"/>
+        <result column="create_name" jdbcType="VARCHAR" property="createName"/>
+        <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt"/>
+        <result column="update_name" jdbcType="VARCHAR" property="updateName"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id,
+        activity_id,
+        dealer_id,
+        user_name,
+        licence_plate,
+        user_phone,
+        original_brand_name,
+        brand_id,
+        brand_name,
+        original_car_series_name,
+        car_series_id,
+        car_series_name,
+        buy_car_time,
+        latest_enter_time,
+        user_type,
+        sync_status,
+        sync_time,
+        matching_time,
+        delete_flag,
+        create_dt,
+        create_name,
+        update_dt,
+        update_name,
+        data_source
+    </sql>
+    <!-- 获取用户类型 -->
+    <select id="getUserType" resultType="integer" parameterType="com.tuanche.directselling.model.AfterSaleKeepOnRecord">
+        SELECT
+            user_type
+        FROM
+        after_sale_keep_on_record
+        WHERE activity_id = #{activityId}
+        AND (licence_plate = #{licencePlate} OR user_phone= #{userPhone})
+        AND delete_flag = 0
+        ORDER BY id DESC LIMIT 1
+    </select>
+    <!-- 通过车牌或者手机号或信息 -->
+    <select id="getByLicencePlateOrPhone" resultMap="BaseResultMap"
+            parameterType="com.tuanche.directselling.model.AfterSaleKeepOnRecord">
+        SELECT
+        id, activity_id, user_name, licence_plate, user_phone
+        FROM
+        after_sale_keep_on_record
+        WHERE activity_id = #{activityId}
+        AND (licence_plate = #{licencePlate} OR user_phone= #{userPhone})
+        <if test="id != null">
+            AND id != #{id}
+        </if>
+        AND delete_flag = 0
+        AND ((user_type=1 AND sync_status=1) OR user_type=0)
+        ORDER BY id DESC LIMIT 1
+    </select>
+
+   <select id="getById" resultMap="BaseResultMap">
+       SELECT
+        <include refid="Base_Column_List"></include>
+        FROM after_sale_keep_on_record
+        WHERE id = #{id}
+   </select>
+    <select id="getKeepOnRecordList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM after_sale_keep_on_record
+        WHERE delete_flag = 0
+        <if test="activityId != null">
+            AND activity_id = #{activityId}
+        </if>
+        <if test="dealerId != null">
+            AND dealer_id = #{dealerId}
+        </if>
+        <if test="userType != null">
+            AND user_type = #{userType}
+        </if>
+        <if test="syncStatus != null">
+            AND sync_status = #{syncStatus}
+        </if>
+        <choose>
+            <when test="userName != null and userName != '' and userPhone != null and userPhone != '' and licencePlate != null and licencePlate != ''">
+                and (user_name LIKE CONCAT(#{userName},'%') or user_phone LIKE CONCAT(#{userPhone},'%') or licence_plate
+                LIKE CONCAT(#{licencePlate},'%'))
+            </when>
+            <otherwise>
+                <if test="userName != null and userName != ''">
+                    AND user_name LIKE CONCAT('%', #{userName},'%')
+                </if>
+                <if test="userPhone != null and userPhone != ''">
+                    AND user_phone LIKE CONCAT('%', #{userPhone},'%')
+                </if>
+                <if test="licencePlate != null and licencePlate != ''">
+                    AND licence_plate LIKE CONCAT('%', #{licencePlate},'%')
+                </if>
+            </otherwise>
+        </choose>
+        order by id desc
+    </select>
+
+    <select id="getUserSumData" resultType="com.tuanche.directselling.dto.AfterSaleKeepOnRecordDto">
+        SELECT act.id,
+        act.activity_name,
+        act.offline_convert_end_time,
+        (select count(*) from after_sale_keep_on_record where delete_flag=0 and activity_id=act.id and
+        user_type=#{userType}) as input_count,
+        ( SELECT count( * ) FROM after_sale_keep_on_record WHERE delete_flag = 0 AND activity_id = act.id AND user_type
+        = #{userType} and user_phone is not null ) AS user_phone_count,
+        ( SELECT count( * ) FROM after_sale_keep_on_record WHERE delete_flag = 0 AND activity_id = act.id AND user_type
+        = #{userType} and licence_plate is not null) AS licence_plate_count,
+        act.on_state
+        FROM after_sale_activity act
+        where act.delete_flag=0 and act.dealer_id = #{dealerId}
+        <if test="activityId != null">
+            and act.id=#{activityId}
+        </if>
+        group by act.id order by act.offline_convert_end_time desc
+    </select>
+
+    <select id="getByIdAndDealerId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM after_sale_keep_on_record
+        WHERE id = #{id} and dealer_id=#{dealerId}
+    </select>
+
+    <select id="getKeepOnRecordBrandCarSeriesList"
+            resultType="com.tuanche.directselling.dto.AfterSaleKeepOnRecordBrandCarSeriesDto">
+        select id,
+        original_brand_name,
+        brand_id,
+        brand_name,
+        original_car_series_name,
+        car_series_id,
+        car_series_name,
+        matching_time,
+        sync_status
+        from after_sale_keep_on_record
+        where delete_flag=0 and activity_id=#{activityId} and user_type=1 and original_brand_name is not null and
+        original_car_series_name is not null
+        <if test="status == 1">
+            and brand_name is null
+        </if>
+        <if test="status == 2">
+            and car_series_name is null
+        </if>
+        <if test="status == 3">
+            and (car_series_name is null or brand_name is null)
+        </if>
+        <if test="syncStatus != null">
+            and sync_status=#{syncStatus}
+        </if>
+        group by original_brand_name,original_car_series_name
+        order by id desc
+    </select>
+</mapper>

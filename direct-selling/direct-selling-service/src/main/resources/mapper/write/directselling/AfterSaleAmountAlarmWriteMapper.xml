@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.AfterSaleAmountAlarmWriteMapper" >
+
+  <insert id="insertSelective" parameterType="com.tuanche.directselling.model.AfterSaleAmountAlarm" keyProperty="id" useGeneratedKeys="true">
+    insert into after_sale_amount_alarm
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="accruingAmounts != null" >
+        accruing_amounts,
+      </if>
+      <if test="paymentAmount != null" >
+        payment_amount,
+      </if>
+      <if test="alarmAmount != null" >
+        alarm_amount,
+      </if>
+      <if test="alarmPhone != null" >
+        alarm_phone,
+      </if>
+      <if test="alarmEmail != null" >
+        alarm_email,
+      </if>
+      <if test="updateDt != null" >
+        update_dt,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="accruingAmounts != null" >
+        #{accruingAmounts,jdbcType=DECIMAL},
+      </if>
+      <if test="paymentAmount != null" >
+        #{paymentAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="alarmAmount != null" >
+        #{alarmAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="alarmPhone != null" >
+        #{alarmPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmEmail != null" >
+        #{alarmEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDt != null" >
+        #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.AfterSaleAmountAlarm" >
+    update after_sale_amount_alarm
+    <set >
+      <if test="accruingAmounts != null" >
+        accruing_amounts = #{accruingAmounts,jdbcType=DECIMAL},
+      </if>
+      <if test="paymentAmount != null" >
+        payment_amount = #{paymentAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="alarmAmount != null" >
+        alarm_amount = #{alarmAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="alarmPhone != null" >
+        alarm_phone = #{alarmPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmEmail != null" >
+        alarm_email = #{alarmEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDt != null" >
+        update_dt = #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

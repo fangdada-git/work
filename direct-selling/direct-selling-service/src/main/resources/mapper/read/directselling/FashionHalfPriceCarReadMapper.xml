@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.FashionHalfPriceCarReadMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FashionHalfPriceCar">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="periods_id" jdbcType="INTEGER" property="periodsId" />
+    <result column="car_fashion_id" jdbcType="INTEGER" property="carFashionId" />
+    <result column="activity_start" jdbcType="DATE" property="activityStart" />
+    <result column="activity_end" jdbcType="DATE" property="activityEnd" />
+    <result column="activity_date" jdbcType="DATE" property="activityDate" />
+    <result column="brand_id" jdbcType="INTEGER" property="brandId" />
+    <result column="winning_number" jdbcType="INTEGER" property="winningNumber" />
+    <result column="creat_by" jdbcType="INTEGER" property="creatBy" />
+    <result column="creat_dt" jdbcType="TIMESTAMP" property="creatDt" />
+    <result column="update_by" jdbcType="INTEGER" property="updateBy" />
+    <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
+    <result column="delete_flag" jdbcType="INTEGER" property="deleteFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, periods_id, car_fashion_id,activity_start, activity_end,  activity_date, brand_id, winning_number, creat_by, creat_dt,
+    update_by, update_dt, delete_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from fashion_half_price_car
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectListByPeriodsId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from fashion_half_price_car
+    where delete_flag = 0
+    and periods_id = #{periodsId,jdbcType=INTEGER}
+    order by activity_date
+  </select>
+
+  <select id="getNotFilledActivity" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from fashion_half_price_car
+    where delete_flag=0
+    <if test="periodsId!=null">
+      and periods_id = #{periodsId}
+    </if>
+    and activity_date = DATE(NOW())
+    and winning_number is null
+  </select>
+
+  <select id="selectNotInputWinNum" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from fashion_half_price_car
+    where activity_date=#{day} and winning_number is null and delete_flag=0
+  </select>
+
+  <select id="selectInputtedWinNum" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>s
+    from fashion_half_price_car
+    where activity_date=#{day} and winning_number is not null and delete_flag=0
+  </select>
+
+  <select id="selectActivityByDay" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from fashion_half_price_car
+    where activity_date=#{day} and delete_flag=0
+  </select>
+
+  <select id="getBrandHalfpriceFlag" resultType="java.lang.Integer">
+    select
+    count(id)
+    from fashion_half_price_car
+    where delete_flag=0
+    and periods_id = #{periodsId}
+    and brand_id = #{brandId}
+<!--and DATE(NOW()) between activity_start and activity_end-->
+  </select>
+
+  <select id="getHalfPriceCarListByPeriodsIdAndDateList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from fashion_half_price_car
+    where delete_flag=0
+    <if test="periodsId!=null">
+      and periods_id = #{periodsId}
+    </if>
+    <if test="activityDateList!=null and activityDateList.size>0">
+      and activity_date in
+      <foreach collection="activityDateList" item="item" open="(" separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+
+  </select>
+
+</mapper>

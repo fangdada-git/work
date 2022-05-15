@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>团车直卖-裂变活动表单</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.js"></script>
+    <script src="/layui/js/formSelects-v4.js"></script>
+    <script src="/common/js/tools.js"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/layui/css/formSelects-v4.css" media="all">
+    <style>
+        .label-close-icon {
+            vertical-align: bottom;
+            margin-left: -8px;
+            font-size: 18px;
+            position: absolute;
+            top: -8px;
+            cursor: pointer;
+            z-index: 100;
+        }
+        .layui-input {
+            width: 300px;
+        }
+        .layui-form-select {
+            width: 300px;
+        }
+        .xm-form-select {
+            min-width: 300px;
+        }
+        .layui-form-label {
+            width: 100px;
+        }
+        .layui-input-block {
+            margin-left: 138px;
+        }
+    </style>
+</head>
+<body class="childrenBody">
+<form class="layui-form" style="background-color:#ffffff" lay-filter="fissionActivityForm">
+    <div class="layui-form-item" style="width: 437px;">
+        <label class="layui-form-label">关联场次</label>
+        <div class="layui-input-block">
+            <select name="periodsSelect" xm-select="periodsSelect" xm-select-search="" xm-select-search-type="dl"  xm-select-radio="" disabled>
+                <option value="">请选择场次</option>
+                <option th:each="period : ${periodsList}" th:value="${period.id}" th:text="${period.name}"></option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item" style="width: 437px;">
+        <label class="layui-form-label">关联场次-活动</label>
+        <div class="layui-input-block">
+            <select name="sceneSelect" xm-select="sceneSelect" xm-select-search="" xm-select-search-type="dl"  xm-select-radio="" disabled>
+                <option value="" >[[${sceneTitle}]]</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item" style="width: 437px;">
+        <label class="layui-form-label required">活动名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="activityName" id="activityName" lay-verify="required"
+                   placeholder="请输活动名称" maxlength="30" th:value="${fissionActivity.activityName}" autocomplete="off" class="layui-input"  style="width: 300px;">
+        </div>
+    </div>
+    <div class="layui-form-item" style="width: 437px;">
+        <label class="layui-form-label">C端有现金奖励</label>
+        <div class="layui-input-block">
+            <input type="radio" name="cAwardFlag" value="1" title="是" th:field="${fissionActivity.cAwardFlag}" >
+            <input type="radio" name="cAwardFlag" value="0" title="否" th:field="${fissionActivity.cAwardFlag}" >
+        </div>
+    </div>
+    <div class="layui-form-item" style="width: 437px;">
+        <label class="layui-form-label">活动时间范围</label>
+        <div class="layui-input-block">
+            <input type="hidden" id="startTime" th:value="${#dates.format(fissionActivity.startTime,'yyyy-MM-dd HH:mm:ss')}"/>
+            <input type="hidden" id="endTime" th:value="${#dates.format(fissionActivity.endTime,'yyyy-MM-dd HH:mm:ss')}"/>
+            <input type="datetime" readonly class="layui-input" id="activityTime" placeholder="请选择活动时间范围">
+        </div>
+    </div>
+    <div class="layui-form-item" style="margin-bottom: 225px;">
+        <div class="layui-input-block">
+            <button type="submit" class="layui-btn layui-btn-normal" id="submitBtn" lay-submit lay-filter="submitBtn">
+                <i class="layui-icon layui-icon-ok-circle"></i>立即提交
+            </button>
+            <button type="button" class="layui-btn layui-btn-normal" id="backBtn"><i class="layui-icon layui-icon-close-fill"></i>返回</button>
+        </div>
+    </div>
+</form>
+
+<!-- layui 初始化 -->
+<script type="text/javascript" th:inline="javascript">
+    layui.use(['form','layer','table','upload','laydate','element'],function(){
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            laydate = layui.laydate,
+            util = layui.util,
+            formSelects = layui.formSelects,
+            element = layui.element;
+        element.init();
+
+        var fissionId = [[${fissionActivity.id}]];
+        var periodsId = [[${fissionActivity.periodsId}]];
+        layui.formSelects.value('periodsSelect', [periodsId]);
+
+        // 场次活动时间范围
+        var startTime = [[${fissionActivity.startTime}]];
+        var endTime = [[${fissionActivity.endTime}]];
+        var startTimeStr = layui.util.toDateString(startTime, 'yyyy-MM-dd HH:mm:ss');
+        var endTimeStr = layui.util.toDateString(endTime, 'yyyy-MM-dd HH:mm:ss');
+
+        laydate.render({
+            elem: '#activityTime'
+            , type: 'datetime'
+            , range: true
+            , value: startTimeStr + ' - ' + endTimeStr
+            , done: function(value, date, endDate){
+                if(value == null || value == ""){
+                    $("#startTime").val("");
+                    $("#endTime").val("");
+                }else{
+                    var time = value.split(" - ");
+                    $("#startTime").val(time[0]);
+                    $("#endTime").val(time[1]);
+                }
+            }
+        });
+
+        // 设置下拉框 只保留清空按钮
+        formSelects.btns('sceneCitySelect', ['remove']);
+        formSelects.btns('periodsSelect', ['remove']);
+
+        // 监听提交
+        form.on('submit(submitBtn)', function(data){
+            // 获取关联场次
+            var periodsId = layui.formSelects.value("periodsSelect","val");
+            var activityName = $("#activityName").val();
+            var startTime = $("#startTime").val();
+            var endTime = $("#endTime").val();
+            var cAwardFlag = $('input[name="cAwardFlag"]:checked').val();
+
+            var nowTime = layui.util.toDateString(new Date().getTime(), 'yyyy-MM-dd HH:mm:ss');
+
+            if(periodsId == null || periodsId == ""){
+                layer.msg("请选择关联场次！", {icon: 5});
+                return false;
+            }
+
+            if(activityName == null || activityName == ""){
+                layer.msg("请输入场次活动主题！", {icon: 5});
+                return false;
+            }
+            if (cAwardFlag == undefined) {
+                layer.msg("请选择C端是否有现金奖励", {icon: 5});
+                return false;
+            }
+            if(startTime == null || startTime == "" || endTime == null || endTime == ""){
+                layer.msg("请选择时间范围！", {icon: 5});
+                return false;
+            }else if(startTime <= nowTime){
+                layer.msg("开始时间需要晚于当前时间！", {icon: 5});
+                return false;
+            }
+
+            $('#submitBtn').attr('disabled','disabled');
+            var loadIndex = layer.load(1,{
+                shade: [0.5,'#000']
+            })
+            $.ajax({
+                type: 'POST',
+                url: '/fission/activity/saveFissionActivity',
+                contentType: "application/json",
+                data: JSON.stringify({
+                    "id":fissionId,
+                    "periodsId": parseInt(periodsId),
+                    "activityName": activityName,
+                    "cAwardFlag": cAwardFlag,
+                    "startTimeStr": startTime,
+                    "endTimeStr": endTime
+                }),
+                success :function(data){
+                    if (data.code == 200) {
+                        layer.msg("修改成功", {
+                            icon: 6, time: 2000, end: function () {
+                                parent.location.href = "/fission/activity/toListPage"
+                            }
+                        });
+                    } else {
+                        layer.alert(data.msg == null ? "有一丝丝问题，请联系管理员" : data.msg, {icon: 5});
+                        $('#submitBtn').removeAttr('disabled');
+                    }
+                    layer.close(loadIndex);
+                },
+                error :function(e){
+                    console.log(e);
+                    layer.close(loadIndex);
+                    layer.msg("有一丝丝问题，请联系管理员", {icon: 5});
+                    $('#submitBtn').removeAttr('disabled');
+                    return false;
+                }
+            });
+            return false;
+        });
+
+        $("#backBtn").on("click",function () {
+            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+            parent.layer.close(index);//关闭弹出的子页面窗口
+        })
+    });
+
+</script>
+</body>
+</html>

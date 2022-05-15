@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.FissionActivityExtendReadMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FissionActivityExtend">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="fission_id" jdbcType="INTEGER" property="fissionId" />
+    <result column="data_type" jdbcType="TINYINT" property="dataType" />
+    <result column="data_id" jdbcType="INTEGER" property="dataId" />
+    <result column="rel_status" jdbcType="TINYINT" property="relStatus" />
+    <result column="rel_time" jdbcType="TIMESTAMP" property="relTime" />
+    <result column="operate_user" jdbcType="INTEGER" property="operateUser" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, fission_id, data_type, data_id, rel_status, rel_time, operate_user
+  </sql>
+  <select id="selectActivityExtendByFissionId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from fission_activity_extend
+    where rel_status = 1 and  fission_id = #{fissionId}
+  </select>
+    <select id="selectActivityExtendByTypeAndId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from fission_activity_extend
+        where rel_status = 1
+        and data_id = #{dateId}
+        and fission_id = #{fissionId}
+        and data_type = #{dataType}
+    </select>
+    <!-- 获取经销商参与的活动列表 -->
+    <select id="getDealerActivityList" resultType="com.tuanche.directselling.model.FissionActivity" parameterType="com.tuanche.directselling.model.FissionActivityExtend">
+        SELECT
+            t1.fission_id AS id,
+            t2.periods_id,
+            t2.activity_name,
+            t2.on_state,
+            t2.start_time,
+            t2.end_time
+        FROM
+            fission_activity_extend t1
+            LEFT JOIN fission_activity t2 ON t2.id = t1.fission_id
+        WHERE
+            t1.data_type = 3
+        <if test="dataId != null">
+            AND t1.data_id = #{dataId}
+        </if>
+          AND t1.rel_status = 1
+        ORDER BY rel_time DESC;
+    </select>
+    <!-- 根据扩展类型获取数据 -->
+    <select id="getActivityExtendByType" resultType="com.tuanche.directselling.dto.FissionActivityExtendDto" parameterType="com.tuanche.directselling.model.FissionActivityExtend">
+        SELECT
+            t1.data_id AS dataId,
+            t1.data_type AS dataType
+        FROM
+            fission_activity_extend t1
+        WHERE t1.rel_status = 1
+        <if test="fissionId != null">
+            AND t1.fission_id = #{fissionId}
+        </if>
+        <if test="dataType != null">
+            AND t1.data_type = #{dataType}
+        </if>
+        <if test="dataId != null">
+            AND t1.data_id = #{dataId}
+        </if>
+    </select>
+    <!-- 获取经销商的结算状态列表 -->
+    <select id="getFissionDealerSettlementAccountList" resultType="com.tuanche.directselling.dto.FissionActivityExtendDto" parameterType="com.tuanche.directselling.model.FissionActivityExtend">
+        SELECT
+        t1.fission_id AS fissionId,
+        t1.data_id AS dataId,
+        t1.data_type AS dataType,
+        t2.activity_name AS fissionName,
+        t3.payment_status AS paymentStatus,
+        t3.id AS id,
+        t3.account_type AS accountType
+        FROM
+        fission_activity_extend t1
+        LEFT JOIN fission_activity t2 ON t2.id = t1.fission_id
+        LEFT JOIN fission_dealer_settlement_account t3 ON t3.fission_id = t1.fission_id AND t3.dealer_id = t1.data_id
+        WHERE t1.rel_status = 1 AND t1.data_type = 3 and t3.delete_flag=0 and t2.delete_flag=0
+        <if test="fissionId != null">
+            AND t1.fission_id = #{fissionId}
+        </if>
+        ORDER BY t1.id DESC
+    </select>
+</mapper>

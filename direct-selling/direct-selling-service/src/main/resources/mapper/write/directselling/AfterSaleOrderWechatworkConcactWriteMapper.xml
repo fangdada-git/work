@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.AfterSaleOrderWechatworkConcactWriteMapper" >
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    update after_sale_order_wechatwork_concact set delete_flag=1 where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.tuanche.directselling.model.AfterSaleOrderWechatworkConcact" useGeneratedKeys="true" keyProperty="id">
+    insert into after_sale_order_wechatwork_concact
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="activityId != null" >
+        activity_id,
+      </if>
+      <if test="orderCode != null" >
+        order_code,
+      </if>
+      <if test="userWxUnionId != null" >
+        user_wx_union_id,
+      </if>
+      <if test="wwUserId != null and wwUserId!=''" >
+        ww_user_id,
+      </if>
+      <if test="wwUserName != null" >
+        ww_user_name,
+      </if>
+      <if test="wwCreateDt != null" >
+        ww_create_dt,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="activityId != null" >
+        #{activityId,jdbcType=INTEGER},
+      </if>
+      <if test="orderCode != null" >
+        #{orderCode,jdbcType=VARCHAR},
+      </if>
+      <if test="userWxUnionId != null" >
+        #{userWxUnionId,jdbcType=VARCHAR},
+      </if>
+      <if test="wwUserId != null and wwUserId!=''" >
+        #{wwUserId},
+      </if>
+      <if test="wwUserName != null" >
+        #{wwUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="wwCreateDt != null" >
+        #{wwCreateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+
+  <insert id="addList">
+    insert into after_sale_order_wechatwork_concact
+    (activity_id, order_code, user_wx_union_id, ww_user_id, ww_user_name, ww_create_dt, status)
+    values
+    <foreach collection="list" item="item" separator="," >
+      ( #{item.activityId}, #{item.orderCode}, #{item.userWxUnionId},
+       #{item.wwUserId}, #{item.wwUserName}, #{item.wwCreateDt}, #{item.status})
+    </foreach>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.AfterSaleOrderWechatworkConcact" >
+    update after_sale_order_wechatwork_concact
+    <set >
+      <if test="activityId != null" >
+        activity_id = #{activityId,jdbcType=INTEGER},
+      </if>
+      <if test="orderCode != null" >
+        order_code = #{orderCode,jdbcType=VARCHAR},
+      </if>
+      <if test="userWxUnionId != null" >
+        user_wx_union_id = #{userWxUnionId,jdbcType=VARCHAR},
+      </if>
+      <if test="wwUserId != null and wwUserId!=''" >
+        ww_user_id = #{wwUserId},
+      </if>
+      <if test="wwUserName != null" >
+        ww_user_name = #{wwUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="wwCreateDt != null" >
+        ww_create_dt = #{wwCreateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+</mapper>

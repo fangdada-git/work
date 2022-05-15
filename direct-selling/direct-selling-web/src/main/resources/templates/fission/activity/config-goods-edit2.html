@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>团车直卖-添加关联商品</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.all.js"></script>
+    <script src="/common/js/jquery-1.12.4.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/magnify/css/jquery.magnify.css">
+    <script src="/layui/js/tableSelect.js"></script>
+</head>
+<body class="childrenBody">
+<div style="padding: 20px; background-color: #F2F2F2;">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <form class="layui-form" action="">
+                        <div class="layui-form-item">
+                            <a class="layui-btn search_btn" data-type="reload" onclick="editActivityGoodsRecord()"><i class="layui-icon layui-icon-add-circle"></i>确认添加已选商品</a>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-inline">
+                                <input type="text" name="commodityId" id="commodityId" placeholder="请输入商品ID" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-input-inline">
+                                <input type="text" name="commodityName" id="commodityName" placeholder="请输入商品名称" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-input-inline">
+                                <input type="text" name="goodsAddDate" id="goodsAddDate" placeholder="商品创建时间大于该时间" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-input-inline">
+                                <a class="layui-btn search_btn" data-type="reload" onclick="reloadGoods()"><i class="layui-icon layui-icon-search"></i>查询</a>
+                            </div>
+                        </div>
+                        <table id="goodsDataTable" lay-filter="goodsDataTableTool"></table>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var form = layui.form;
+    var tableSelect = layui.tableSelect;
+    var table = layui.table;
+    var laydate = layui.laydate;
+
+    var fissionId = [[${fissionId}]];
+    var checkGoodsIds = new Array();
+    var table_data = new Array();
+
+
+    !function () {
+        //加载时间控件
+        laydate.render({
+            elem: '#goodsAddDate',
+            type : 'datetime',
+            trigger: 'click',
+        });
+        initGoods("", "", "");
+
+    }();
+
+    //搜索商品库商品
+    function initGoods(commodityId, commodityName, goodsAddDate) {
+        table.render({
+            elem: '#goodsDataTable',
+            cellMinWidth: 50,
+            url: '/fission/goods/getFissionGoodsList?activityId='+fissionId,
+            where: {
+                commodityId : commodityId,
+                commodityName : commodityName,
+                goodsAddDate : goodsAddDate
+            },
+            page : true,
+            limits : [10,20,50,100],
+            limit : 10,
+            cols: [
+                [
+                    {type: "checkbox", fixed: "left", width: 50},
+                    {
+                        field: 'commodityId', title: 'ID', minWidth: 80, align: 'center',templet:function(d){
+                            return d.commodityId;
+                        }
+                    },
+                    {field: 'commodityName', title: '名称', width: 300},
+                    {field: 'commodityType', title: '类型', width: 120,align: "center",templet:function(d){
+                            if (d.commodityType!=null){
+                                if (d.commodityType == 'VOUCHER') return '代金券';
+                                if (d.commodityType == 'STORE_GIFT') return '到店礼';
+                                if (d.commodityType == 'FIXED_PRICE') return '一口价';
+                                if (d.commodityType == 'PREFERENTIAL') return '购车优惠';
+                                if (d.commodityType == 'GENERAL') return '普通商品';
+                                if (d.commodityType == 'SECKILL') return '秒杀商品';
+                                if (d.commodityType == 'group_buying') return '拼团商品';
+                            }
+                            return '其他';
+                        }
+                    },
+                    {field: 'commodityCount', title: '库存', minWidth: 100, align: "center"},
+                    {field: 'commodityPrice', title: '售价', minWidth: 100, align: "center"},
+                    // {
+                    //     field: '', title: '售价', minWidth: 100, align: 'center',templet:function(d){
+                    //         if (d.seckill==1) {
+                    //             return d.commodityPrice;
+                    //         } else {
+                    //             return d.originalPrice;
+                    //         }
+                    //     }
+                    // },
+                    {
+                        field: '', title: '商品状态', minWidth: 100, align: 'center',templet:function(d){
+                            if (d.statusEnum!=null && d.statusEnum=='ONSALE') {
+                                return '上架中';
+                            } else if (d.statusEnum!=null && d.statusEnum=='STORAGE') {
+                                return '未上架';
+                            }
+                            return '未知';
+                        }
+                    },
+                ]
+            ],
+            done: function (res, curr, count) {
+                table_data = res.data;
+            }
+        });
+    }
+
+    // 记录勾选数据
+    table.on('checkbox(goodsDataTableTool)', function (obj) {
+        if (obj.checked == true) {
+            if (obj.type == 'one') {// 勾选单条
+                checkGoodsIds.push(obj.data.commodityId);
+            }
+            if (obj.type == 'all') {// 勾选全部
+                checkGoodsIds.splice(0);
+                for (var i = 0; i < table_data.length; i++) {
+                    checkGoodsIds.push(table_data[i].commodityId);
+                }
+            }
+        } else {
+            if (obj.type == 'one') {
+                for (var i = 0; i < checkGoodsIds.length; i++) {
+                    if (checkGoodsIds[i]==obj.data.commodityId) {
+                        checkGoodsIds.splice(i,1);
+                        return;
+                    }
+                }
+            } else {
+                checkGoodsIds.splice(0);
+            }
+        }
+    });
+
+    function reloadGoods() {
+        var commodityId = $("#commodityId").val();
+        var commodityName = $("#commodityName").val();
+        var goodsAddDate = $("#goodsAddDate").val();
+
+        table.reload("goodsDataTable",{
+            page: {
+                curr: 1 //重新从第 1 页开始
+            },
+            where: {
+                commodityId : commodityId,
+                commodityName : commodityName,
+                goodsAddDate : goodsAddDate
+            }
+        })
+    }
+
+
+    function editActivityGoodsRecord() {
+        if (checkGoodsIds.length==0) {
+            layer.alert("请选择关联商品", {icon: 5});
+            return false;
+        }
+        $.ajax({
+            type : 'post',
+            url : '/fission/goods/addActivityGoodsRecord',
+            data : {fissionId : fissionId, goodsIds : checkGoodsIds.join(",")},
+            dataType : 'json',
+            success : function (s) {
+                if (s.code == 200) {
+                    layer.msg("保存成功", {
+                        icon: 6, time: 1000, end: function () {
+                            window.parent.location.reload();//刷新父页面
+                            var index=parent.layer.getFrameIndex(window.name); //获取当前窗口的name
+                            parent.layer.close(index);
+                        }
+                    });
+                } else {
+                    layer.alert(s.msg == null ? "有一丝丝问题，请联系管理员" : s.msg, {icon: 5});
+                }
+            },
+            error : function (e) {
+
+            }
+        })
+    }
+
+
+</script>
+</body>
+</html>

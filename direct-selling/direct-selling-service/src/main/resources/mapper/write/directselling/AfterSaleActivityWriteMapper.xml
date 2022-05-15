@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.AfterSaleActivityWriteMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.AfterSaleActivity">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="business_type" jdbcType="INTEGER" property="businessType" />
+    <result column="dealer_id" jdbcType="INTEGER" property="dealerId" />
+    <result column="brand_id" jdbcType="INTEGER" property="brandId" />
+    <result column="public_account" jdbcType="VARCHAR" property="publicAccount" />
+    <result column="merchant_no" jdbcType="VARCHAR" property="merchantNo" />
+    <result column="activity_name" jdbcType="VARCHAR" property="activityName" />
+    <result column="goods_id" jdbcType="INTEGER" property="goodsId" />
+    <result column="goods_fission_count" jdbcType="INTEGER" property="goodsFissionCount" />
+    <result column="sale_start_time" jdbcType="TIMESTAMP" property="saleStartTime" />
+    <result column="sale_end_time" jdbcType="TIMESTAMP" property="saleEndTime" />
+    <result column="gift_coupon_id" jdbcType="INTEGER" property="giftCouponId" />
+    <result column="gift_coupon_name" jdbcType="VARCHAR" property="giftCouponName" />
+    <result column="gift_fission_count" jdbcType="INTEGER" property="giftFissionCount" />
+    <result column="offline_convert_start_time" jdbcType="TIMESTAMP" property="offlineConvertStartTime" />
+    <result column="offline_convert_end_time" jdbcType="TIMESTAMP" property="offlineConvertEndTime" />
+    <result column="agent_award_base" jdbcType="DECIMAL" property="agentAwardBase" />
+    <result column="agent_award_inviter_count" jdbcType="INTEGER" property="agentAwardInviterCount" />
+    <result column="agent_award_extra" jdbcType="DECIMAL" property="agentAwardExtra" />
+    <result column="share_award_base" jdbcType="DECIMAL" property="shareAwardBase" />
+    <result column="share_award_inviter_count" jdbcType="INTEGER" property="shareAwardInviterCount" />
+    <result column="share_award_extra" jdbcType="DECIMAL" property="shareAwardExtra" />
+    <result column="buyer_award_base" jdbcType="DECIMAL" property="buyerAwardBase" />
+    <result column="we_chat_title" jdbcType="VARCHAR" property="weChatTitle" />
+    <result column="we_chat_description" jdbcType="VARCHAR" property="weChatDescription" />
+    <result column="we_chat_pic" jdbcType="VARCHAR" property="weChatPic" />
+    <result column="poster_url" jdbcType="VARCHAR" property="posterUrl" />
+    <result column="on_state" jdbcType="INTEGER" property="onState" />
+    <result column="budget" jdbcType="DECIMAL" property="budget" />
+    <result column="amount_alarm" jdbcType="DECIMAL" property="amountAlarm" />
+    <result column="alarm_phone" jdbcType="VARCHAR" property="alarmPhone" />
+    <result column="alarm_email" jdbcType="VARCHAR" property="alarmEmail" />
+    <result column="sub_account_ratio" jdbcType="DECIMAL" property="subAccountRatio" />
+    <result column="public_qr_code" jdbcType="VARCHAR" property="publicQrCode" />
+    <result column="on_sub_account" jdbcType="INTEGER" property="onSubAccount" />
+    <result column="delete_flag" jdbcType="INTEGER" property="deleteFlag" />
+    <result column="create_by" jdbcType="INTEGER" property="createBy" />
+    <result column="create_dt" jdbcType="TIMESTAMP" property="createDt" />
+    <result column="update_by" jdbcType="INTEGER" property="updateBy" />
+    <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+     id, business_type, dealer_id, brand_id, public_account, merchant_no, activity_name, goods_id, goods_fission_count,
+    sale_start_time, sale_end_time, gift_coupon_id, gift_coupon_name, gift_fission_count,
+    offline_convert_start_time, offline_convert_end_time, agent_award_base, agent_award_inviter_count,
+    agent_award_extra, share_award_base, share_award_inviter_count, share_award_extra,
+    buyer_award_base, we_chat_title, we_chat_description, we_chat_pic, poster_url, on_state,
+    budget, amount_alarm, alarm_phone, alarm_email, sub_account_ratio, public_qr_code,
+    delete_flag, create_by, create_dt, update_by, update_dt
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from after_sale_activity
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from after_sale_activity
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tuanche.directselling.model.AfterSaleActivity">
+    insert into after_sale_activity (id, business_type, dealer_id, brand_id,
+      public_account, merchant_no, activity_name,
+      goods_id, goods_fission_count, sale_start_time,
+      sale_end_time, gift_coupon_id, gift_coupon_name,
+      gift_fission_count, offline_convert_start_time,
+      offline_convert_end_time, agent_award_base,
+      agent_award_inviter_count, agent_award_extra,
+      share_award_base, share_award_inviter_count,
+      share_award_extra, buyer_award_base, we_chat_title,
+      we_chat_description, we_chat_pic, poster_url,
+      on_state, budget, amount_alarm,
+      alarm_phone, alarm_email, sub_account_ratio,
+      public_qr_code,on_sub_account, delete_flag, create_by,
+      create_dt, update_by, update_dt
+      )
+    values (#{id,jdbcType=INTEGER}, #{businessType,jdbcType=INTEGER}, #{dealerId,jdbcType=INTEGER}, #{brandId,jdbcType=INTEGER},
+      #{publicAccount,jdbcType=VARCHAR}, #{merchantNo,jdbcType=VARCHAR}, #{activityName,jdbcType=VARCHAR},
+      #{goodsId,jdbcType=INTEGER}, #{goodsFissionCount,jdbcType=INTEGER}, #{saleStartTime,jdbcType=TIMESTAMP},
+      #{saleEndTime,jdbcType=TIMESTAMP}, #{giftCouponId,jdbcType=INTEGER}, #{giftCouponName,jdbcType=VARCHAR},
+      #{giftFissionCount,jdbcType=INTEGER}, #{offlineConvertStartTime,jdbcType=TIMESTAMP},
+      #{offlineConvertEndTime,jdbcType=TIMESTAMP}, #{agentAwardBase,jdbcType=DECIMAL},
+      #{agentAwardInviterCount,jdbcType=INTEGER}, #{agentAwardExtra,jdbcType=DECIMAL},
+      #{shareAwardBase,jdbcType=DECIMAL}, #{shareAwardInviterCount,jdbcType=INTEGER},
+      #{shareAwardExtra,jdbcType=DECIMAL}, #{buyerAwardBase,jdbcType=DECIMAL}, #{weChatTitle,jdbcType=VARCHAR},
+      #{weChatDescription,jdbcType=VARCHAR}, #{weChatPic,jdbcType=VARCHAR}, #{posterUrl,jdbcType=VARCHAR},
+      #{onState,jdbcType=TINYINT}, #{budget,jdbcType=DECIMAL}, #{amountAlarm,jdbcType=DECIMAL},
+      #{alarmPhone,jdbcType=VARCHAR}, #{alarmEmail,jdbcType=VARCHAR}, #{subAccountRatio,jdbcType=DECIMAL},
+      #{publicQrCode,jdbcType=VARCHAR},  #{onSubAccount,jdbcType=TINYINT}, #{deleteFlag,jdbcType=BIT}, #{createBy,jdbcType=INTEGER},
+      #{createDt,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=INTEGER}, #{updateDt,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.tuanche.directselling.model.AfterSaleActivity">
+    insert into after_sale_activity
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="businessType != null">
+        business_type,
+      </if>
+      <if test="dealerId != null">
+        dealer_id,
+      </if>
+      <if test="brandId != null">
+        brand_id,
+      </if>
+      <if test="publicAccount != null">
+        public_account,
+      </if>
+      <if test="merchantNo != null">
+        merchant_no,
+      </if>
+      <if test="activityName != null">
+        activity_name,
+      </if>
+      <if test="goodsId != null">
+        goods_id,
+      </if>
+      <if test="goodsFissionCount != null">
+        goods_fission_count,
+      </if>
+      <if test="saleStartTime != null">
+        sale_start_time,
+      </if>
+      <if test="saleEndTime != null">
+        sale_end_time,
+      </if>
+      <if test="giftCouponId != null">
+        gift_coupon_id,
+      </if>
+      <if test="giftCouponName != null">
+        gift_coupon_name,
+      </if>
+      <if test="giftFissionCount != null">
+        gift_fission_count,
+      </if>
+      <if test="offlineConvertStartTime != null">
+        offline_convert_start_time,
+      </if>
+      <if test="offlineConvertEndTime != null">
+        offline_convert_end_time,
+      </if>
+      <if test="agentAwardBase != null">
+        agent_award_base,
+      </if>
+      <if test="agentAwardInviterCount != null">
+        agent_award_inviter_count,
+      </if>
+      <if test="agentAwardExtra != null">
+        agent_award_extra,
+      </if>
+      <if test="shareAwardBase != null">
+        share_award_base,
+      </if>
+      <if test="shareAwardInviterCount != null">
+        share_award_inviter_count,
+      </if>
+      <if test="shareAwardExtra != null">
+        share_award_extra,
+      </if>
+      <if test="buyerAwardBase != null">
+        buyer_award_base,
+      </if>
+      <if test="weChatTitle != null">
+        we_chat_title,
+      </if>
+      <if test="weChatDescription != null">
+        we_chat_description,
+      </if>
+      <if test="weChatPic != null">
+        we_chat_pic,
+      </if>
+      <if test="posterUrl != null">
+        poster_url,
+      </if>
+      <if test="onState != null">
+        on_state,
+      </if>
+      <if test="budget != null">
+        budget,
+      </if>
+      <if test="amountAlarm != null">
+        amount_alarm,
+      </if>
+      <if test="alarmPhone != null">
+        alarm_phone,
+      </if>
+      <if test="alarmEmail != null">
+        alarm_email,
+      </if>
+      <if test="subAccountRatio != null">
+        sub_account_ratio,
+      </if>
+      <if test="publicQrCode != null">
+        public_qr_code,
+      </if>
+      <if test="lookPhoneBeforeDays != null">
+        look_phone_before_days,
+      </if>
+      <if test="onSubAccount != null">
+        on_sub_account,
+      </if>
+      <if test="deleteFlag != null">
+        delete_flag,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      <if test="createDt != null">
+        create_dt,
+      </if>
+      <if test="updateBy != null">
+        update_by,
+      </if>
+      <if test="updateDt != null">
+        update_dt,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="businessType != null">
+        #{businessType,jdbcType=INTEGER},
+      </if>
+      <if test="dealerId != null">
+        #{dealerId,jdbcType=INTEGER},
+      </if>
+      <if test="brandId != null">
+        #{brandId,jdbcType=INTEGER},
+      </if>
+      <if test="publicAccount != null">
+        #{publicAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantNo != null">
+        #{merchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="activityName != null">
+        #{activityName,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsId != null">
+        #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsFissionCount != null">
+        #{goodsFissionCount,jdbcType=INTEGER},
+      </if>
+      <if test="saleStartTime != null">
+        #{saleStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="saleEndTime != null">
+        #{saleEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="giftCouponId != null">
+        #{giftCouponId,jdbcType=INTEGER},
+      </if>
+      <if test="giftCouponName != null">
+        #{giftCouponName,jdbcType=VARCHAR},
+      </if>
+      <if test="giftFissionCount != null">
+        #{giftFissionCount,jdbcType=INTEGER},
+      </if>
+      <if test="offlineConvertStartTime != null">
+        #{offlineConvertStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="offlineConvertEndTime != null">
+        #{offlineConvertEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="agentAwardBase != null">
+        #{agentAwardBase,jdbcType=DECIMAL},
+      </if>
+      <if test="agentAwardInviterCount != null">
+        #{agentAwardInviterCount,jdbcType=INTEGER},
+      </if>
+      <if test="agentAwardExtra != null">
+        #{agentAwardExtra,jdbcType=DECIMAL},
+      </if>
+      <if test="shareAwardBase != null">
+        #{shareAwardBase,jdbcType=DECIMAL},
+      </if>
+      <if test="shareAwardInviterCount != null">
+        #{shareAwardInviterCount,jdbcType=INTEGER},
+      </if>
+      <if test="shareAwardExtra != null">
+        #{shareAwardExtra,jdbcType=DECIMAL},
+      </if>
+      <if test="buyerAwardBase != null">
+        #{buyerAwardBase,jdbcType=DECIMAL},
+      </if>
+      <if test="weChatTitle != null">
+        #{weChatTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="weChatDescription != null">
+        #{weChatDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="weChatPic != null">
+        #{weChatPic,jdbcType=VARCHAR},
+      </if>
+      <if test="posterUrl != null">
+        #{posterUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="onState != null">
+        #{onState,jdbcType=TINYINT},
+      </if>
+      <if test="budget != null">
+        #{budget,jdbcType=DECIMAL},
+      </if>
+      <if test="amountAlarm != null">
+        #{amountAlarm,jdbcType=DECIMAL},
+      </if>
+      <if test="alarmPhone != null">
+        #{alarmPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmEmail != null">
+        #{alarmEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="subAccountRatio != null">
+        #{subAccountRatio,jdbcType=DECIMAL},
+      </if>
+      <if test="publicQrCode != null">
+        #{publicQrCode,jdbcType=VARCHAR},
+      </if>
+      <if test="lookPhoneBeforeDays != null">
+        #{lookPhoneBeforeDays,jdbcType=INTEGER},
+      </if>
+      <if test="onSubAccount != null">
+        #{onSubAccount,jdbcType=TINYINT},
+      </if>
+      <if test="deleteFlag != null">
+        #{deleteFlag,jdbcType=BIT},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=INTEGER},
+      </if>
+      <if test="createDt != null">
+        #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateDt != null">
+        #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.AfterSaleActivity">
+    update after_sale_activity
+    <set>
+      <if test="businessType != null">
+        business_type = #{businessType,jdbcType=INTEGER},
+      </if>
+      <if test="dealerId != null">
+        dealer_id = #{dealerId,jdbcType=INTEGER},
+      </if>
+      brand_id = #{brandId,jdbcType=INTEGER},
+      <if test="publicAccount != null">
+        public_account = #{publicAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="merchantNo != null">
+        merchant_no = #{merchantNo,jdbcType=VARCHAR},
+      </if>
+      <if test="activityName != null">
+        activity_name = #{activityName,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsId != null">
+        goods_id = #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsFissionCount != null">
+        goods_fission_count = #{goodsFissionCount,jdbcType=INTEGER},
+      </if>
+      <if test="saleStartTime != null">
+        sale_start_time = #{saleStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="saleEndTime != null">
+        sale_end_time = #{saleEndTime,jdbcType=TIMESTAMP},
+      </if>
+        gift_coupon_id = #{giftCouponId,jdbcType=INTEGER},
+        gift_coupon_name = #{giftCouponName,jdbcType=VARCHAR},
+        gift_fission_count = #{giftFissionCount,jdbcType=INTEGER},
+      <if test="offlineConvertStartTime != null">
+        offline_convert_start_time = #{offlineConvertStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="offlineConvertEndTime != null">
+        offline_convert_end_time = #{offlineConvertEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="agentAwardBase != null">
+        agent_award_base = #{agentAwardBase,jdbcType=DECIMAL},
+      </if>
+      <if test="agentAwardInviterCount != null">
+        agent_award_inviter_count = #{agentAwardInviterCount,jdbcType=INTEGER},
+      </if>
+      <if test="agentAwardExtra != null">
+        agent_award_extra = #{agentAwardExtra,jdbcType=DECIMAL},
+      </if>
+      <if test="shareAwardBase != null">
+        share_award_base = #{shareAwardBase,jdbcType=DECIMAL},
+      </if>
+      <if test="shareAwardInviterCount != null">
+        share_award_inviter_count = #{shareAwardInviterCount,jdbcType=INTEGER},
+      </if>
+      <if test="shareAwardExtra != null">
+        share_award_extra = #{shareAwardExtra,jdbcType=DECIMAL},
+      </if>
+      <if test="buyerAwardBase != null">
+        buyer_award_base = #{buyerAwardBase,jdbcType=DECIMAL},
+      </if>
+      <if test="weChatTitle != null">
+        we_chat_title = #{weChatTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="weChatDescription != null">
+        we_chat_description = #{weChatDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="weChatPic != null">
+        we_chat_pic = #{weChatPic,jdbcType=VARCHAR},
+      </if>
+      <if test="posterUrl != null">
+        poster_url = #{posterUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="onState != null">
+        on_state = #{onState,jdbcType=TINYINT},
+      </if>
+      <if test="budget != null">
+        budget = #{budget,jdbcType=DECIMAL},
+      </if>
+      <if test="amountAlarm != null">
+        amount_alarm = #{amountAlarm,jdbcType=DECIMAL},
+      </if>
+      <if test="alarmPhone != null">
+        alarm_phone = #{alarmPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="alarmEmail != null">
+        alarm_email = #{alarmEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="subAccountRatio != null">
+        sub_account_ratio = #{subAccountRatio,jdbcType=DECIMAL},
+      </if>
+      <if test="publicQrCode != null">
+        public_qr_code = #{publicQrCode,jdbcType=VARCHAR},
+      </if>
+      <if test="onSubAccount != null">
+        on_sub_account = #{onSubAccount,jdbcType=TINYINT},
+      </if>
+      <if test="deleteFlag != null">
+        delete_flag = #{deleteFlag,jdbcType=BIT},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=INTEGER},
+      </if>
+      <if test="createDt != null">
+        create_dt = #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        update_by = #{updateBy,jdbcType=INTEGER},
+      </if>
+      <if test="updateDt != null">
+        update_dt = #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="actualAmount != null">
+        actual_amount = #{actualAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="paymentTime != null">
+        payment_time = #{paymentTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="paymentRemark != null">
+        payment_remark = #{paymentRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="paymentBy != null">
+        payment_by = #{paymentBy,jdbcType=INTEGER},
+      </if>
+      <if test="paymentFlowNum != null">
+        payment_flow_num = #{paymentFlowNum,jdbcType=VARCHAR},
+      </if>
+      <if test="lookPhoneBeforeDays != null">
+          look_phone_before_days = #{lookPhoneBeforeDays,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+    <update id="openCloseSubAccountById" parameterType="com.tuanche.directselling.model.AfterSaleActivity">
+        update after_sale_activity
+          set
+            on_sub_account = #{onSubAccount,jdbcType=TINYINT},
+            update_by = #{updateBy,jdbcType=INTEGER},
+            update_dt = #{updateDt,jdbcType=TIMESTAMP}
+          where id = #{id,jdbcType=INTEGER}
+    </update>
+
+</mapper>

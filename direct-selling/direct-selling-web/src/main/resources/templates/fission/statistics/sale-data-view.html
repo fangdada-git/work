@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>团车直卖-B端数据概览</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.all.js"></script>
+    <script src="/common/js/jquery-1.12.4.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/magnify/css/jquery.magnify.css">
+    <script src="/layui/js/tableSelect.js"></script>
+</head>
+<body class="childrenBody">
+<div style="padding: 20px; background-color: #F2F2F2;">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <form class="layui-form" action="">
+                        <div class="layui-inline">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">活动名称：</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="" placeholder="请输入" autocomplete="off" class="layui-input"
+                                           id="acName">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="layui-tab layui-tab-card" lay-filter="tableTab" id="dataTab">
+                        <ul class="layui-tab-title">
+                            <li class="layui-this">全部的B端分享数据</li>
+                            <li>一级</li>
+                            <li>其他层级</li>
+                        </ul>
+                        <div class="layui-tab-content">
+                            <div class="layui-tab-item layui-show">
+                                <table class="layui-table" lay-even lay-skin="nob">
+                                    <tr>
+                                        <th>资金池总金额(元)</th>
+                                        <th>实发总金额(元)</th>
+                                        <th>积分个数(个)</th>
+                                        <th>完成任务销售数量(个)</th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td name="prizePool"></td>
+                                        <td name="prizeActual"></td>
+                                        <td name="totalIntegral"></td>
+                                        <td name="finishSalesmanCount"></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>最高奖金获得金额(元)</th>
+                                        <th>最低奖金获得金额(元)</th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td name="prizeMax"></td>
+                                        <td name="prizeMin"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>浏览总人次</th>
+                                        <th>浏览总人数</th>
+                                        <th>成功分享总人数</th>
+                                        <th>海报分享成功总人数</th>
+                                        <th>分享页面成功总人数</th>
+                                    </tr>
+                                    <tr>
+                                        <td name="uniqueVisitor"></td>
+                                        <td name="pageView"></td>
+                                        <td name="shareCount"></td>
+                                        <td name="sharePosterCount"></td>
+                                        <td name="sharePageCount"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>活动页商品购买数</th>
+                                        <th>活动页商品购买人数</th>
+                                        <th>直播间页面商品购买数</th>
+                                        <th>直播间页面商品购买人数</th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td name="activityOrderCount"></td>
+                                        <td name="activityProductUserCount"></td>
+                                        <td name="liveProductCount"></td>
+                                        <td name="liveProductUserCount"></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>预约直播总人数</th>
+                                        <th>直播间总人数</th>
+                                        <th>预约用户进入直播间总人数</th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td name="subscribeUserCount"></td>
+                                        <td name="liveUserCount"></td>
+                                        <td name="subscribeLiveUserCount"></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="layui-tab-item">
+                                <table class="layui-table" lay-even lay-skin="nob">
+                                    <tr>
+                                        <th>资金池总金额(元)</th>
+                                        <th>实发总金额(元)</th>
+                                        <th>积分个数(个)</th>
+                                        <th>完成任务销售数量(个)</th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td name="prizePool"></td>
+                                        <td name="prizeActual"></td>
+                                        <td name="totalIntegral"></td>
+                                        <td name="finishSalesmanCount"></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>最高奖金获得金额(元)</th>
+                                        <th>最低奖金获得金额(元)</th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td name="prizeMax"></td>
+                                        <td name="prizeMin"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>浏览总人次</th>
+                                        <th>浏览总人数</th>
+                                        <th>成功分享总人数</th>
+                                        <th>海报分享成功总人数</th>
+                                        <th>分享页面成功总人数</th>
+                                    </tr>
+                                    <tr>
+                                        <td name="uniqueVisitor"></td>
+                                        <td name="pageView"></td>
+                                        <td name="shareCount"></td>
+                                        <td name="sharePosterCount"></td>
+                                        <td name="sharePageCount"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>活动页商品购买数</th>
+                                        <th>活动页商品购买人数</th>
+                                        <th>直播间页面商品购买数</th>
+                                        <th>直播间页面商品购买人数</th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td name="activityOrderCount"></td>
+                                        <td name="activityProductUserCount"></td>
+                                        <td name="liveProductCount"></td>
+                                        <td name="liveProductUserCount"></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>预约直播总人数</th>
+                                        <th>直播间总人数</th>
+                                        <th>预约用户进入直播间总人数</th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td name="subscribeUserCount"></td>
+                                        <td name="liveUserCount"></td>
+                                        <td name="subscribeLiveUserCount"></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="layui-tab-item">
+                                <table class="layui-table" lay-even lay-skin="nob">
+                                    <tr>
+                                        <th>资金池总金额(元)</th>
+                                        <th>实发总金额(元)</th>
+                                        <th>积分个数(个)</th>
+                                        <th>完成任务销售数量(个)</th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td name="prizePool"></td>
+                                        <td name="prizeActual"></td>
+                                        <td name="totalIntegral"></td>
+                                        <td name="finishSalesmanCount"></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>最高奖金获得金额(元)</th>
+                                        <th>最低奖金获得金额(元)</th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td name="prizeMax"></td>
+                                        <td name="prizeMin"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>浏览总人次</th>
+                                        <th>浏览总人数</th>
+                                        <th>成功分享总人数</th>
+                                        <th>海报分享成功总人数</th>
+                                        <th>分享页面成功总人数</th>
+                                    </tr>
+                                    <tr>
+                                        <td name="uniqueVisitor"></td>
+                                        <td name="pageView"></td>
+                                        <td name="shareCount"></td>
+                                        <td name="sharePosterCount"></td>
+                                        <td name="sharePageCount"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>活动页商品购买数</th>
+                                        <th>活动页商品购买人数</th>
+                                        <th>直播间页面商品购买数</th>
+                                        <th>直播间页面商品购买人数</th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td name="activityOrderCount"></td>
+                                        <td name="activityProductUserCount"></td>
+                                        <td name="liveProductCount"></td>
+                                        <td name="liveProductUserCount"></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>预约直播总人数</th>
+                                        <th>直播间总人数</th>
+                                        <th>预约用户进入直播间总人数</th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td name="subscribeUserCount"></td>
+                                        <td name="liveUserCount"></td>
+                                        <td name="subscribeLiveUserCount"></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md6" id="dealerCard">
+            <div class="layui-card">
+                <div class="layui-card-header">经销商收入排行</div>
+                <div class="layui-card-body">
+                    <table class="layui-table" lay-even lay-skin="nob" id="dealerTable">
+                        <tr>
+                            <th>排行</th>
+                            <th>经销商名称</th>
+                            <th>收入(元)</th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md6" id="saleCard">
+            <div class="layui-card">
+                <div class="layui-card-header">销售收入排行</div>
+                <div class="layui-card-body">
+                    <table class="layui-table" lay-even lay-skin="nob" id="saleTable">
+                        <tr>
+                            <th>排行</th>
+                            <th>销售姓名</th>
+                            <th>收入(元)</th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script>
+    ;!function () {
+        $("#dealerCard").hide();
+        $("#saleCard").hide();
+        $("#dataTab").hide();
+        var form = layui.form;
+        var tableSelect = layui.tableSelect;
+        var element = layui.element;
+        element.on('tab(tableTab)', function (data) {
+            dataChange();
+        });
+        tableSelect.render({
+            elem: '#acName',
+            checkedKey: 'id',
+            table: {
+                url: '/fission/data/view/business/activity/select',
+                cols: [
+                    [
+                        {type: 'radio'},
+                        {field: 'id', title: 'ID', width: 50},
+                        {field: 'activityName', title: '活动名称', width: 200},
+                        {field: 'startTime', title: '活动开始时间', width: 300},
+                        {field: 'endTime', title: '活动结束时间', width: 300}
+                    ]
+                ]
+            },
+            done: function (elem, data) {
+                var NEWJSON = []
+                layui.each(data.data, function (index, item) {
+                    NEWJSON.push(item.activityName)
+                    dataViewInit(item.id);
+                    dealerTableInit(item.id);
+                    saleTableInit(item.id);
+                })
+                elem.val(NEWJSON.join(","))
+                dataChange();
+                $("#dataTab").show();
+            }
+        })
+    }();
+
+    function dealerTableInit(id) {
+        $.ajax({
+            url: '/fission/data/view/business/rank/dealer?id=' + id,
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json;charset=UTF-8",
+            success: function (data) {
+                $("#dealerTable tr:gt(0)").remove();
+                if (data.result != null) {
+                    for (var d of data.result) {
+                        $("#dealerTable").append("<tr><td>" + d.rank + "</td><td>" + d.name + "</td><td>" + d.income + "</td></tr>");
+
+                    }
+                }
+                $("#dealerCard").show();
+            }
+        });
+    }
+
+    function saleTableInit(id) {
+        $.ajax({
+            url: '/fission/data/view/business/rank/sale?id=' + id,
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json;charset=UTF-8",
+            success: function (data) {
+                $("#saleTable tr:gt(0)").remove();
+                if (data.result != null) {
+                    for (var d of data.result) {
+                        $("#saleTable").append("<tr><td>" + d.rank + "</td><td>" + d.name + "</td><td>" + d.income + "</td></tr>");
+                    }
+                }
+                $("#saleCard").show();
+            }
+        });
+    }
+
+    function dataViewInit(id) {
+        $.ajax({
+            url: '/fission/data/view/business/detail?id=' + id,
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json;charset=UTF-8",
+            success: function (data) {
+                var result = data.result;
+                $("td[name='prizePool']").text("0");
+                $("td[name='prizeActual']").text("0");
+                $("td[name='totalIntegral']").text("0");
+                $("td[name='finishSalesmanCount']").text("0/0");
+
+                $("td[name='prizeMax']").text("0");
+                $("td[name='prizeMin']").text("0");
+                if (result != null) {
+                    $("td[name='prizePool']").text(result.prizePool);
+                    $("td[name='prizeActual']").text(result.prizeActual);
+                    $("td[name='totalIntegral']").text(result.totalIntegral);
+                    $("td[name='finishSalesmanCount']").text(result.finishSalesmanCount + "/" + result.salesmanCount);
+
+                    $("td[name='prizeMax']").text(result.prizeMax);
+                    $("td[name='prizeMin']").text(result.prizeMin);
+                }
+            }
+        });
+    }
+
+    function dataChange() {
+        var tabIndex = 0;
+        $.each($("ul[class='layui-tab-title'] li"), function (i, n) {
+            if ($(n).attr("class") == 'layui-this') {
+                tabIndex = i;
+                return false;
+            }
+        });
+        var dataType = 0;
+        if (tabIndex == 0) {
+            dataType = 0;
+        } else if (tabIndex == 1) {
+            dataType = 5
+        } else {
+            dataType = 6
+        }
+        initDataView(tabIndex, dataType);
+    }
+
+    function initDataView(index, dataType) {
+        $.ajax({
+            url: '/fission/data/view/' + $("#acName").attr("ts-selected") + "/" + dataType,
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json;charset=UTF-8",
+            success: function (data) {
+                var result = data.result;
+                $("td[name='uniqueVisitor']:eq(" + index + ")").text("0");
+                $("td[name='pageView']:eq(" + index + ")").text("0");
+                $("td[name='shareCount']:eq(" + index + ")").text("0");
+                $("td[name='sharePosterCount']:eq(" + index + ")").text("0");
+                $("td[name='sharePageCount']:eq(" + index + ")").text("0");
+
+                $("td[name='activityOrderCount']:eq(" + index + ")").text("0");
+                $("td[name='activityProductUserCount']:eq(" + index + ")").text("0");
+                $("td[name='liveProductCount']:eq(" + index + ")").text("0");
+                $("td[name='liveProductUserCount']:eq(" + index + ")").text("0");
+
+                $("td[name='subscribeUserCount']:eq(" + index + ")").text("0");
+                $("td[name='liveUserCount']:eq(" + index + ")").text("0");
+                $("td[name='subscribeLiveUserCount']:eq(" + index + ")").text("0");
+
+                if (result != null && result.length != 0) {
+                    for (var r in result) {
+                        var res = result[r];
+                        $("td[name='uniqueVisitor']:eq(" + index + ")").text(res.uniqueVisitor);
+                        $("td[name='pageView']:eq(" + index + ")").text(res.pageView);
+                        $("td[name='shareCount']:eq(" + index + ")").text(res.shareCount);
+                        $("td[name='sharePosterCount']:eq(" + index + ")").text(res.sharePosterCount);
+                        $("td[name='sharePageCount']:eq(" + index + ")").text(res.sharePageCount);
+
+                        $("td[name='activityOrderCount']:eq(" + index + ")").text(res.activityOrderCount);
+                        $("td[name='activityProductUserCount']:eq(" + index + ")").text(res.activityProductUserCount);
+                        $("td[name='liveProductCount']:eq(" + index + ")").text(res.liveProductCount);
+                        $("td[name='liveProductUserCount']:eq(" + index + ")").text(res.liveProductUserCount);
+
+                        $("td[name='subscribeUserCount']:eq(" + index + ")").text(res.subscribeUserCount);
+                        $("td[name='liveUserCount']:eq(" + index + ")").text(res.liveUserCount);
+                        $("td[name='subscribeLiveUserCount']:eq(" + index + ")").text(res.subscribeLiveUserCount);
+                    }
+                }
+                $("#dataTab").show();
+            }
+        });
+    }
+</script>
+</body>
+</html>

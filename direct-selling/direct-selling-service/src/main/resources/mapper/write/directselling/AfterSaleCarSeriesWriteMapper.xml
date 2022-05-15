@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.AfterSaleCarSeriesWriteMapper">
+    <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.AfterSaleCarSeries">
+        <!--@mbg.generated-->
+        <!--@Table after_sale_car_series-->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="brand_id" jdbcType="INTEGER" property="brandId"/>
+        <result column="original_car_series_name" jdbcType="VARCHAR" property="originalCarSeriesName"/>
+        <result column="car_series_id" jdbcType="INTEGER" property="carSeriesId"/>
+        <result column="car_series_name" jdbcType="VARCHAR" property="carSeriesName"/>
+        <result column="delete_flag" jdbcType="BOOLEAN" property="deleteFlag"/>
+        <result column="create_dt" jdbcType="TIMESTAMP" property="createDt"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, brand_id, original_car_series_name, car_series_id, car_series_name, delete_flag,
+        create_dt
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from after_sale_car_series
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        <!--@mbg.generated-->
+        delete from after_sale_car_series
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id"
+            parameterType="com.tuanche.directselling.model.AfterSaleCarSeries" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into after_sale_car_series (brand_id, original_car_series_name, car_series_id,
+        car_series_name, delete_flag, create_dt
+        )
+        values (#{brandId,jdbcType=INTEGER}, #{originalCarSeriesName,jdbcType=VARCHAR}, #{carSeriesId,jdbcType=INTEGER},
+        #{carSeriesName,jdbcType=VARCHAR}, #{deleteFlag,jdbcType=BOOLEAN}, #{createDt,jdbcType=TIMESTAMP}
+        )
+    </insert>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id"
+            parameterType="com.tuanche.directselling.model.AfterSaleCarSeries" useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into after_sale_car_series
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="brandId != null">
+                brand_id,
+            </if>
+            <if test="originalCarSeriesName != null">
+                original_car_series_name,
+            </if>
+            <if test="carSeriesId != null">
+                car_series_id,
+            </if>
+            <if test="carSeriesName != null">
+                car_series_name,
+            </if>
+            <if test="deleteFlag != null">
+                delete_flag,
+            </if>
+            <if test="createDt != null">
+                create_dt,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="brandId != null">
+                #{brandId,jdbcType=INTEGER},
+            </if>
+            <if test="originalCarSeriesName != null">
+                #{originalCarSeriesName,jdbcType=VARCHAR},
+            </if>
+            <if test="carSeriesId != null">
+                #{carSeriesId,jdbcType=INTEGER},
+            </if>
+            <if test="carSeriesName != null">
+                #{carSeriesName,jdbcType=VARCHAR},
+            </if>
+            <if test="deleteFlag != null">
+                #{deleteFlag,jdbcType=BOOLEAN},
+            </if>
+            <if test="createDt != null">
+                #{createDt,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.AfterSaleCarSeries">
+        <!--@mbg.generated-->
+        update after_sale_car_series
+        <set>
+            <if test="brandId != null">
+                brand_id = #{brandId,jdbcType=INTEGER},
+            </if>
+            <if test="originalCarSeriesName != null">
+                original_car_series_name = #{originalCarSeriesName,jdbcType=VARCHAR},
+            </if>
+            <if test="carSeriesId != null">
+                car_series_id = #{carSeriesId,jdbcType=INTEGER},
+            </if>
+            <if test="carSeriesName != null">
+                car_series_name = #{carSeriesName,jdbcType=VARCHAR},
+            </if>
+            <if test="deleteFlag != null">
+                delete_flag = #{deleteFlag,jdbcType=BOOLEAN},
+            </if>
+            <if test="createDt != null">
+                create_dt = #{createDt,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.tuanche.directselling.model.AfterSaleCarSeries">
+        <!--@mbg.generated-->
+        update after_sale_car_series
+        set brand_id = #{brandId,jdbcType=INTEGER},
+        original_car_series_name = #{originalCarSeriesName,jdbcType=VARCHAR},
+        car_series_id = #{carSeriesId,jdbcType=INTEGER},
+        car_series_name = #{carSeriesName,jdbcType=VARCHAR},
+        delete_flag = #{deleteFlag,jdbcType=BOOLEAN},
+        create_dt = #{createDt,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="deleteByOriginalCarSeriesName">
+        delete
+        from after_sale_car_series where brand_id=#{brandId} and original_car_series_name=#{originalCarSeriesName}
+    </delete>
+
+    <select id="selectByBrandIdAndOriginalCarSeriesName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from after_sale_car_series where brand_id=#{brandId} and original_car_series_name=#{originalCarSeriesName}
+    </select>
+</mapper>

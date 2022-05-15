@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.FissionAwardRuleReadMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FissionAwardRule">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="fission_id" jdbcType="INTEGER" property="fissionId" />
+    <result column="rule_type" jdbcType="SMALLINT" property="ruleType" />
+    <result column="prize_pool" jdbcType="DECIMAL" property="prizePool" />
+    <result column="person_money" jdbcType="DECIMAL" property="personMoney" />
+    <result column="task_code" jdbcType="VARCHAR" property="taskCode" />
+    <result column="award" jdbcType="DECIMAL" property="award" />
+    <result column="award_rule" jdbcType="DECIMAL" property="awardRule" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, fission_id, rule_type, prize_pool, person_money, task_code, award, award_rule
+  </sql>
+  <select id="selectAwardRuleByFissionId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from fission_award_rule
+    where fission_id = #{fissionId}
+  </select>
+  <!-- 获取通过裂变活动ids和类型获取规则列表 -->
+  <select id="selectAwardRuleByFissionIdsAndType" resultMap="BaseResultMap" >
+      select
+      <include refid="Base_Column_List" />
+      from fission_award_rule
+      <where>
+          <if test="fissionIds != null">
+              AND fission_id IN
+              <foreach collection="fissionIds" index="index" item="item" open="(" separator="," close=")">
+                  #{item}
+              </foreach>
+          </if>
+          <if test="ruleType!=null">
+              AND rule_type = #{ruleType}
+          </if>
+      </where>
+  </select>
+
+</mapper>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.AfterSaleActivityPackagePrimaryLabelWriteMapper" >
+
+    <update id="delByIds" >
+        update
+          after_sale_activity_package_primary_label
+        set delete_flag=1
+        where id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <insert id="insert" parameterType="com.tuanche.directselling.model.AfterSaleActivityPackagePrimaryLabel" keyProperty="id" useGeneratedKeys="true">
+        insert into after_sale_activity_package_primary_label
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="activityId != null" >
+                activity_id,
+            </if>
+            <if test="labelName != null" >
+                label_name,
+            </if>
+            <if test="deleteFlag != null" >
+                delete_flag,
+            </if>
+            <if test="createDt != null" >
+                create_dt,
+            </if>
+            <if test="createName != null" >
+                create_name,
+            </if>
+            <if test="updateDt != null" >
+                update_dt,
+            </if>
+            <if test="updateName != null" >
+                update_name,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="activityId != null" >
+                #{activityId,jdbcType=INTEGER},
+            </if>
+            <if test="labelName != null" >
+                #{labelName,jdbcType=VARCHAR},
+            </if>
+            <if test="deleteFlag != null" >
+                #{deleteFlag,jdbcType=BIT},
+            </if>
+            <if test="createDt != null" >
+                #{createDt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createName != null" >
+                #{createName,jdbcType=VARCHAR},
+            </if>
+            <if test="updateDt != null" >
+                #{updateDt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateName != null" >
+                #{updateName,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateById" parameterType="com.tuanche.directselling.model.AfterSaleActivityPackagePrimaryLabel" >
+        update after_sale_activity_package_primary_label
+        <set >
+            <if test="activityId != null" >
+                activity_id = #{activityId,jdbcType=INTEGER},
+            </if>
+            <if test="labelName != null" >
+                label_name = #{labelName,jdbcType=VARCHAR},
+            </if>
+            <if test="deleteFlag != null" >
+                delete_flag = #{deleteFlag,jdbcType=BIT},
+            </if>
+            <if test="createDt != null" >
+                create_dt = #{createDt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createName != null" >
+                create_name = #{createName,jdbcType=VARCHAR},
+            </if>
+            <if test="updateDt != null" >
+                update_dt = #{updateDt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateName != null" >
+                update_name = #{updateName,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

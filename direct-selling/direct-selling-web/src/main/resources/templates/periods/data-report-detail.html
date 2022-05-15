@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>团车直卖-数据报表-经销商七天内线索统计</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.js"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/magnify/css/jquery.magnify.css" >
+    <style type="text/css">
+        .layui-table-header .layui-table tr {
+            height: auto;
+            line-height: 50px;
+        }
+        .layui-table tr{height: 40px}
+    </style>
+</head>
+<body class="childrenBody">
+<form class="layui-form" style="background-color: #ffffff;">
+    <table id="dealerDataDetailList" lay-filter="dealerTool"></table>
+</form>
+
+
+<script type="text/javascript" src="/common/js/tools.js"></script>
+<!-- layui 初始化 -->
+<script type="text/javascript" th:inline="javascript">
+    layui.use(['form','layer','table','laydate'],function(){
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            table = layui.table;
+
+        var periodsId = [[${periodsId}]];
+        var dealerId = [[${dealerId}]];
+
+        // 经销商品牌列表
+        var tableIns = table.render({
+            elem: '#dealerDataDetailList',
+            url : '/dataReport/getPeriodsDealerDetail?periodsId='+periodsId + "&dealerId=" + dealerId,
+            cellMinWidth : 80,
+            height : "full-40",
+            page : false,
+            id : "dealerClueDataTable",
+            cols: [
+                [
+                    {field: 'dayDesc', title: ' ', minWidth: 160, align: "center"},
+                    {field: 'addClueCount', title: '今日新增线索（含车型商品）', minWidth: 160, align: "center"},
+                    {field: 'disClueCount', title: '今日已发送新增线索', minWidth: 160, align: "center"},
+                    {field: 'orderClueCount', title: '今日购买车型商品订单', minWidth: 160, align: "center"}
+                ]
+            ]
+        });
+
+    })
+
+</script>
+</body>
+</html>

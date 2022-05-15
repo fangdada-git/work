@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.LiveSceneWriteMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.LiveScene">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="scene_title" jdbcType="VARCHAR" property="sceneTitle" />
+    <result column="city_id" jdbcType="INTEGER" property="cityId" />
+    <result column="periods_id" jdbcType="INTEGER" property="periodsId" />
+    <result column="begin_time" jdbcType="TIMESTAMP" property="beginTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="ready_begin_time" jdbcType="TIMESTAMP" property="readyBeginTime" />
+    <result column="ready_end_time" jdbcType="TIMESTAMP" property="readyEndTime" />
+    <result column="formal_begin_time" jdbcType="TIMESTAMP" property="formalBeginTime" />
+    <result column="formal_end_time" jdbcType="TIMESTAMP" property="formalEndTime" />
+    <result column="up_state" jdbcType="INTEGER" property="upState" />
+    <result column="host_code" jdbcType="VARCHAR" property="hostCode" />
+    <result column="plan_id" jdbcType="VARCHAR" property="planId" />
+    <result column="preview_address" jdbcType="VARCHAR" property="previewAddress" />
+    <result column="live_address" jdbcType="VARCHAR" property="liveAddress" />
+    <result column="director_id" jdbcType="INTEGER" property="directorId" />
+    <result column="director_name" jdbcType="VARCHAR" property="directorName" />
+    <result column="create_user_id" jdbcType="INTEGER" property="createUserId" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+    <result column="create_dt" jdbcType="TIMESTAMP" property="createDt" />
+    <result column="update_user_id" jdbcType="INTEGER" property="updateUserId" />
+    <result column="update_user_name" jdbcType="VARCHAR" property="updateUserName" />
+    <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
+    <result column="delete_state" jdbcType="BIT" property="deleteState" />
+    <result column="send_flag" jdbcType="TINYINT" property="sendFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, scene_title, city_id, begin_time, end_time, up_state, host_code, plan_id, preview_address, 
+    live_address, director_id, director_name, create_user_id, create_user_name, create_dt, update_user_id,
+    update_user_name, update_dt, delete_state, ready_begin_time, ready_end_time, formal_begin_time, formal_end_time,periods_id,send_flag
+  </sql>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from live_scene
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.tuanche.directselling.model.LiveScene">
+    insert into live_scene
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="sceneTitle != null">
+        scene_title,
+      </if>
+      <if test="periodsId != null">
+        periods_id,
+      </if>
+      <if test="cityId != null">
+        city_id,
+      </if>
+      <if test="beginTime != null">
+        begin_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+      <if test="readyBeginTime != null">
+        ready_begin_time,
+      </if>
+      <if test="readyEndTime != null">
+        ready_end_time,
+      </if>
+      <if test="formalBeginTime != null">
+        formal_begin_time,
+      </if>
+      <if test="formalEndTime != null">
+        formal_end_time,
+      </if>
+      <if test="upState != null">
+        up_state,
+      </if>
+      <if test="hostCode != null">
+        host_code,
+      </if>
+      <if test="planId != null">
+        plan_id,
+      </if>
+      <if test="previewAddress != null">
+        preview_address,
+      </if>
+      <if test="liveAddress != null">
+        live_address,
+      </if>
+      <if test="directorId != null">
+        director_id,
+      </if>
+      <if test="directorName != null">
+        director_name,
+      </if>
+      <if test="createUserId != null">
+        create_user_id,
+      </if>
+      <if test="createUserName != null">
+        create_user_name,
+      </if>
+      <if test="createDt != null">
+        create_dt,
+      </if>
+      <if test="updateUserId != null">
+        update_user_id,
+      </if>
+      <if test="updateUserName != null">
+        update_user_name,
+      </if>
+      <if test="updateDt != null">
+        update_dt,
+      </if>
+      <if test="deleteState != null">
+        delete_state,
+      </if>
+      <if test="sendFlag != null">
+        send_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="sceneTitle != null">
+        #{sceneTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="periodsId != null">
+        #{periodsId,jdbcType=INTEGER},
+      </if>
+      <if test="cityId != null">
+        #{cityId,jdbcType=INTEGER},
+      </if>
+      <if test="beginTime != null">
+        #{beginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="readyBeginTime != null">
+        #{readyBeginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="readyEndTime != null">
+        #{readyEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="formalBeginTime != null">
+        #{formalBeginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="formalEndTime != null">
+        #{formalEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="upState != null">
+        #{upState,jdbcType=INTEGER},
+      </if>
+      <if test="hostCode != null">
+        #{hostCode,jdbcType=VARCHAR},
+      </if>
+      <if test="planId != null">
+        #{planId,jdbcType=VARCHAR},
+      </if>
+      <if test="previewAddress != null">
+        #{previewAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="liveAddress != null">
+        #{liveAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="directorId != null">
+        #{directorId,jdbcType=INTEGER},
+      </if>
+      <if test="directorName != null">
+        #{directorName,jdbcType=VARCHAR},
+      </if>
+      <if test="createUserId != null">
+        #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="createUserName != null">
+        #{createUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="createDt != null">
+        #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null">
+        #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateUserName != null">
+        #{updateUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDt != null">
+        #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteState != null">
+        #{deleteState,jdbcType=BIT},
+      </if>
+      <if test="sendFlag != null">
+        #{sendFlag,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.LiveScene">
+    update live_scene
+    <set>
+      <if test="periodsId != null">
+        periods_id = #{periodsId,jdbcType=INTEGER},
+      </if>
+      <if test="sceneTitle != null">
+        scene_title = #{sceneTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="cityId != null">
+        city_id = #{cityId,jdbcType=INTEGER},
+      </if>
+      <if test="beginTime != null">
+        begin_time = #{beginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="readyBeginTime != null">
+        ready_begin_time = #{readyBeginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="readyEndTime != null">
+        ready_end_time = #{readyEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="formalBeginTime != null">
+        formal_begin_time = #{formalBeginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="formalEndTime != null">
+        formal_end_time = #{formalEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="upState != null">
+        up_state = #{upState,jdbcType=INTEGER},
+      </if>
+      <if test="hostCode != null">
+        host_code = #{hostCode,jdbcType=VARCHAR},
+      </if>
+      <if test="planId != null">
+        plan_id = #{planId,jdbcType=VARCHAR},
+      </if>
+      <if test="previewAddress != null">
+        preview_address = #{previewAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="liveAddress != null">
+        live_address = #{liveAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="directorId != null">
+        director_id = #{directorId,jdbcType=INTEGER},
+      </if>
+      <if test="directorName != null">
+        director_name = #{directorName,jdbcType=VARCHAR},
+      </if>
+      <if test="createUserId != null">
+        create_user_id = #{createUserId,jdbcType=INTEGER},
+      </if>
+      <if test="createUserName != null">
+        create_user_name = #{createUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="createDt != null">
+        create_dt = #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateUserId != null">
+        update_user_id = #{updateUserId,jdbcType=INTEGER},
+      </if>
+      <if test="updateUserName != null">
+        update_user_name = #{updateUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="updateDt != null">
+        update_dt = #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleteState != null">
+        delete_state = #{deleteState,jdbcType=BIT},
+      </if>
+      <if test="sendFlag != null">
+        send_flag = #{sendFlag,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

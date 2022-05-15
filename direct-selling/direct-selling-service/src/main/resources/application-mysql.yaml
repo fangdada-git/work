@@ -1,0 +1,81 @@
+tuanche:
+  mysql:
+    datasource:
+      login-user: tuanche
+      login-password: tuanche
+      directselling-write:
+        mapper-location: classpath:/mapper/write/directselling/*.xml
+        driver-class-name: com.mysql.jdbc.Driver
+        filters: stat,slf4j,wall
+        maxActive: 100
+        initialSize: 10
+        maxWait: 60000
+        minIdle: 5
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: select 'x'
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxOpenPreparedStatements: 20
+        timeBetweenLogStatsMillis: 120000
+      directselling-read:
+        mapper-location: classpath:/mapper/read/directselling/*.xml
+        driver-class-name: com.mysql.jdbc.Driver
+        filters: stat,slf4j,wall
+        maxActive: 100
+        initialSize: 10
+        maxWait: 60000
+        minIdle: 5
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: select 'x'
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxOpenPreparedStatements: 20
+        timeBetweenLogStatsMillis: 120000
+
+---
+spring:
+  profiles:
+    active: local
+
+tuanche:
+  mysql:
+    datasource:
+      directselling-write:
+         url: jdbc:mysql://172.16.70.111:3306/direct_selling?useUnicode=true&rewriteBatchedStatements=true&characterEncoding=utf8&characterSetResults=utf8&allowMultiQueries=true
+         username: devadmin
+         password: devadmin123456
+      directselling-read:
+        url: jdbc:mysql://172.16.70.111:3306/direct_selling?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8&allowMultiQueries=true
+        username: devadmin
+        password: devadmin123456
+
+#tuanche:
+#  mysql:
+#    datasource:
+#      directselling-write:
+#        url: jdbc:mysql://172.16.5.100:3306/direct_selling?useUnicode=true&rewriteBatchedStatements=true&characterEncoding=utf8&characterSetResults=utf8&allowMultiQueries=true
+#        username: testuser
+#        password: hegXoWF0Gs
+#      directselling-read:
+#        url: jdbc:mysql://172.16.5.100:3306/direct_selling?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8&allowMultiQueries=true
+#        username: testuser
+#        password: hegXoWF0Gs
+
+
+#tuanche:
+#  mysql:
+#    datasource:
+#      directselling-write:
+#        url: jdbc:mysql://172.16.12.44:3306/direct_selling?useUnicode=true&rewriteBatchedStatements=true&characterEncoding=utf8&characterSetResults=utf8&allowMultiQueries=true
+#        username: testadmin
+#        password: test!@#123
+#      directselling-read:
+#        url: jdbc:mysql://172.16.12.44:3306/direct_selling?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8&allowMultiQueries=true
+#        username: testadmin
+#        password: test!@#123

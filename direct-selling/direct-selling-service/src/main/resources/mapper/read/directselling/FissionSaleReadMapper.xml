@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.FissionSaleReadMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FissionSale">
+      <id column="id" property="id" jdbcType="INTEGER" />
+      <result column="fission_id" property="fissionId" jdbcType="INTEGER" />
+      <result column="dealer_id" property="dealerId" jdbcType="INTEGER" />
+      <result column="sale_id" property="saleId" jdbcType="INTEGER" />
+      <result column="sale_name" property="saleName" jdbcType="VARCHAR" />
+      <result column="sale_wx_open_id" property="saleWxOpenId" jdbcType="CHAR" />
+      <result column="sale_wx_union_id" property="saleWxUnionId" jdbcType="CHAR" />
+      <result column="pay_amount" property="payAmount" jdbcType="DECIMAL" />
+      <result column="task_integral" property="taskIntegral" jdbcType="INTEGER" />
+      <result column="estimated_income" property="estimatedIncome" jdbcType="DECIMAL" />
+      <result column="real_income" property="realIncome" jdbcType="DECIMAL" />
+      <result column="calculation_real_income" property="calculationRealIncome" jdbcType="TINYINT" />
+      <result column="whether_complete_task" property="whetherCompleteTask" jdbcType="BIT" />
+      <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+      <result column="financial_audit_status" property="financialAuditStatus" jdbcType="TINYINT" />
+      <result column="withdrawal_state" property="withdrawalState" jdbcType="BIT" />
+      <result column="withdrawal_time" property="withdrawalTime" jdbcType="TIMESTAMP" />
+      <result column="trade_record_id" property="tradeRecordId" jdbcType="BIGINT" />
+      <result column="delete_flag" property="deleteFlag" jdbcType="BIT" />
+      <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+      <result column="create_name" property="createName" jdbcType="VARCHAR" />
+      <result column="update_dt" property="updateDt" jdbcType="TIMESTAMP" />
+      <result column="update_name" property="updateName" jdbcType="VARCHAR" />
+      <result column="audit_name" property="auditName" jdbcType="VARCHAR" />
+      <result column="pay_name" property="payName" jdbcType="VARCHAR" />
+  </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, fission_id, dealer_id, sale_id, sale_name, sale_wx_open_id,sale_wx_union_id, pay_amount, task_integral,
+        estimated_income, real_income, calculation_real_income, whether_complete_task, order_no,
+        financial_audit_status, withdrawal_state, withdrawal_time, trade_record_id, delete_flag,
+        create_dt, create_name, update_dt, update_name, audit_name, pay_name
+    </sql>
+    <!-- 获取销售单个实体 -->
+    <select id="getFissionSale" resultMap="BaseResultMap" parameterType="com.tuanche.directselling.model.FissionSale">
+        SELECT
+        id, fission_id, dealer_id, sale_id, sale_name, sale_wx_open_id,sale_wx_union_id, pay_amount, order_no,
+        estimated_income, real_income, whether_complete_task, financial_audit_status, withdrawal_state,
+        withdrawal_time, trade_record_id, task_integral, audit_name, pay_name
+        FROM fission_sale
+        <where>
+            <if test="id != null">
+                AND id = #{id}
+            </if>
+            <if test="fissionId != null">
+                AND fission_id = #{fissionId}
+            </if>
+            <if test="saleWxOpenId != null">
+                AND sale_wx_open_id = #{saleWxOpenId}
+            </if>
+            <if test="saleWxUnionId != null">
+                AND sale_wx_union_id = #{saleWxUnionId}
+            </if>
+            <if test="saleId != null">
+                AND sale_id = #{saleId}
+            </if>
+        </where>
+        LIMIT 1
+    </select>
+    <!-- 获取裂变活动销售列表 -->
+    <select id="getFissionSaleList" resultMap="BaseResultMap">
+        SELECT
+        id, fission_id, dealer_id, sale_id, sale_name, sale_wx_open_id,sale_wx_union_id, pay_amount, order_no,
+        estimated_income, real_income, whether_complete_task, financial_audit_status, withdrawal_state,
+        withdrawal_time, trade_record_id, task_integral, audit_name, pay_name
+        FROM fission_sale
+        <where>
+            <if test="fissionId != null">
+                AND fission_id = #{fissionId}
+            </if>
+            <if test="saleId != null">
+                AND sale_id = #{saleId}
+            </if>
+            <if test="saleWxOpenId != null">
+                AND sale_wx_open_id = #{saleWxOpenId}
+            </if>
+            <if test="saleWxUnionId != null">
+                AND sale_wx_union_id = #{saleWxUnionId}
+            </if>
+            <if test="dealerId != null">
+                AND dealer_id = #{dealerId}
+            </if>
+            AND delete_flag = 0
+        </where>
+    </select>
+    <select id="selectFissionDealerRank" resultMap="BaseResultMap">
+    SELECT
+        dealer_id,
+        sum(real_income) real_income,
+        sum(estimated_income) estimated_income,
+        sum(task_integral) task_integral
+    FROM
+        fission_sale
+    WHERE
+        fission_id = #{fissionId}
+    GROUP BY
+        dealer_id
+    ORDER BY
+        real_income DESC,estimated_income DESC
+        LIMIT 10
+  </select>
+
+    <select id="selectFissionSaleRank" resultMap="BaseResultMap">
+    SELECT
+        sale_name,
+        financial_audit_status,
+        calculation_real_income,
+        sum(real_income) real_income,
+        sum(estimated_income) estimated_income,
+        sum(task_integral) task_integral
+    FROM
+        fission_sale
+    WHERE
+        fission_id = #{fissionId}
+    group by sale_id
+    ORDER BY
+        real_income DESC,estimated_income DESC
+        LIMIT 10
+  </select>
+    <!-- 判断销售是否存在于列表活动中 -->
+    <select id="saleExistInFission" resultType="integer">
+      SELECT 1 FROM fission_sale
+       WHERE fission_id = #{fissionId} AND sale_wx_open_id = #{saleWxOpenId} LIMIT 1;
+  </select>
+  <!-- 检测用户和分享人是否是销售 -->
+  <select id="userAndShareUserIsSalesman" resultType="com.tuanche.directselling.dto.FissionSaleExistDto"  parameterType="com.tuanche.directselling.dto.FissionSaleExistDto">
+      SELECT
+           <if test="shareWxOpenId != null">
+               (SELECT COUNT(1) FROM fission_sale WHERE sale_wx_open_id = #{shareWxOpenId} AND fission_id = #{fissionId} LIMIT 1) AS shareIsSale,
+           </if>
+          (SELECT COUNT(1) FROM fission_sale WHERE sale_wx_open_id = #{userWxOpenId} AND fission_id = #{fissionId} LIMIT 1) AS userIsSale
+  </select>
+    <!--销售打款审核列表-->
+  <select id="selectSalePayListByFissionId" resultType="com.tuanche.directselling.dto.FissionSalePayDto">
+    SELECT *
+    FROM
+        fission_sale
+    WHERE
+        whether_complete_task = 1
+        AND fission_id = #{fissionId}
+        <if test="financialAuditStatus != null">
+          AND financial_audit_status = #{financialAuditStatus}
+        </if>
+        <if test='saleName != null and saleName !=""'>
+          AND sale_name = #{saleName}
+        </if>
+        <if test="saleId != null">
+          AND sale_id = #{saleId}
+        </if>
+  </select>
+
+  <select id="selectSalePayListCountByFissionId" resultType="java.lang.Integer">
+      SELECT count(1)
+      FROM
+      fission_sale
+      WHERE
+      whether_complete_task = 1
+      <if test="financialAuditStatus != null">
+          AND financial_audit_status = #{financialAuditStatus}
+      </if>
+      AND fission_id = #{fissionId}
+  </select>
+
+    <select id="selectFissionSaleWithdrawal" resultType="java.math.BigDecimal">
+        select sum(real_income) from fission_sale where
+        delete_flag = 0
+        and sale_id=#{saleId}
+        and withdrawal_state=#{state} and financial_audit_status=2 and whether_complete_task=1
+    </select>
+
+    <select id="selectFissionSaleList" resultType="com.tuanche.directselling.dto.FissionSaleDto">
+        SELECT
+        fs.fission_id,
+        fa.activity_name,
+        fs.estimated_income,
+        fs.real_income,
+        fs.withdrawal_state,
+        fs.withdrawal_time
+        FROM
+        fission_sale fs
+        LEFT JOIN fission_activity fa ON fs.fission_id = fa.id
+        WHERE
+        fs.delete_flag= 0 and
+        fs.sale_id = #{saleId} and fs.financial_audit_status=2
+        order by fs.update_dt desc,fs.fission_id desc
+    </select>
+
+  <select id="selectNewestFissionIdBySaleId" resultType="java.lang.Integer">
+      SELECT
+        fission_id
+    FROM
+        fission_sale
+    WHERE
+        sale_id = #{saleId} and delete_flag=0
+    ORDER BY
+        create_dt DESC
+        LIMIT 1
+    </select>
+
+  <select id="selectFissionSaleByFissionAndIdSaleId" resultMap="BaseResultMap">
+      select
+      id, fission_id, dealer_id, sale_id, sale_wx_open_id, sale_wx_union_id, pay_amount, order_no, real_income,estimated_income,
+      withdrawal_state, whether_complete_task,task_integral,sale_name
+      from fission_sale
+      WHERE
+      fission_id = #{fissionId} and sale_id = #{saleId} and delete_flag=0
+    </select>
+
+  <select id="selectFissionDealerSaleRank" resultMap="BaseResultMap">
+      SELECT
+      sale_id,
+      sale_name,
+      real_income,
+      estimated_income,
+      task_integral
+      FROM
+      fission_sale
+      WHERE
+      fission_id = #{fissionId} and dealer_id=#{dealerId}
+      ORDER BY
+      real_income DESC,estimated_income DESC
+      limit 10
+    </select>
+
+    <select id="selectWithdrawalFissionListBySaleId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT
+            *
+        FROM
+            fission_sale
+        WHERE
+            delete_flag = 0
+            AND sale_id = #{saleId}
+            AND withdrawal_state = 0
+            AND financial_audit_status = 2
+    </select>
+    <!-- 获取裂变活动销售支付的对赌总金额 -->
+    <select id="getTotalAmountByFissionIds" resultMap="BaseResultMap">
+        SELECT
+            fission_id,
+            SUM(pay_amount) AS pay_amount
+        FROM
+            fission_sale
+        <where>
+            <if test="fissionIds != null">
+                fission_id IN
+                <foreach collection="fissionIds" index="index" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        GROUP BY fission_id
+    </select>
+
+  <select id="selectFissionAllSaleRank" resultMap="BaseResultMap">
+      SELECT
+          sale_id,
+          sale_wx_open_id,
+          sale_wx_union_id,
+          sale_name,
+          dealer_id,
+          real_income,
+          estimated_income,
+          task_integral,
+          whether_complete_task
+      FROM
+          fission_sale
+      <where>
+          <if test="fissionId != null">
+              AND fission_id=#{fissionId}
+          </if>
+          <if test="dealerIds != null and dealerIds.size() != 0">
+              and dealer_id in <foreach collection="dealerIds" item="id" separator="," open="(" close=")">
+              #{id}
+          </foreach>
+          </if>
+          <if test="saleIds != null and saleIds.size() != 0">
+              and sale_id in
+              <foreach collection="saleIds" item="id" separator="," open="(" close=")">
+                  #{id}
+              </foreach>
+          </if>
+      </where>
+      ORDER BY
+          real_income DESC,
+          estimated_income DESC
+    </select>
+
+  <select id="selectFissionAllDealerRank" resultType="com.tuanche.directselling.dto.FissionSaleDto">
+      SELECT
+          dealer_id,
+          GROUP_CONCAT(sale_wx_open_id) sale_wx_open_id,
+          sum( real_income ) real_income,
+          sum( estimated_income ) estimated_income,
+          sum( task_integral ) task_integral,
+          sum( IF ( whether_complete_task = 1, task_integral, 0 ) ) finish_task_integral,
+          count( sale_id ) sale_count
+      FROM
+          fission_sale
+      WHERE
+          fission_id = #{fissionId}
+      <if test="dealerIds != null and dealerIds.size() != 0">
+          and dealer_id in <foreach collection="dealerIds" item="id" separator="," open="(" close=")">
+          #{id}
+      </foreach>
+      </if>
+      GROUP BY
+          dealer_id
+      ORDER BY
+          real_income DESC,
+          estimated_income DESC
+    </select>
+
+  <select id="selectFissionSaleReward" resultMap="BaseResultMap">
+      SELECT
+          sale_id,
+          dealer_id,
+          real_income,
+          withdrawal_state
+      FROM
+          fission_sale where fission_id=#{fissionId} order by real_income desc
+  </select>
+
+  <select id="getSaleRewardReconciliationDtoList" resultType="com.tuanche.directselling.dto.FissionSaleRewardReconciliationDto">
+      SELECT
+          fs.id,
+          fs.fission_id,
+          fa.activity_name,
+          fs.dealer_id,
+          fs.sale_id,
+          fs.sale_name,
+          fs.real_income,
+          fs.withdrawal_time,
+          ftr.trade_no,
+          ftr.trade_amount
+      FROM
+          fission_sale fs
+          left join fission_trade_record ftr on ftr.id=fs.trade_record_id and ftr.trade_type=4
+          left join fission_activity fa on fs.fission_id=fa.id
+      WHERE
+          fs.withdrawal_state = 1
+          AND fs.delete_flag = 0
+          <if test="fissionId != null">
+              AND fs.fission_id=#{fissionId}
+          </if>
+          <if test="withdrawalBeginTime != null">
+              AND fs.withdrawal_time &gt; #{withdrawalBeginTime}
+          </if>
+          <if test="withdrawalEndTime != null">
+              AND fs.withdrawal_time &lt; #{withdrawalEndTime}
+          </if>
+    </select>
+
+  <select id="selectFissionRewardGroupSale" resultMap="BaseResultMap">
+      SELECT
+          sale_id,
+          sum(real_income) real_income
+      FROM
+          fission_sale
+      WHERE
+          withdrawal_state = 1
+        AND delete_flag = 0 AND fission_id=#{fissionId}
+      GROUP BY
+          sale_id
+    </select>
+   <!-- 获取裂变活动下的所有经销商真实收入，返回MAP<dealer_id,real_income> -->
+  <select id="getDealerRealIncomeByFissionId" resultMap="BaseResultMap">
+      SELECT
+          dealer_id,
+          sum(real_income) AS real_income
+      FROM
+          fission_sale
+      WHERE
+          fission_id=#{fissionId}
+        AND delete_flag = 0 AND whether_complete_task=1
+      GROUP BY
+          dealer_id
+    </select>
+</mapper>

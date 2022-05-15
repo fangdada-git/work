@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<title>标签管理</title>
+<head th:replace="/common/vue.html"></head>
+<style>
+    .el-tag + .el-tag {
+        margin-left: 10px;
+    }
+    .button-new-tag {
+        margin-left: 10px;
+        height: 32px;
+        line-height: 30px;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+    .input-new-tag {
+        width: 90px;
+        margin-left: 10px;
+        vertical-align: bottom;
+    }
+    .babel_input{
+        width: 50px;
+        border: 0px;
+    }
+</style>
+<body>
+<div class="content" id="labelList">
+    <el-form  label-width="100px" class="demo-form-inline" :inline="true">
+        <el-checkbox-group v-model="checkedVals">
+        <div v-for="(label, pIndex) in labels" >
+            <el-form-item label="一级标签：">
+                    <el-checkbox-button :label="label" :checked="label.checked" :key="label.id" :disabled="label.secondaryLabels.length>0">{{label.labelName}}</el-checkbox-button>
+            </el-form-item>
+            <el-form-item label="二级标签：">
+                    <el-checkbox-button v-for="slabel in label.secondaryLabels" :checked="slabel.checked" :label="slabel" >{{slabel.labelName}}</el-checkbox-button>
+            </el-form-item>
+        </div>
+        </el-checkbox-group>
+    </el-form>
+
+    <div style="text-align: center">
+        <el-button type="primary" @click="save">提交</el-button>
+        <el-button @click="closeWinow">关闭</el-button>
+    </div>
+    <div>
+        <p style="font-size: 8px;color: #6d737b">
+            提示：<br>
+            1、有二级标签的不能选择一级标签，选择二级标签后会默认选择一级标签<br>
+            2、没有二级标签的才能选择一级标签
+        </p>
+    </div>
+</div>
+<script>
+    var activityId = [[${activityId}]];
+    var packageId = [[${packageId}]];
+    var app = new Vue({
+        el: "#labelList",
+        //绑定变量
+        data: {
+            labels:[],
+            packageLabels: [],
+            checkedVals:[]
+        },
+        //加载完VUE执行
+        mounted: function () {
+            this.getPackageLabels();
+        },
+        //方法
+        methods: {
+            getPackageLabels(){
+                that = this;
+                $.ajax({
+                    url:'/afterSale/packageLabel/package/getPackageLabels',
+                    data:{packageId:packageId},
+                    success:function(res){
+                        if(res&&res.length > 0){
+                            that.packageLabels = res;
+                        }
+                        that.getLabels();
+                    }
+                });
+            },
+            getLabels(){
+                that = this;
+                $.ajax({
+                    url:'/afterSale/packageLabel/config/getLabel',
+                    data:{activityId:activityId},
+                    success:function(res){
+                        if(res&&res.length > 0){
+                            if(that.packageLabels.length>0){
+                                for (var i = 0; i < res.length; i++) {
+                                    for (var j = 0; j < that.packageLabels.length; j++) {
+                                        if(res[i].id==that.packageLabels[j].primaryLabelId && that.packageLabels[j].secondaryLabelId==null){
+                                            res[i]['checked']=true;
+                                            res[i]['packageLabelId']=that.packageLabels[j].id;
+                                        }
+                                    }
+                                    for (var k = 0; k < res[i].secondaryLabels.length; k++) {
+                                        for (var j = 0; j < that.packageLabels.length; j++) {
+                                            if(res[i].secondaryLabels[k].id==that.packageLabels[j].secondaryLabelId){
+                                                res[i].secondaryLabels[k]['checked']=true;
+                                                res[i].secondaryLabels[k]['packageLabelId']=that.packageLabels[j].id;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            that.labels = res;
+                        }
+                    }
+                });
+
+            },
+            save(){
+                var packageLabels = this.checkedVals;
+                var labels = [];
+                for(var i=0;i<packageLabels.length;i++){
+                    if(packageLabels[i].secondaryLabels){
+                        labels.push({id:packageLabels[i].packageLabelId,packageId:packageId,primaryLabelId:packageLabels[i].id});
+                    }else{
+                        labels.push({id:packageLabels[i].packageLabelId,packageId:packageId,primaryLabelId:packageLabels[i].primaryLabelId,secondaryLabelId:packageLabels[i].id});
+                    }
+                }
+                var that = this;
+                $.ajax({
+                    type:"post",
+                    url:'/afterSale/packageLabel/package/savePackageLabel/'+packageId,
+                    contentType:"application/json",
+                    data:JSON.stringify(labels),
+                    dataType: "json",
+                    success:function(res){
+                        if(res){
+                            if(res.responseHeader.status==200){
+                                that.$message({
+                                    showClose: true,
+                                    message: "保存成功",
+                                    type: 'success',
+                                    duration:1000
+                                });
+                                setTimeout(function () {
+                                    that.closeWinow();
+                                },1000)
+
+                            }else{
+                                that.$message({
+                                    showClose: true,
+                                    message: res.responseHeader.message,
+                                    type: 'warning',
+                                    duration:1000
+                                });
+                            }
+                        }else{
+                            that.$message({
+                                showClose: true,
+                                message: "系统错误，请稍后再试或联系开发人员",
+                                type: 'warning',
+                                duration:1000
+                            });
+                        }
+
+
+                    }
+                });
+            },
+
+            trim(inputValue){
+                return inputValue.replace(/^\s\s*/, '').replace(/\s\s*$/, '')
+            },
+            closeWinow(){
+                    var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                parent.reloadTable();
+                parent.layer.close(index);//关闭弹出的子页面窗口
+            }
+        }
+    })
+
+</script>
+</body>
+</html>

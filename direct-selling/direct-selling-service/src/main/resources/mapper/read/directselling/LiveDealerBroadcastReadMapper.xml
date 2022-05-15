@@ -1,0 +1,624 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.LiveDealerBroadcastReadMapper" >
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.LiveDealerBroadcast" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="anchor_id" property="anchorId" jdbcType="BIGINT" />
+    <result column="live_id" property="liveId" jdbcType="BIGINT" />
+    <result column="live_title" property="liveTitle" jdbcType="VARCHAR" />
+    <result column="live_url" property="liveUrl" jdbcType="VARCHAR" />
+    <result column="live_city" property="liveCity" jdbcType="VARCHAR" />
+    <result column="goods_count" property="goodsCount" jdbcType="INTEGER" />
+    <result column="praise_count" property="praiseCount" jdbcType="INTEGER" />
+    <result column="view_count" property="viewCount" jdbcType="INTEGER" />
+    <result column="live_start_time" property="liveStartTime" jdbcType="TIMESTAMP" />
+    <result column="live_state" property="liveState" jdbcType="INTEGER" />
+    <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+    <result column="live_cover" property="liveCover" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <resultMap id="LiveInfoDtoResultMap" type="com.tuanche.directselling.dto.LiveInfoDto" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="anchor_id" property="anchorId" jdbcType="BIGINT" />
+    <result column="live_id" property="liveId" jdbcType="BIGINT" />
+    <result column="live_title" property="liveTitle" jdbcType="VARCHAR" />
+    <result column="live_url" property="liveUrl" jdbcType="VARCHAR" />
+    <result column="live_city" property="liveCity" jdbcType="VARCHAR" />
+    <result column="goods_count" property="goodsCount" jdbcType="INTEGER" />
+    <result column="praise_count" property="praiseCount" jdbcType="INTEGER" />
+    <result column="view_count" property="viewCount" jdbcType="INTEGER" />
+    <result column="live_start_time" property="liveStartTime" jdbcType="TIMESTAMP" />
+    <result column="live_state" property="liveState" jdbcType="INTEGER" />
+    <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+    <result column="live_cover" property="liveCover" jdbcType="VARCHAR" />
+    <result column="anchor_nick" property="anchorNick" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, anchor_id, live_id, live_title, live_url, live_city, goods_count, praise_count, 
+    view_count, live_start_time, live_state, create_dt
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from live_dealer_broadcast
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="getLiveDealerBroadByAnchorIds" resultMap="BaseResultMap">
+    SELECT
+      t2.live_start_time,
+      t2.anchor_id,
+      t2.live_url
+    FROM
+    (
+      SELECT
+        t1.id,
+        t1.live_start_time,
+        t1.anchor_id,
+        t1.live_url
+      FROM live_dealer_broadcast t1
+      WHERE t1.live_state IN (1,2)
+      AND t1.anchor_id IN
+      <foreach collection="anchorIds" item="anchorId" open="(" separator="," close=")">
+        #{anchorId}
+      </foreach>
+      ORDER BY t1.live_start_time DESC
+    ) t2
+    GROUP BY anchor_id;
+  </select>
+
+  <select id="getLiveDealerBroadViewByAnchorIds" resultMap="BaseResultMap">
+    SELECT
+      t2.view_count,
+      t2.anchor_id,
+      t2.live_url
+    FROM
+    (
+      SELECT
+        t1.id,
+        t1.view_count,
+        t1.anchor_id,
+        t1.live_url
+      FROM live_dealer_broadcast t1
+      WHERE t1.live_state IN (1,2)
+      AND live_start_time BETWEEN DATE_SUB(curdate(),INTERVAL 1 DAY) AND DATE_SUB(curdate(),INTERVAL 0 DAY)
+      AND t1.anchor_id IN
+      <foreach collection="anchorIds" item="anchorId" open="(" separator="," close=")">
+        #{anchorId}
+      </foreach>
+      ORDER BY t1.view_count DESC
+    ) t2
+    GROUP BY anchor_id;
+  </select>
+  
+  <!-- 获取正在直播的数据 --> 
+  <select id="getLiveBroadcastInprogressList" resultType="com.tuanche.directselling.dto.LiveDealerBroadcastDto">
+    SELECT tt1.* 
+     FROM (
+      SELECT t2.live_id
+           , t2.live_url
+           , t2.live_cover
+           , t2.live_title
+           , t2.live_start_time
+           , t2.goods_count
+           , t2.praise_count
+           , t2.view_count
+           , t1.anchor_id
+           , t1.anchor_url
+           , t1.anchor_nick
+           , t1.head_img
+           , t1.`desc`          as `desc`
+           , t2.live_state
+      FROM live_dealer_anchor       t1
+      LEFT JOIN live_dealer_broadcast t2 on t2.live_id = t1.living_id
+     WHERE t1.delete_flag = 0
+       AND t2.live_state = 1
+       AND t1.anchor_type = 2
+       AND t1.city_id in
+       <foreach collection="cityIds" item="cityId" open="(" separator="," close=")">
+          #{cityId}
+       </foreach>
+       ) tt1
+   
+     UNION ALL
+    
+    SELECT tt2.* 
+      FROM (
+      SELECT t2.live_id
+           , t2.live_url
+           , t2.live_cover
+           , t2.live_title
+           , t2.live_start_time
+           , t2.goods_count
+           , t2.praise_count
+           , t2.view_count
+           , t1.anchor_id
+           , t1.anchor_url
+           , t1.anchor_nick
+           , t1.head_img
+           , t1.`desc`          as `desc`
+           , t2.live_state
+        FROM live_dealer_anchor       t1
+        LEFT JOIN live_dealer_broadcast t2 on t2.live_id = t1.living_id
+       WHERE t1.delete_flag = 0
+         AND t2.live_state = 1
+         AND t1.anchor_type != 2
+         AND t1.city_id in
+         <foreach collection="cityIds" item="cityId" open="(" separator="," close=")">
+             #{cityId}
+         </foreach>
+         AND t1.dealer_id in (
+             SELECT tt1.dealer_id
+               FROM live_scene_dealer_brand tt1
+  	           JOIN live_scene              tt2 on tt1.scene_id = tt2.id and tt2.delete_state = 0
+              WHERE tt1.delete_state = 0
+                AND tt2.id is not null
+                AND tt2.up_state = 1
+                AND tt2.periods_id = #{periodsId})
+       ORDER BY t2.live_start_time DESC) tt2
+  </select>
+
+  <!-- 直播回放 -->
+  <select id="getLiveBroadcastPlaybackList" resultType="com.tuanche.directselling.dto.LiveDealerBroadcastDto">
+    SELECT *
+      FROM (
+    SELECT IF(@batchId = IFNULL(b.dealer_id,-1), @rank := @rank + 1, @rank := 1) AS rank
+         , @batchId := IFNULL(b.dealer_id,-1)                                    AS temp_batch_id
+         , b.*
+      FROM (
+        SELECT a.*
+          FROM (
+            SELECT t1.live_id
+                 , t1.live_url
+                 , t1.live_cover
+                 , t1.live_title
+                 , t1.live_start_time
+                 , t1.goods_count
+                 , t1.praise_count
+                 , t1.view_count
+                 , t2.dealer_id
+                 , t2.city_id
+                 , t2.anchor_id
+                 , t2.anchor_url
+                 , t2.anchor_nick
+                 , t2.head_img
+              FROM live_dealer_anchor t2, live_dealer_broadcast t1, live_dealer_playback t3, live_scene t4
+             WHERE t1.anchor_id = t2.anchor_id
+               AND t3.dealer_id = t2.dealer_id
+               AND t3.feed_id = t1.live_id 
+               AND t3.activity_id = t4.id
+               AND t3.delete_state = 0
+               AND t4.delete_state = 0
+               AND t4.periods_id = #{periodsId}
+               AND t4.up_state = 1
+               AND t1.live_state = 2
+               AND t2.anchor_id = t1.anchor_id
+               AND t2.delete_flag = 0
+               AND t2.city_id in
+               <foreach collection="cityIds" item="cityId" open="(" separator="," close=")">
+                    #{cityId}
+               </foreach>
+               AND t2.dealer_id in (
+                   SELECT tt1.dealer_id
+                     FROM live_scene_dealer_brand tt1
+                     JOIN live_scene              tt2 on tt1.scene_id = tt2.id and tt2.delete_state = 0
+                    WHERE tt1.delete_state = 0
+                      AND tt2.up_state = 1
+                      AND tt2.periods_id = #{periodsId}
+                 )
+             UNION ALL
+             
+            SELECT t1.live_id
+                 , t1.live_url
+                 , t1.live_cover
+                 , t1.live_title
+                 , t1.live_start_time
+                 , t1.goods_count
+                 , t1.praise_count
+                 , t1.view_count
+                 , IFNULL(t2.dealer_id,t2.anchor_id) as dealer_id
+                 , t2.city_id
+                 , t2.anchor_id
+                 , t2.anchor_url
+                 , t2.anchor_nick
+                 , t2.head_img
+              FROM live_dealer_anchor t2
+              LEFT JOIN live_dealer_broadcast t1 on t1.anchor_id = t2.anchor_id
+             WHERE t1.live_state = 2
+               AND t2.delete_flag = 0
+               AND t2.city_id in
+               <foreach collection="cityIds" item="cityId" open="(" separator="," close=")">
+                  #{cityId}
+               </foreach>
+               AND (t2.dealer_id in (
+                   SELECT tt1.dealer_id
+                     FROM live_scene_dealer_brand tt1
+                     JOIN live_scene              tt2 on tt1.scene_id = tt2.id and tt2.delete_state = 0
+                    WHERE tt1.delete_state = 0
+                      AND tt2.up_state = 1
+                      AND tt2.periods_id = #{periodsId}) OR t2.anchor_type = 2)
+              AND t1.live_start_time &lt; #{periodsEndTime}
+              AND t1.live_start_time > #{periodsPreheatTime}
+              AND (t2.dealer_id not in (
+                  SELECT tt1.dealer_id
+                    FROM live_dealer_playback tt1
+                    LEFT JOIN live_scene      tt2 on tt2.id = tt1.activity_id
+                   WHERE tt1.delete_state = 0
+                     AND tt2.delete_state = 0
+                     AND tt2.up_state = 1
+                     AND tt2.periods_id =  #{periodsId}) OR t2.anchor_type = 2)
+           ) a
+     ORDER BY  a.dealer_id, a.view_count desc
+       ) b , (SELECT @batchId := NULL, @rank:= 0) temp
+       ) c
+     WHERE c.rank = 1 
+     ORDER BY c.view_count desc
+  </select>
+  
+    
+  <!-- 品牌直播回放 -->
+  <select id="getLiveBroadcastForBrandList" resultType="com.tuanche.directselling.dto.LiveDealerBroadcastDto">
+    SELECT a.*
+      FROM (
+    SELECT 0                  as rank
+         , null               as temp_batch_id
+         , t2.live_id
+         , t2.live_url
+         , t2.live_cover
+         , t2.live_title
+         , t2.live_start_time
+         , t2.goods_count
+         , t2.praise_count
+         , t2.view_count
+         , t1.dealer_id
+         , t1.city_id
+         , t1.brand_id
+         , t1.anchor_id
+         , t1.anchor_url
+         , t1.anchor_nick
+         , t1.head_img
+         , t2.live_state
+      FROM live_dealer_anchor       t1
+      LEFT JOIN live_dealer_broadcast t2 on t2.live_id = t1.living_id
+     WHERE t1.delete_flag = 0
+       AND t2.live_state = 1
+       AND t1.anchor_id in
+       <foreach collection="anchorIds" item="anchorIdItem"  open="("  separator=","   close=")" >
+        #{anchorIdItem}
+      </foreach>
+     ORDER BY if(t1.city_id = #{cityId}, -1, t1.city_id), t2.view_count desc ) a
+     UNION ALL
+    SELECT d.*
+      FROM (
+    SELECT *
+      FROM (
+    SELECT IF(@batchId = IFNULL(b.dealer_id,-1), @rank := @rank + 1, @rank := 1) AS rank
+         , @batchId := IFNULL(b.dealer_id,-1)                                    as temp_batch_id
+         , b.*
+      FROM (
+    SELECT a.*
+      FROM (
+    SELECT t1.live_id
+         , t1.live_url
+         , t1.live_cover
+         , t1.live_title
+         , t1.live_start_time
+         , t1.goods_count
+         , t1.praise_count
+         , t1.view_count
+         , t2.dealer_id
+         , t2.city_id
+         , t2.brand_id
+         , t2.anchor_id
+         , t2.anchor_url
+         , t2.anchor_nick
+         , t2.head_img
+         , t1.live_state
+      FROM live_dealer_anchor t2, live_dealer_broadcast t1, live_dealer_playback t3, live_scene t4
+     WHERE t1.anchor_id = t2.anchor_id
+       AND t3.dealer_id = t2.dealer_id
+       AND t3.feed_id = t1.live_id 
+       AND t3.activity_id = t4.id
+       AND t3.delete_state = 0
+       AND t4.delete_state = 0
+       AND t4.periods_id = #{periodsId}
+       AND t4.up_state = 1
+       AND t1.live_state = 2
+       AND t2.anchor_id = t1.anchor_id
+       AND t2.delete_flag = 0
+       AND t2.anchor_id in
+       <foreach collection="anchorIds" item="anchorIdItem"  open="("  separator=","   close=")" >
+          #{anchorIdItem}
+      </foreach>
+       AND t2.dealer_id in (
+           SELECT tt1.dealer_id
+             FROM live_scene_dealer_brand tt1
+             JOIN live_scene              tt2 on tt1.scene_id = tt2.id and tt2.delete_state = 0
+            WHERE tt1.delete_state = 0
+              AND tt2.up_state = 1
+              AND tt2.periods_id = #{periodsId})
+     AND t3.id is not null 
+     UNION ALL
+    SELECT t1.live_id
+         , t1.live_url
+         , t1.live_cover
+         , t1.live_title
+         , t1.live_start_time
+         , t1.goods_count
+         , t1.praise_count
+         , t1.view_count
+         , t2.dealer_id
+         , t2.city_id
+         , t2.brand_id
+         , t2.anchor_id
+         , t2.anchor_url
+         , t2.anchor_nick
+         , t2.head_img
+         , t1.live_state
+      FROM live_dealer_anchor t2
+      LEFT JOIN live_dealer_broadcast t1 on t1.anchor_id = t2.anchor_id
+     WHERE t1.live_state = 2
+       AND t2.delete_flag = 0
+       AND t2.anchor_id in
+       <foreach collection="anchorIds" item="anchorIdItem"  open="("  separator=","   close=")" >
+          #{anchorIdItem}
+      </foreach>
+       AND t1.live_start_time &lt; #{periodsEndTime}
+       AND t1.live_start_time > #{periodsPreheatTime}
+       AND t2.dealer_id not in (
+           SELECT tt1.dealer_id
+             FROM live_dealer_playback tt1
+             LEFT JOIN live_scene      tt2 on tt2.id = tt1.activity_id
+            WHERE tt1.delete_state = 0
+              AND tt2.delete_state = 0
+              AND tt2.up_state = 1
+              AND tt2.periods_id =  #{periodsId})
+       AND t2.dealer_id in (
+           SELECT tt1.dealer_id
+             FROM live_scene_dealer_brand tt1
+             JOIN live_scene              tt2 on tt1.scene_id = tt2.id and tt2.delete_state = 0
+            WHERE tt1.delete_state = 0
+              AND tt2.up_state = 1
+              AND tt2.periods_id = #{periodsId}) 
+        ) a
+     ORDER BY  a.dealer_id, a.view_count desc
+       ) b , (SELECT @batchId := NULL, @rank:= 0) temp
+       ) c
+     WHERE c.rank = 1 
+     ORDER BY c.view_count desc
+       ) d
+  </select>
+
+  <!--取场次下正在直播数据-->
+  <select id="getLivingRollNoticeByPeriodsId" resultMap="LiveInfoDtoResultMap">
+    SELECT distinct
+    lda.anchor_nick,
+    ldb.live_title
+    FROM live_dealer_anchor lda
+    JOIN live_dealer_broadcast ldb ON lda.living_id = ldb.live_id
+    JOIN live_scene_dealer_brand lsdb ON lsdb.dealer_id = lda.dealer_id AND lsdb.delete_state = 0
+    JOIN live_scene ls ON lsdb.scene_id = ls.id	AND ls.delete_state = 0 AND ls.up_state = 1
+    WHERE lda.delete_flag = 0
+    and ls.periods_id = #{periodsId}
+  </select>
+
+  <!--根据主播ids和场次起止时间取直播信息，每个主播id优先直播中其次场次时间内观看量最大-->
+  <select id="getLivingOrPlayBackInfosByAnchorAndPeriods" resultMap="LiveInfoDtoResultMap">
+    SELECT * FROM(
+      SELECT
+      ldb.*,
+      lda.anchor_nick,
+      lda2.living_id AS livingId
+      FROM
+      live_dealer_broadcast ldb
+      JOIN live_dealer_anchor lda ON lda.anchor_id = ldb.anchor_id
+      LEFT JOIN live_dealer_anchor lda2 ON lda2.anchor_id = ldb.anchor_id
+      AND lda2.living_id = ldb.live_id
+      WHERE
+      lda.delete_flag = 0
+      AND ldb.anchor_id IN
+      <foreach collection="anchorIds" item="anchorId" open="(" separator="," close=")">
+        #{anchorId}
+      </foreach>
+      AND ldb.live_start_time BETWEEN #{periodsPreheatTime} AND #{periodsEndTime}
+      ORDER BY
+      ldb.anchor_id,lda2.living_id DESC,ldb.view_count DESC) a
+    GROUP BY anchor_id
+  </select>
+
+  <!--返回指定公司直播号下场次预告到结束时间最大观看数回放直播信息  -->
+  <select id="getMaxViewCountPlayBackByPeriodsTime" resultType="com.tuanche.directselling.dto.LiveDealerBroadcastDto">
+    SELECT t2.live_id
+	   , t2.live_url
+	   , t2.live_cover
+	   , t2.live_title
+	   , t2.live_start_time
+	   , t2.goods_count
+	   , t2.praise_count
+	   , t2.view_count
+	   , t1.anchor_id
+	   , t1.anchor_url
+	   , t1.anchor_nick
+	   , t1.head_img
+	   , t2.live_state
+	   , t1.`desc` as `desc`
+	   , t2.live_state
+    FROM live_dealer_anchor t1
+    LEFT JOIN live_dealer_broadcast t2 on t2.anchor_id = t1.anchor_id
+    WHERE t1.delete_flag = 0
+    AND t2.live_state = 2
+    AND t1.anchor_id = 3039259927
+    AND t2.live_start_time between #{periodsPreheatTime} AND #{periodsEndTime}
+    ORDER BY view_count DESC
+    LIMIT 1
+  </select>
+
+
+  <!--获取直播列表数据（直播&回放）直播和回放数据包含城市号；回放：取参展经销商/城市号观看数最大一条；排序规则"直播（本地->异地）->回放（本地->异地）"-->
+  <select id="getPreheatLivingAndPlayBackList" resultType="com.tuanche.directselling.dto.LiveDealerBroadcastDto">
+    SELECT * FROM (
+    SELECT * FROM (
+    SELECT 0 as rank, 0 as temp_batch_id ,a.*
+     FROM (
+      SELECT t2.live_id
+           , t2.live_url
+           , t2.live_cover
+           , t2.live_title
+           , t2.live_start_time
+           , t2.goods_count
+           , t2.praise_count
+           , t2.view_count
+           , t1.dealer_id
+           , if(t1.city_id=#{cityId}, t1.city_id, 0) as city_id
+           , t1.anchor_id
+           , t1.anchor_url
+           , t1.anchor_nick
+           , t1.head_img
+           , t1.`desc`          as `desc`
+           , t2.live_state
+      FROM live_dealer_anchor       t1
+      LEFT JOIN live_dealer_broadcast t2 on t2.live_id = t1.living_id
+     WHERE t1.delete_flag = 0
+       AND t2.live_state = 1
+       AND t1.city_id in
+       <foreach collection="cityIds" item="city" open="(" separator="," close=")">
+          #{city}
+       </foreach>
+       AND (t1.dealer_id in (
+         SELECT tt1.dealer_id
+           FROM live_scene_dealer_brand tt1
+           JOIN live_scene              tt2 on tt1.scene_id = tt2.id and tt2.delete_state = 0
+          WHERE tt1.delete_state = 0
+            AND tt2.id is not null
+            AND tt2.up_state = 1
+            AND tt2.periods_id = #{periodsId}) or t1.anchor_type =2)) a
+        order by a.city_id desc,a.live_start_time desc,a.live_id) b
+
+     UNION ALL
+
+    SELECT * FROM(
+    SELECT *
+      FROM (
+    SELECT IF(@batchId = IFNULL(b.anchor_id,-1), @rank := @rank + 1, @rank := 1) AS rank
+         , @batchId := IFNULL(b.anchor_id,-1)                                    AS temp_batch_id
+         , b.*
+      FROM (
+        SELECT a.*
+          FROM (
+            SELECT t1.live_id
+                 , t1.live_url
+                 , t1.live_cover
+                 , t1.live_title
+                 , t1.live_start_time
+                 , t1.goods_count
+                 , t1.praise_count
+                 , t1.view_count
+                 , t2.dealer_id
+                 , if(t2.city_id=#{cityId}, t2.city_id, 0) as city_id
+                 , t2.anchor_id
+                 , t2.anchor_url
+                 , t2.anchor_nick
+                 , t2.head_img
+                 , t2.`desc`          as `desc`
+                 , t1.live_state
+              FROM live_dealer_anchor t2, live_dealer_broadcast t1, live_dealer_playback t3, live_scene t4
+             WHERE t1.anchor_id = t2.anchor_id
+               AND t3.dealer_id = t2.dealer_id
+               AND t3.feed_id = t1.live_id
+               AND t3.activity_id = t4.id
+               AND t3.delete_state = 0
+               AND t4.delete_state = 0
+               AND t4.periods_id = #{periodsId}
+               AND t4.up_state = 1
+               AND t1.live_state = 2
+               AND t2.anchor_id = t1.anchor_id
+               AND t2.delete_flag = 0
+               AND t2.dealer_id in (
+                   SELECT tt1.dealer_id
+                     FROM live_scene_dealer_brand tt1
+                     JOIN live_scene              tt2 on tt1.scene_id = tt2.id and tt2.delete_state = 0
+                    WHERE tt1.delete_state = 0
+                      AND tt2.up_state = 1
+                      AND tt2.periods_id = #{periodsId}
+                 )
+             UNION ALL
+
+            SELECT t1.live_id
+                 , t1.live_url
+                 , t1.live_cover
+                 , t1.live_title
+                 , t1.live_start_time
+                 , t1.goods_count
+                 , t1.praise_count
+                 , t1.view_count
+                 , t2.dealer_id
+                 , if(t2.city_id=#{cityId}, t2.city_id, 0) as city_id
+                 , t2.anchor_id
+                 , t2.anchor_url
+                 , t2.anchor_nick
+                 , t2.head_img
+                 , t2.`desc`          as `desc`
+                 , t1.live_state
+              FROM live_dealer_anchor t2
+              JOIN live_dealer_broadcast t1 on t1.anchor_id = t2.anchor_id
+             WHERE t1.live_state = 2
+               AND t2.delete_flag = 0
+               AND (t2.dealer_id in (
+                   SELECT tt1.dealer_id
+                     FROM live_scene_dealer_brand tt1
+                     JOIN live_scene  tt2 on tt1.scene_id = tt2.id and tt2.delete_state = 0 AND tt2.up_state = 1
+                    WHERE tt1.delete_state = 0
+                      AND tt2.periods_id = #{periodsId}
+                      AND tt1.dealer_id not in(
+                          SELECT tt3.dealer_id
+                          FROM live_dealer_playback tt3
+                          JOIN live_scene  tt4 on tt4.id = tt3.activity_id AND tt4.delete_state = 0 AND tt4.up_state = 1
+                          WHERE tt3.delete_state = 0
+                          AND tt4.periods_id = #{periodsId}
+                      )) OR t2.anchor_type = 2)
+              AND t2.city_id in
+              <foreach collection="cityIds" item="city" open="(" separator="," close=")">
+                  #{city}
+              </foreach>
+              AND t1.live_start_time between #{periodsPreheatTime} and #{periodsEndTime}
+           ) a
+     ORDER BY  a.anchor_id, a.view_count desc, a.live_id
+       ) b , (SELECT @batchId := NULL, @rank:= 0) temp
+       ) c
+     WHERE c.rank = 1
+     ORDER BY c.city_id desc, c.view_count desc, c.live_id) d) e
+  </select>
+
+  <!--根据条件取团车主直播号下直播数据  -->
+  <select id="getTcAnchorLiveList" resultType="com.tuanche.directselling.dto.LiveDealerBroadcastDto" parameterType="com.tuanche.directselling.vo.LiveParameterVo">
+        SELECT t2.live_id
+        , t2.live_url
+        , t2.live_cover
+        , t2.live_title
+        , t2.live_start_time
+        , t2.goods_count
+        , t2.praise_count
+        , t2.view_count
+        , t1.anchor_id
+        , t1.anchor_url
+        , t1.anchor_nick
+        , t1.head_img
+        , t2.live_state
+        , t1.`desc` as `desc`
+        , t2.live_state
+        FROM live_dealer_anchor t1
+        JOIN live_dealer_broadcast t2 on t2.anchor_id = t1.anchor_id
+        WHERE t1.delete_flag = 0
+        AND t1.anchor_id = #{anchorId}
+        <if test="liveState !=null">
+            AND t2.live_state = #{liveState}
+        </if>
+        <if test="periodsStartTime !=null">
+            AND t2.live_start_time between #{periodsStartTime} AND #{periodsEndTime}
+        </if>
+        <if test="excludeLiveId != null">
+            AND t2.live_id &lt;&gt; #{excludeLiveId}
+        </if>
+        ORDER BY view_count DESC
+    </select>
+</mapper>

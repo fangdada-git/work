@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.FashionCarMarkeHelperUserWriteMapper" >
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from fashion_car_marke_helper_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tuanche.directselling.model.FashionCarMarkeHelperUser">
+    insert into fashion_car_marke_helper_user (id, periods_id,car_fashion_id, goods_id,
+      helper_type, user_id, user_wx_union_id, helper_user_id,
+      helper_wx_union_id, buy_flag, create_dt, update_dt
+      )
+    values (#{id,jdbcType=INTEGER},#{periodsId}, #{carFashionId,jdbcType=INTEGER}, #{goodsId,jdbcType=INTEGER},
+      #{helperType,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{userWxUnionId,jdbcType=VARCHAR}, 
+      #{helperUserId,jdbcType=INTEGER}, #{helperWxUnionId,jdbcType=VARCHAR},
+      #{buyFlag,jdbcType=INTEGER}, #{createDt,jdbcType=TIMESTAMP}, #{updateDt,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.tuanche.directselling.model.FashionCarMarkeHelperUser" useGeneratedKeys="true" keyProperty="id">
+    insert into fashion_car_marke_helper_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="periodsId != null" >
+        periods_id,
+      </if>
+      <if test="carFashionId != null" >
+        car_fashion_id,
+      </if>
+      <if test="goodsId != null" >
+        goods_id,
+      </if>
+      <if test="helperType != null" >
+        helper_type,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="userWxUnionId != null" >
+        user_wx_union_id,
+      </if>
+      <if test="helperUserId != null" >
+        helper_user_id,
+      </if>
+      <if test="helperWxUnionId != null" >
+        helper_wx_union_id,
+      </if>
+      <if test="buyFlag != null" >
+        buy_flag,
+      </if>
+      <if test="createDt != null" >
+        create_dt,
+      </if>
+      <if test="updateDt != null" >
+        update_dt,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="periodsId != null" >
+        #{periodsId},
+      </if>
+      <if test="carFashionId != null" >
+        #{carFashionId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsId != null" >
+        #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="helperType != null" >
+        #{helperType,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userWxUnionId != null" >
+        #{userWxUnionId,jdbcType=VARCHAR},
+      </if>
+      <if test="helperUserId != null" >
+        #{helperUserId,jdbcType=INTEGER},
+      </if>
+      <if test="helperWxUnionId != null" >
+        #{helperWxUnionId,jdbcType=VARCHAR},
+      </if>
+      <if test="buyFlag != null" >
+        #{buyFlag,jdbcType=INTEGER},
+      </if>
+      <if test="createDt != null" >
+        #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDt != null" >
+        #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.FashionCarMarkeHelperUser" >
+    update fashion_car_marke_helper_user
+    <set >
+      <if test="periodsId != null" >
+        periods_id = #{periodsId},
+      </if>
+      <if test="carFashionId != null" >
+        car_fashion_id = #{carFashionId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsId != null" >
+        goods_id = #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="helperType != null" >
+        helper_type = #{helperType,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userWxUnionId != null" >
+        user_wx_union_id = #{userWxUnionId,jdbcType=VARCHAR},
+      </if>
+      <if test="helperUserId != null" >
+        helper_user_id = #{helperUserId,jdbcType=INTEGER},
+      </if>
+      <if test="helperWxUnionId != null" >
+        helper_wx_union_id = #{helperWxUnionId,jdbcType=VARCHAR},
+      </if>
+      <if test="buyFlag != null" >
+        buy_flag = #{buyFlag,jdbcType=INTEGER},
+      </if>
+      <if test="createDt != null" >
+        create_dt = #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDt != null" >
+        update_dt = #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tuanche.directselling.model.FashionCarMarkeHelperUser" >
+    update fashion_car_marke_helper_user
+    set
+      periods_id = #{periodsId},
+      car_fashion_id = #{carFashionId,jdbcType=INTEGER},
+      goods_id = #{goodsId,jdbcType=INTEGER},
+      helper_type = #{helperType,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      user_wx_union_id = #{userWxUnionId,jdbcType=VARCHAR},
+      helper_user_id = #{helperUserId,jdbcType=INTEGER},
+      helper_wx_union_id = #{helperWxUnionId,jdbcType=VARCHAR},
+      buy_flag = #{buyFlag,jdbcType=INTEGER},
+      create_dt = #{createDt,jdbcType=TIMESTAMP},
+      update_dt = #{updateDt,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateHelperUserToBuy" parameterType="com.tuanche.directselling.model.FashionCarMarkeHelperUser" >
+    update fashion_car_marke_helper_user
+    SET buy_flag = 1
+    where goods_id = #{goodsId}
+      <if test="periodsId !=null">
+        and periods_id = #{periodsId}
+      </if>
+      <if test="carFashionId !=null">
+        and car_fashion_id = #{carFashionId}
+      </if>
+      <if test="userWxUnionId !=null">
+        and user_wx_union_id = #{userWxUnionId}
+      </if>
+      <if test="userWxUnionId !=null">
+        and user_wx_union_id = #{userWxUnionId}
+      </if>
+      <if test="userId !=null">
+        and user_id = #{userId}
+      </if>
+      and buy_flag = 0
+  </update>
+</mapper>

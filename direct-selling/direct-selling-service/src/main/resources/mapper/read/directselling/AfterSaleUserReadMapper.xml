@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.AfterSaleUserReadMapper" >
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.AfterSaleUser" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="activity_id" property="activityId" jdbcType="INTEGER" />
+    <result column="user_wx_union_id" property="userWxUnionId" jdbcType="CHAR" />
+    <result column="user_wx_open_id" property="userWxOpenId" jdbcType="CHAR" />
+    <result column="nick_name" property="nickName" jdbcType="VARCHAR" />
+    <result column="user_wx_head" property="userWxHead" jdbcType="VARCHAR" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="BIT" />
+    <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+    <result column="update_dt" property="updateDt" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, activity_id, user_wx_union_id, user_wx_open_id, nick_name, user_wx_head, delete_flag,
+    create_dt, update_dt
+  </sql>
+    <!-- 获取单个用户 -->
+    <select id="getUser"  resultMap="BaseResultMap" parameterType="com.tuanche.directselling.model.AfterSaleUser">
+        SELECT
+            <include refid="Base_Column_List"></include>
+        FROM
+            after_sale_user
+        WHERE
+            activity_id =#{activityId}
+          AND user_wx_union_id =#{userWxUnionId}
+        ORDER BY id DESC LIMIT 1
+  </select>
+    <select id="getUserListByActivityIdAndUnionId"  resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List"></include>
+        FROM
+            after_sale_user
+        WHERE delete_flag=0
+        AND (activity_id, user_wx_union_id) in
+        <foreach collection="userList" item="item" open="(" separator="," close=")">
+            (#{item.activityId}, #{item.userWxUnionId})
+        </foreach>
+        order by id desc
+  </select>
+    <!-- 获取UV -->
+  <select id="getUvMap" resultType="com.tuanche.directselling.dto.ResultMapDto">
+      SELECT
+        activity_id AS mapKey,
+        COUNT(1) AS mapValue
+      FROM
+          after_sale_user
+      WHERE
+          activity_id IN
+          <foreach collection="activityIds" item="item" open="(" separator="," close=")">
+              #{item}
+          </foreach>
+      GROUP BY
+          activity_id
+  </select>
+</mapper>

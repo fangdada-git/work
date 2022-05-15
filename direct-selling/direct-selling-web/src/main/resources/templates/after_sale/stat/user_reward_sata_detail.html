@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>团车直卖-C端用户奖励对账明细</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.js"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/magnify/css/jquery.magnify.css" >
+    <script src="/layui/js/formSelects-v4.js"></script>
+    <link rel="stylesheet" href="/layui/css/formSelects-v4.css" media="all">
+    <style type="text/css">
+        .layui-table-header .layui-table tr {
+            height: auto;
+            line-height: 50px;
+        }
+        .layui-table tr{height: 65px}
+        .layui-form-label{width: 100px}
+        .layui-input-block{
+            margin-left: 131px;
+            min-height: 36px;
+        }
+        .layui-input{
+            width: 217.44px;
+        }
+        .layui-input-block-p{
+            padding-top: 8px;
+        }
+        .layui-table-cell {
+            height:auto;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:normal;
+        }
+    </style>
+</head>
+<body class="childrenBody">
+<form class="layui-form" id="form" style="background-color: #ffffff;" action="">
+    <input type="hidden" id="activityId" name="activityId" th:value="${rewardStatisticsDto.activityId}">
+    <input type="hidden" id="activityName" name="activityName" th:value="${rewardStatisticsDto.activityName}">
+    <input type="hidden" id="dealerName" name="dealerName" th:value="${rewardStatisticsDto.dealerName}">
+    <input type="hidden" id="userWxUnionId" name="userWxUnionId" th:value="${rewardStatisticsDto.userWxUnionId}">
+    <input type="hidden" id="licencePlate" name="licencePlate" th:value="${rewardStatisticsDto.licencePlate}">
+    <blockquote class="layui-elem-quote quoteBox">
+        <div class="layui-form-item" >
+            <div style="float: left; margin-left: 10px;">微信昵称：<div style="float: right;">[[${rewardStatisticsDto.userNickName==null || rewardStatisticsDto.userNickName=='null' ?'':rewardStatisticsDto.userNickName}]]</div></div>
+            <div style="float: left; margin-left: 10px;">微信id：<div style="float: right;">[[${rewardStatisticsDto.userWxUnionId==null || rewardStatisticsDto.userWxUnionId=='null' ?'':rewardStatisticsDto.userWxUnionId}]]</div></div>
+            <div style="float: left; margin-left: 10px;">手机号：<div style="float: right;">[[${rewardStatisticsDto.userPhone==null || rewardStatisticsDto.userPhone=='null' ?'':rewardStatisticsDto.userPhone}]]</div></div>
+            <div style="float: left; margin-left: 20px;">车牌号：<div style="float: right;">[[${rewardStatisticsDto.licencePlate==null || rewardStatisticsDto.licencePlate=='null' ?'':rewardStatisticsDto.licencePlate}]]</div></div>
+            <div style="float: left; margin-left: 20px;">身份：<div style="float: right;">[[${rewardStatisticsDto.userTypeName==null  || rewardStatisticsDto.userTypeName=='null' ?'':rewardStatisticsDto.userTypeName}]]</div></div>
+        </div>
+        <div class="layui-form-item" >
+            <div class="layui-inline">
+                <div style="float: left; margin-left: 10px;">邀请人数：<div  style="float: right;">[[${rewardStatisticsDto.inviteesNum}]]</div></div>
+            </div>
+            <div class="layui-inline">
+                <div style="float: left; margin-left: 10px;">累计奖励：<div style="float: right;">[[${rewardStatisticsDto.rewardSun}]]</div></div>
+            </div>
+            <div class="layui-inline">
+                <div class="layui-input-block" style="margin-left: 10px;">
+                    <a class="layui-btn layui-btn-radius add_btn" id="orderexport" href="javascript:;"><i class="layui-icon layui-icon-search"></i>导出</a>
+                </div>
+            </div>
+        </div>
+    </blockquote>
+    <table id="afterSaleOrderList" lay-filter="fissionActivityTool"></table>
+</form>
+
+<script type="text/javascript" src="/common/js/tools.js"></script>
+<!-- layui 初始化 -->
+<script type="text/javascript" th:inline="javascript">
+    layui.use(['form','layer','table','laydate'],function(){
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            table = layui.table;
+
+
+        //当前页数据数量
+        var table_data = new Array();
+        //选中的订单编号
+        var orderNos = new Array();
+        // 裂变活动列表
+        var tableIns = table.render({
+            elem: '#afterSaleOrderList',
+            url : '/afterSale/user/reward/getUserRewardDetailListByPage?activityId='+$("#activityId").val()+'&userWxUnionId='+$("#userWxUnionId").val()+'&activityName='+$("#activityName").val()+'&dealerName='+$("#dealerName").val(),
+            cellMinWidth : 100,
+            page : true,
+            height : "full-125",
+            limits : [10,20,50,100],
+            limit : 10,
+            id : "goodsOrderListTable",
+            cols: [
+                [
+                    {field: 'nickName', title: '微信昵称', minWidth: 180, align: "left"},
+                    {field: 'userWxUnionId', title: '微信id', minWidth: 180, align: "left"},
+                    {
+                        field: 'licencePlate', title: '用户车牌号', align: "center", minWidth: 160, templet: function (d) {
+                            var r = '';
+                            if (d.keepOnRecordUser == 1) {
+                                r = '<sup style="margin-left: 5px;">R</sup>';
+                            }
+                            var html = '<div><div style="display: inline-block">' + (d.licencePlate==null?'':d.licencePlate) + '</div>' + r + '</div>';
+                            return html;
+                        }
+                    },
+                    {field: 'userPhone', title: '手机号', align: "center", width: 120},
+                    {field: 'userTypeStr', title: '用户身份', align: "center", width: 240},
+                    {field: 'payTime', title: '购买时间', align: "center", width: 120},
+                    {field: 'invitationReward', title: '邀请奖励', align: "center", width: 110},
+                    {field: 'extraReward', title: '额外奖励', align: "center", width: 110},
+                ]
+            ],
+        });
+
+        //导出
+        $("#orderexport").on("click",function(){
+            $("#form").attr("action","/afterSale/user/reward/detailExport");
+            $("#form").submit();
+            $("#form").attr("action","/afterSale/user/reward/toUserRewardDetailListByPage");
+        });
+
+
+    });
+</script>
+
+</body>
+</html>

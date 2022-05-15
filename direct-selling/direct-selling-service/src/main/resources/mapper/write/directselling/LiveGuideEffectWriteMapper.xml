@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.LiveGuideEffectWriteMapper" >
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.LiveGuideEffect" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="guide_name" property="guideName" jdbcType="VARCHAR" />
+    <result column="guide_tb_nick" property="guideTbNick" jdbcType="VARCHAR" />
+    <result column="total_fans" property="totalFans" jdbcType="INTEGER" />
+    <result column="feed_count" property="feedCount" jdbcType="INTEGER" />
+    <result column="total_time_lenth" property="totalTimeLenth" jdbcType="DOUBLE" />
+    <result column="alipay_amt" property="alipayAmt" jdbcType="DECIMAL" />
+    <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+    <result column="update_dt" property="updateDt" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, guide_name, guide_tb_nick, total_fans, feed_count, total_time_lenth, alipay_amt, 
+    create_dt, update_dt
+  </sql>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from live_guide_effect
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.tuanche.directselling.model.LiveGuideEffect" >
+    insert into live_guide_effect (id, guide_name, guide_tb_nick, 
+      total_fans, feed_count, total_time_lenth, 
+      alipay_amt, create_dt, update_dt
+      )
+    values (#{id,jdbcType=INTEGER}, #{guideName,jdbcType=VARCHAR}, #{guideTbNick,jdbcType=VARCHAR}, 
+      #{totalFans,jdbcType=INTEGER}, #{feedCount,jdbcType=INTEGER}, #{totalTimeLenth,jdbcType=DOUBLE}, 
+      #{alipayAmt,jdbcType=DECIMAL}, #{createDt,jdbcType=TIMESTAMP}, #{updateDt,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.tuanche.directselling.model.LiveGuideEffect" >
+    insert into live_guide_effect
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="guideName != null" >
+        guide_name,
+      </if>
+      <if test="guideTbNick != null" >
+        guide_tb_nick,
+      </if>
+      <if test="totalFans != null" >
+        total_fans,
+      </if>
+      <if test="feedCount != null" >
+        feed_count,
+      </if>
+      <if test="totalTimeLenth != null" >
+        total_time_lenth,
+      </if>
+      <if test="alipayAmt != null" >
+        alipay_amt,
+      </if>
+      <if test="createDt != null" >
+        create_dt,
+      </if>
+      <if test="updateDt != null" >
+        update_dt,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="guideName != null" >
+        #{guideName,jdbcType=VARCHAR},
+      </if>
+      <if test="guideTbNick != null" >
+        #{guideTbNick,jdbcType=VARCHAR},
+      </if>
+      <if test="totalFans != null" >
+        #{totalFans,jdbcType=INTEGER},
+      </if>
+      <if test="feedCount != null" >
+        #{feedCount,jdbcType=INTEGER},
+      </if>
+      <if test="totalTimeLenth != null" >
+        #{totalTimeLenth,jdbcType=DOUBLE},
+      </if>
+      <if test="alipayAmt != null" >
+        #{alipayAmt,jdbcType=DECIMAL},
+      </if>
+      <if test="createDt != null" >
+        #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDt != null" >
+        #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.tuanche.directselling.model.LiveGuideEffect" >
+    update live_guide_effect
+    <set >
+      <if test="guideName != null" >
+        guide_name = #{guideName,jdbcType=VARCHAR},
+      </if>
+      <if test="guideTbNick != null" >
+        guide_tb_nick = #{guideTbNick,jdbcType=VARCHAR},
+      </if>
+      <if test="totalFans != null" >
+        total_fans = #{totalFans,jdbcType=INTEGER},
+      </if>
+      <if test="feedCount != null" >
+        feed_count = #{feedCount,jdbcType=INTEGER},
+      </if>
+      <if test="totalTimeLenth != null" >
+        total_time_lenth = #{totalTimeLenth,jdbcType=DOUBLE},
+      </if>
+      <if test="alipayAmt != null" >
+        alipay_amt = #{alipayAmt,jdbcType=DECIMAL},
+      </if>
+      <if test="createDt != null" >
+        create_dt = #{createDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDt != null" >
+        update_dt = #{updateDt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.tuanche.directselling.model.LiveGuideEffect" >
+    update live_guide_effect
+    set guide_name = #{guideName,jdbcType=VARCHAR},
+      guide_tb_nick = #{guideTbNick,jdbcType=VARCHAR},
+      total_fans = #{totalFans,jdbcType=INTEGER},
+      feed_count = #{feedCount,jdbcType=INTEGER},
+      total_time_lenth = #{totalTimeLenth,jdbcType=DOUBLE},
+      alipay_amt = #{alipayAmt,jdbcType=DECIMAL},
+      create_dt = #{createDt,jdbcType=TIMESTAMP},
+      update_dt = #{updateDt,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

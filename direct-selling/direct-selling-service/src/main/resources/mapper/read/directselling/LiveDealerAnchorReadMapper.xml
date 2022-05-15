@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.LiveDealerAnchorReadMapper" >
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.LiveDealerAnchor" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="dealer_id" property="dealerId" jdbcType="INTEGER" />
+    <result column="dealer_name" property="dealerName" jdbcType="VARCHAR" />
+    <result column="anchor_id" property="anchorId" jdbcType="BIGINT" />
+    <result column="anchor_url" property="anchorUrl" jdbcType="VARCHAR" />
+    <result column="anchor_name" property="anchorName" jdbcType="VARCHAR" />
+    <result column="anchor_nick" property="anchorNick" jdbcType="VARCHAR" />
+    <result column="anchor_phone" property="anchorPhone" jdbcType="VARCHAR" />
+    <result column="head_img" property="headImg" jdbcType="VARCHAR" />
+    <result column="tb_nick" property="tbNick" jdbcType="VARCHAR" />
+    <result column="city_id" property="cityId" jdbcType="INTEGER" />
+    <result column="city_name" property="cityName" jdbcType="VARCHAR" />
+    <result column="brand_id" property="brandId" jdbcType="INTEGER" />
+    <result column="brand_name" property="brandName" jdbcType="VARCHAR" />
+    <result column="desc" property="desc" jdbcType="VARCHAR" />
+    <result column="live_title" property="liveTitle" jdbcType="VARCHAR" />
+    <result column="live_cover" property="liveCover" jdbcType="VARCHAR" />
+    <result column="live_url" property="liveUrl" jdbcType="VARCHAR" />
+    <result column="fans" property="fans" jdbcType="INTEGER" />
+    <result column="content_count" property="contentCount" jdbcType="INTEGER" />
+    <result column="praise_count" property="praiseCount" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="BIT" />
+    <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+    <result column="update_dt" property="updateDt" jdbcType="TIMESTAMP" />
+    <result column="anchorHeat" property="anchorHeat"/>
+    <result column="anchor_type" property="anchorType" jdbcType="INTEGER" />
+    <result column="enterprise_alipay" property="enterpriseAlipay" jdbcType="VARCHAR" />
+    <result column="scene_id" property="activityId" jdbcType="INTEGER" />
+    <result column="scene_title" property="activityName" jdbcType="VARCHAR" />
+    <result column="feed_id" property="feedId" jdbcType="INTEGER" />
+    <result column="periods_id" property="periodsId" jdbcType="INTEGER" />
+    <result column="province_id" property="provinceId" jdbcType="INTEGER" />
+    <result column="province_name" property="provinceName" jdbcType="VARCHAR" />
+    <result column="dealer_landline" property="dealerLandline" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="charge_name" property="chargeName" jdbcType="VARCHAR" />
+    <result column="charge_phone" property="chargePhone" jdbcType="VARCHAR" />
+    <result column="enterprise_alipay_name" property="enterpriseAlipayName" jdbcType="VARCHAR" />
+    <result column="store_name" property="storeName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, dealer_id, dealer_name, anchor_id, anchor_url, anchor_name, anchor_phone, head_img, 
+    tb_nick, city_id, city_name, `desc`, fans, content_count, praise_count, status, delete_flag, create_dt,
+    update_dt, brand_id, brand_name, anchor_type, enterprise_alipay, province_id, province_name, address, dealer_landline,
+    charge_name, charge_phone, enterprise_alipay_name, store_name
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from live_dealer_anchor
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="getLiveDealerAnchorByPv" parameterType="com.tuanche.directselling.vo.LiveDealerAnchorVo" resultMap="BaseResultMap">
+    SELECT
+      t1.anchor_id,
+      t1.anchor_nick,
+      t1.desc,
+      t1.head_img,
+      t3.anchorHeat
+    FROM live_dealer_anchor t1 join
+    (
+      SELECT
+      t4.guide_tb_nick AS anchorNick,
+      <if test="int_type == 1">
+        ROUND(SUM(t4.alipay_cnt)*#{ratio}) anchorHeat
+      </if>
+      <if test="int_type == 2">
+        ROUND(SUM(t4.pv + IF(t4.pv_zan>t4.pv*2,t4.pv*2,t4.pv_zan) + t4.pv_ping)*#{ratio}) anchorHeat
+      </if>
+      FROM live_effect t4
+      WHERE DATE(t4.start_time)= DATE(#{date})
+      GROUP BY t4.guide_tb_nick
+    ) t3 on t1.tb_nick=t3.anchorNick
+    join live_scene_dealer_brand lsdb on t1.dealer_id = lsdb.dealer_id AND lsdb.delete_state = 0
+    join live_scene ls on lsdb.scene_id = ls.id	AND ls.delete_state = 0 AND ls.up_state = 1
+    WHERE t1.delete_flag = 0 AND t1.anchor_id IS NOT NULL
+    AND t1.head_img IS NOT NULL AND t1.anchor_nick IS NOT NULL
+    <if test="anchorType !=null">
+      AND t1.anchor_type= #{anchorType}
+    </if>
+    <if test="periodsId !=null">
+      AND ls.periods_id= #{periodsId}
+    </if>
+    ORDER BY t3.anchorHeat DESC
+    LIMIT 20;
+  </select>
+
+  <select id="getLiveDealerAnchorByLiveTime" parameterType="com.tuanche.directselling.vo.LiveDealerAnchorVo" resultMap="BaseResultMap">
+    SELECT DISTINCT
+      t1.anchor_id,
+      t1.anchor_nick,
+      t1.desc,
+      t1.head_img,
+      t3.anchorHeat
+    FROM live_dealer_anchor t1 join
+    (
+      SELECT
+        t4.guide_tb_nick AS anchorNick,
+        ROUND(t4.total_time_lenth*#{ratio}) anchorHeat
+      FROM live_guide_effect_detail t4
+      WHERE DATE(t4.summary_date)= DATE(#{date})
+      GROUP BY t4.guide_tb_nick
+    ) t3 on t1.tb_nick=t3.anchorNick
+    join live_scene_dealer_brand lsdb on t1.dealer_id = lsdb.dealer_id AND lsdb.delete_state = 0
+    join live_scene ls on lsdb.scene_id = ls.id	AND ls.delete_state = 0 AND ls.up_state=1
+    WHERE  t1.delete_flag = 0 AND t1.anchor_id IS NOT NULL
+    AND t1.head_img IS NOT NULL AND t1.anchor_nick IS NOT NULL
+    <if test="anchorType !=null">
+      AND t1.anchor_type= #{anchorType}
+    </if>
+    <if test="periodsId !=null">
+      AND ls.periods_id= #{periodsId}
+    </if>
+    ORDER BY t3.anchorHeat DESC
+    LIMIT 20;
+  </select>
+
+  <select id="getAnchorLiveDataByCityId" parameterType="com.tuanche.directselling.vo.LiveDealerAnchorVo" resultMap="BaseResultMap">
+      SELECT t2.live_cover,
+      t2.live_title,
+      lda.head_img,
+      lda.anchor_nick,
+      lda.anchor_name,
+      lda.desc,
+      lda.city_name,
+      lda.dealer_name,
+      t2.live_url,
+      t2.anchor_id,
+	  t2.view_count FROM
+      (
+        SELECT t1.* FROM live_dealer_broadcast t1 ORDER BY t1.view_count DESC
+      ) t2,live_dealer_anchor lda
+      where t2.anchor_id = lda.anchor_id and lda.delete_flag=0 and lda.city_id= #{cityId}
+      group by anchor_id
+      order by t2.view_count desc
+  </select>
+
+  <select id="getAnchorCityList" resultMap="BaseResultMap">
+    SELECT
+	lda.city_id
+    FROM live_dealer_anchor lda,live_dealer_broadcast ldb
+    WHERE lda.delete_flag = 0 and lda.anchor_id = ldb.anchor_id
+    GROUP BY lda.city_id
+  </select>
+
+    <select id="getLiveDealerAnchorByInfo" resultMap="BaseResultMap" parameterType="com.tuanche.directselling.model.LiveDealerAnchor">
+        select
+        <include refid="Base_Column_List" />
+        from live_dealer_anchor
+        where delete_flag =0
+        and dealer_id = #{dealerId,jdbcType=INTEGER}
+        <if test="anchorType !=null">
+          and anchor_type = #{anchorType,jdbcType=INTEGER}
+        </if>
+        limit 1
+    </select>
+
+  <select id="searchAnchorList" parameterType="com.tuanche.directselling.model.LiveDealerAnchor" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from live_dealer_anchor
+    where delete_flag=0 and anchor_type=3
+    <if test="cityId !=null">
+      and city_id = #{cityId,jdbcType=INTEGER}
+    </if>
+    <if test="status !=null">
+      and status = #{status,jdbcType=INTEGER}
+    </if>
+    <if test="dealerName !=null and dealerName != ''">
+      and dealer_name like "%${dealerName}%"
+    </if>
+    <if test="chargePhone !=null and chargePhone != ''">
+      and charge_phone like "%${chargePhone}%"
+    </if>
+  </select>
+
+  <select id="searchAnchorSceneList" parameterType="com.tuanche.directselling.model.LiveDealerAnchor" resultMap="BaseResultMap">
+    select
+    t3.scene_title,t3.id as scene_id,t1.id, t1.dealer_id,t1.dealer_name,t1.brand_id,t1.brand_name,t1.city_id,t1.city_name,t1.anchor_name,
+    t1.anchor_phone,t1.tb_nick,t1.enterprise_alipay,t1.anchor_id,t1.delete_flag,t1.status, t3.periods_id,t1.province_name,t1.address,t1.charge_phone,
+    t1.enterprise_alipay_name,t1.store_name,t1.charge_name
+    ,(select feed_id from live_dealer_playback where activity_id= t2.scene_id AND dealer_id=t1.dealer_id) as feed_id
+    from live_dealer_anchor t1
+    left join (select * from live_scene_dealer_brand where delete_state=0 group by dealer_id,scene_id ) t2 on t1.dealer_id=t2.dealer_id
+    left join live_scene t3 on t2.scene_id=t3.id
+    where t2.delete_state=0 and t3.delete_state=0 and t1.anchor_type=3 and t1.delete_flag = 0
+    <if test="cityId !=null">
+      and t1.city_id = #{cityId,jdbcType=INTEGER}
+    </if>
+    <if test="activityId !=null">
+      and t2.scene_id = #{activityId,jdbcType=INTEGER}
+    </if>
+    <if test="periodsId !=null">
+      and t3.periods_id = #{periodsId,jdbcType=INTEGER}
+    </if>
+    <if test="deleteFlag !=null">
+      and t1.delete_flag = #{deleteFlag}
+    </if>
+    <if test="dealerName !=null and dealerName != ''">
+      and t1.dealer_name like "%${dealerName}%"
+    </if>
+    <if test="chargePhone !=null and chargePhone != ''">
+      and t1.charge_phone like "%${chargePhone}%"
+    </if>
+    <if test="status !=null">
+      and t1.status = #{status,jdbcType=INTEGER}
+    </if>
+      group by t1.dealer_id,t3.periods_id
+  </select>
+
+  <select id="transformDealerIds" resultType="java.lang.Integer">
+    SELECT DISTINCT
+        dealer_id
+    FROM
+        live_dealer_anchor
+    WHERE
+        delete_flag = 0
+        AND dealer_id IS NOT NULL
+        AND anchor_id in
+    <foreach collection="anchorIds" item="anchorId" open="(" separator="," close=")">
+      #{anchorId}
+    </foreach>
+  </select>
+</mapper>

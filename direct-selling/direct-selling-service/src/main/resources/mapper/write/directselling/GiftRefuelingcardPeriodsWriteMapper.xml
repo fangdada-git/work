@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.write.directselling.GiftRefuelingcardPeriodsWriteMapper" >
+    <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.GiftRefuelingcardPeriods" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="periods_id" property="periodsId" jdbcType="INTEGER" />
+        <result column="periods_name" property="periodsName" jdbcType="VARCHAR" />
+        <result column="begin_time" property="beginTime" jdbcType="TIMESTAMP" />
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+        <result column="delete_flag" property="deleteFlag" jdbcType="BIT" />
+        <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+        <result column="create_name" property="createName" jdbcType="VARCHAR" />
+        <result column="update_dt" property="updateDt" jdbcType="TIMESTAMP" />
+        <result column="update_name" property="updateName" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <insert id="insertGiftRefuelingcardPeriods" parameterType="com.tuanche.directselling.model.GiftRefuelingcardPeriods" keyProperty="id" useGeneratedKeys="true">
+        insert into gift_refuelingcard_periods
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="periodsId != null" >
+                periods_id,
+            </if>
+            <if test="periodsName != null" >
+                periods_name,
+            </if>
+            <if test="beginTime != null" >
+                begin_time,
+            </if>
+            <if test="endTime != null" >
+                end_time,
+            </if>
+            <if test="deleteFlag != null" >
+                delete_flag,
+            </if>
+            <if test="createDt != null" >
+                create_dt,
+            </if>
+            <if test="createName != null" >
+                create_name,
+            </if>
+            <if test="updateDt != null" >
+                update_dt,
+            </if>
+            <if test="updateName != null" >
+                update_name,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="periodsId != null" >
+                #{periodsId,jdbcType=INTEGER},
+            </if>
+            <if test="periodsName != null" >
+                #{periodsName,jdbcType=VARCHAR},
+            </if>
+            <if test="beginTime != null" >
+                #{beginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null" >
+                #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleteFlag != null" >
+                #{deleteFlag,jdbcType=BIT},
+            </if>
+            <if test="createDt != null" >
+                #{createDt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createName != null" >
+                #{createName,jdbcType=VARCHAR},
+            </if>
+            <if test="updateDt != null" >
+                #{updateDt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateName != null" >
+                #{updateName,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateGiftRefuelingcardPeriods" parameterType="com.tuanche.directselling.model.GiftRefuelingcardPeriods" >
+        update gift_refuelingcard_periods
+        <set >
+            <if test="periodsId != null" >
+                periods_id = #{periodsId,jdbcType=INTEGER},
+            </if>
+            <if test="periodsName != null" >
+                periods_name = #{periodsName,jdbcType=VARCHAR},
+            </if>
+            <if test="beginTime != null" >
+                begin_time = #{beginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null" >
+                end_time = #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleteFlag != null" >
+                delete_flag = #{deleteFlag,jdbcType=BIT},
+            </if>
+            <if test="createDt != null" >
+                create_dt = #{createDt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createName != null" >
+                create_name = #{createName,jdbcType=VARCHAR},
+            </if>
+            <if test="updateDt != null" >
+                update_dt = #{updateDt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateName != null" >
+                update_name = #{updateName,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

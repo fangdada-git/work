@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.FissionTradeRecordReadMapper">
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FissionTradeRecord">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="order_no" jdbcType="VARCHAR" property="orderNo" />
+    <result column="order_trade_id" jdbcType="VARCHAR" property="orderTradeId" />
+    <result column="serial_no" jdbcType="VARCHAR" property="serialNo" />
+    <result column="trade_type" jdbcType="TINYINT" property="tradeType" />
+    <result column="trade_amount" jdbcType="DECIMAL" property="tradeAmount" />
+    <result column="trade_remark" jdbcType="VARCHAR" property="tradeRemark" />
+    <result column="trade_no" jdbcType="VARCHAR" property="tradeNo" />
+    <result column="pay_user_id" jdbcType="VARCHAR" property="payUserId" />
+    <result column="to_user_id" jdbcType="VARCHAR" property="toUserId" />
+    <result column="trade_status" jdbcType="TINYINT" property="tradeStatus" />
+    <result column="req_info" jdbcType="VARCHAR" property="reqInfo" />
+    <result column="resp_info" jdbcType="VARCHAR" property="respInfo" />
+    <result column="trade_time" jdbcType="TIMESTAMP" property="tradeTime" />
+    <result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
+    <result column="create_dt" jdbcType="TIMESTAMP" property="createDt" />
+    <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
+    <result column="delete_flag" jdbcType="BIT" property="deleteFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, order_no,order_trade_id,serial_no, trade_type, trade_amount, trade_remark, trade_no, pay_user_id, to_user_id,
+    trade_status, req_info, resp_info, trade_time, pay_time, create_dt, update_dt, delete_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from fission_trade_record
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="getFissionTradeRecordList" parameterType="com.tuanche.directselling.model.FissionTradeRecord" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from fission_trade_record
+    where delete_flag = 0
+    <if test="orderNo != null">
+      and order_no = #{orderNo,jdbcType=VARCHAR}
+    </if>
+    <if test="orderNoList != null and orderNoList.size()>0">
+      and order_no in
+      <foreach collection="orderNoList" item="orderNo" open="(" separator="," close=")">
+        #{orderNo}
+      </foreach>
+    </if>
+    <if test="orderTradeId != null">
+      and order_trade_id = #{orderTradeId,jdbcType=VARCHAR}
+    </if>
+    <if test="serialNo != null">
+      and serial_no = #{serialNo,jdbcType=VARCHAR}
+    </if>
+    <if test="tradeType != null">
+      and trade_type = #{tradeType,jdbcType=TINYINT}
+    </if>
+    <if test="tradeAmount != null">
+      and trade_amount = #{tradeAmount,jdbcType=DECIMAL}
+    </if>
+    <if test="tradeRemark != null">
+      and trade_remark = #{tradeRemark,jdbcType=VARCHAR}
+    </if>
+    <if test="tradeNo != null">
+      and trade_no = #{tradeNo,jdbcType=VARCHAR}
+    </if>
+    <if test="payUserId != null">
+      and pay_user_id = #{payUserId,jdbcType=VARCHAR}
+    </if>
+    <if test="toUserId != null">
+      and to_user_id = #{toUserId,jdbcType=VARCHAR}
+    </if>
+    <if test="tradeStatus != null">
+      and trade_status = #{tradeStatus,jdbcType=TINYINT}
+    </if>
+    <if test="reqInfo != null">
+      and req_info = #{reqInfo,jdbcType=VARCHAR}
+    </if>
+    <if test="respInfo != null">
+      and resp_info = #{respInfo,jdbcType=VARCHAR}
+    </if>
+    <if test="tradeTime != null">
+      and trade_time = #{tradeTime,jdbcType=TIMESTAMP}
+    </if>
+    <if test="payTime != null">
+      and pay_time = #{payTime,jdbcType=TIMESTAMP}
+    </if>
+  </select>
+  
+  <select id="getFissionTradeRecordByInfo" parameterType="com.tuanche.directselling.model.FissionTradeRecord" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from fission_trade_record
+    where delete_flag = 0
+    <if test="orderNo != null">
+      and order_no = #{orderNo,jdbcType=VARCHAR}
+    </if>
+    <if test="orderTradeId != null">
+      and order_trade_id = #{orderTradeId,jdbcType=VARCHAR}
+    </if>
+    <if test="serialNo != null">
+      and serial_no = #{serialNo,jdbcType=VARCHAR}
+    </if>
+    <if test="tradeType != null">
+      and trade_type = #{tradeType,jdbcType=TINYINT}
+    </if>
+    <if test="tradeAmount != null">
+      and trade_amount = #{tradeAmount,jdbcType=DECIMAL}
+    </if>
+    <if test="tradeRemark != null">
+      and trade_remark = #{tradeRemark,jdbcType=VARCHAR}
+    </if>
+    <if test="tradeNo != null">
+      and trade_no = #{tradeNo,jdbcType=VARCHAR}
+    </if>
+    <if test="payUserId != null">
+      and pay_user_id = #{payUserId,jdbcType=VARCHAR}
+    </if>
+    <if test="toUserId != null">
+      and to_user_id = #{toUserId,jdbcType=VARCHAR}
+    </if>
+    <if test="tradeStatus != null">
+      and trade_status = #{tradeStatus,jdbcType=TINYINT}
+    </if>
+    <if test="reqInfo != null">
+      and req_info = #{reqInfo,jdbcType=VARCHAR}
+    </if>
+    <if test="respInfo != null">
+      and resp_info = #{respInfo,jdbcType=VARCHAR}
+    </if>
+    <if test="tradeTime != null">
+      and trade_time = #{tradeTime,jdbcType=TIMESTAMP}
+    </if>
+    <if test="payTime != null">
+      and pay_time = #{payTime,jdbcType=TIMESTAMP}
+    </if>
+    limit 1
+  </select>
+
+  <select id="selectFissionUserPaymentByIds" resultMap="BaseResultMap">
+    select id,serial_no,trade_no,pay_time,trade_amount,trade_status from fission_trade_record where trade_type=5 and id in
+    <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </select>
+</mapper>

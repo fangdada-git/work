@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>团车直卖-销售顾问奖金发放统计</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.all.js"></script>
+    <script src="/common/js/jquery-1.12.4.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/magnify/css/jquery.magnify.css">
+    <script src="/layui/js/tableSelect.js"></script>
+</head>
+<body class="childrenBody">
+<div style="padding: 20px; background-color: #F2F2F2;">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <form class="layui-form" action="">
+                        <div class="layui-inline">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">活动名称：</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="" placeholder="请输入" autocomplete="off" class="layui-input"
+                                           id="acName">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <button id="exportUserData" type="button" class="layui-btn">导出数据</button>
+                    <table id="rewardDataTable"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    ;!function () {
+        var form = layui.form;
+        var tableSelect = layui.tableSelect;
+        var table = layui.table;
+        tableSelect.render({
+            elem: '#acName',
+            checkedKey: 'id',
+            table: {
+                url: '/fission/data/view/business/activity/select',
+                cols: [
+                    [
+                        {type: 'radio'},
+                        {field: 'id', title: 'ID', width: 50},
+                        {field: 'activityName', title: '活动名称', width: 200},
+                        {field: 'startTime', title: '活动开始时间', width: 300},
+                        {field: 'endTime', title: '活动结束时间', width: 300}
+                    ]
+                ]
+            },
+            done: function (elem, data) {
+                var NEWJSON = []
+                layui.each(data.data, function (index, item) {
+                    NEWJSON.push(item.activityName);
+
+                    table.reload('rewardDataTable', {
+                        where: {
+                            id: item.id
+                        },
+                        page: {
+                            curr: 1
+                        }
+                    });
+
+                })
+                elem.val(NEWJSON.join(","))
+            }
+        })
+
+        table.render({
+            elem: '#rewardDataTable',
+            page: true,
+            cellMinWidth: 50,
+            limits : [10,20,50,100],
+            limit : 10,
+            url: '/fission/data/view/business/reward/list',
+            where: {
+                id: 0
+            },
+            cols: [
+                [
+                    {field: 'saleName', title: '销售姓名'},
+                    {field: 'salePhone', title: '手机号'},
+                    {field: 'dealerName', title: '所属经销商'},
+                    {field: 'realIncome', title: '累计奖励金额(元)'},
+                    {
+                        field: 'realIncome2', title: '未提现金额(元)', templet: function (d) {
+                            if (d.withdrawalState == 0) {
+                                return d.realIncome;
+                            } else {
+                                return 0;
+                            }
+
+                        }
+                    },
+                    {
+                        field: 'realIncome3', title: '已提现金额', templet: function (d) {
+                            if (d.withdrawalState == 0) {
+                                return 0;
+                            } else {
+                                return d.realIncome;
+                            }
+
+                        }
+                    }
+                ]
+            ]
+        });
+
+        $("#exportUserData").on("click", function(){
+            window.open("/fission/data/view/business/reward/list/export?id="+$("#acName").attr("ts-selected"));
+        });
+    }();
+</script>
+</body>
+</html>

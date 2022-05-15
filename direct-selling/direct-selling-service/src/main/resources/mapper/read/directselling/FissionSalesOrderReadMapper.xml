@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.FissionSalesOrderReadMapper" >
+  <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.FissionSalesOrder" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+    <result column="periods_id" property="periodsId" jdbcType="INTEGER" />
+    <result column="fission_id" property="fissionId" jdbcType="INTEGER" />
+    <result column="dealer_id" property="dealerId" jdbcType="INTEGER" />
+    <result column="sale_id" property="saleId" jdbcType="INTEGER" />
+    <result column="order_status" property="orderStatus" jdbcType="TINYINT" />
+    <result column="order_type" property="orderType" jdbcType="BIT" />
+    <result column="order_amount" property="orderAmount" jdbcType="DECIMAL" />
+    <result column="pay_type" property="payType" jdbcType="TINYINT" />
+    <result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+    <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+    <result column="update_dt" property="updateDt" jdbcType="TIMESTAMP" />
+    <result column="update_user_id" property="updateUserId" jdbcType="INTEGER" />
+    <result column="delete_flag" property="deleteFlag" jdbcType="BIT" />
+  </resultMap>
+  <resultMap id="BaseResultMapDto" type="com.tuanche.directselling.dto.FissionSalesOrderDto" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+    <result column="periods_id" property="periodsId" jdbcType="INTEGER" />
+    <result column="periods_name" property="periodsName" jdbcType="VARCHAR" />
+    <result column="fission_id" property="fissionId" jdbcType="INTEGER" />
+    <result column="activity_name" property="activityName" jdbcType="VARCHAR" />
+    <result column="activityBeginDate" property="activityBeginDate" jdbcType="TIMESTAMP" />
+    <result column="activityEndDate" property="activityEndDate" jdbcType="TIMESTAMP" />
+    <result column="dealer_id" property="dealerId" jdbcType="INTEGER" />
+    <result column="sale_id" property="saleId" jdbcType="INTEGER" />
+    <result column="order_status" property="orderStatus" jdbcType="TINYINT" />
+    <result column="order_type" property="orderType" jdbcType="BIT" />
+    <result column="order_amount" property="orderAmount" jdbcType="DECIMAL" />
+    <result column="pay_type" property="payType" jdbcType="TINYINT" />
+    <result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    t1.id, t1.order_no, t1.periods_id, t1.fission_id, t1.dealer_id, t1.sale_id, t1.order_status, t1.order_type,
+    t1.order_amount, t1.pay_type, t1.pay_time, t1.create_dt, t1.update_dt, t1.update_user_id, t1.delete_flag
+  </sql>
+  
+  <sql id="query_list_sql" >
+    select
+    <include refid="Base_Column_List" />
+    , t2.periods_name
+    , t2.activity_name
+    , t2.start_time as activityBeginDate
+    , t2.end_time as activityEndDate
+    from fission_sales_order t1
+    left join fission_activity t2 on t1.fission_id=t2.id
+    where t1.delete_flag = 0 and t2.delete_flag=0
+    <choose>
+      <when test="id !=null">
+        and t1.id = #{id}
+      </when>
+      <otherwise>
+        <if test="orderNo !=null and orderNo!=''">
+          and t1.order_no = #{orderNo}
+        </if>
+        <if test="periodsId !=null">
+          and t1.periods_id = #{periodsId}
+        </if>
+        <if test="fissionId !=null">
+          and t1.fission_id = #{fissionId}
+        </if>
+        <if test="dealerId !=null">
+          and t1.dealer_id = #{dealerId}
+        </if>
+        <if test="saleId !=null">
+          and t1.sale_id = #{saleId}
+        </if>
+        <if test="payBeginTime !=null">
+          and t1.pay_time &gt;= #{payBeginTime}
+        </if>
+        <if test="payEndTime !=null">
+          and t1.pay_time &lt;= #{payEndTime}
+        </if>
+        <if test="saleIdList !=null and saleIdList.size>0">
+          and t1.sale_id in
+          <foreach collection="saleIdList" item="saleId" open="(" separator="," close="）">
+            #{saleId}
+          </foreach>
+        </if>
+        <if test="orderStatus !=null">
+          and t1.order_status = #{orderStatus}
+        </if>
+        <if test="orderType !=null">
+          and t1.order_type = #{orderType}
+        </if>
+      </otherwise>
+    </choose>
+    ORDER BY create_dt DESC
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from fission_sales_order t1
+    where t1.id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <select id="getFissionSalesOrderListByFissionId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select
+    <include refid="Base_Column_List"/>
+    from fission_sales_order t1
+    where t1.delete_flag = 0 AND t1.order_status = 2 AND t1.order_type = 1
+    AND t1.fission_id = #{fissionId}
+  </select>
+
+  <select id="getFissionSalesOrderList" resultMap="BaseResultMapDto" parameterType="com.tuanche.directselling.model.FissionSalesOrder" >
+    <include refid="query_list_sql" />
+  </select>
+  <select id="getSaleOrderListByPage" resultMap="BaseResultMapDto" parameterType="com.tuanche.directselling.dto.FissionSalesOrderDto" >
+    <include refid="query_list_sql" />
+  </select>
+
+  <select id="getFissionSalesOrderCount" resultType="int" parameterType="com.tuanche.directselling.model.FissionSalesOrder" >
+    select count(t1.id)
+    from fission_sales_order t1
+    left join fission_activity t2 on t1.fission_id=t2.id
+    where t1.delete_flag = 0 and t2.delete_flag=0
+    <choose>
+      <when test="id !=null">
+        and t1.id = #{id}
+      </when>
+      <otherwise>
+        <if test="orderNo !=null and orderNo!=''">
+          and t1.order_no = #{orderNo}
+        </if>
+        <if test="periodsId !=null">
+          and t1.periods_id = #{periodsId}
+        </if>
+        <if test="fissionId !=null">
+          and t1.fission_id = #{fissionId}
+        </if>
+        <if test="dealerId !=null">
+          and t1.dealer_id = #{dealerId}
+        </if>
+        <if test="saleId !=null">
+          and t1.sale_id = #{saleId}
+        </if>
+        <if test="saleIdList !=null and saleIdList.size>0">
+          and t1.sale_id in
+          <foreach collection="saleIdList" item="saleId" open="(" separator="," close="）">
+            #{saleId}
+          </foreach>
+        </if>
+        <if test="orderStatus !=null">
+          and t1.order_status = #{orderStatus}
+        </if>
+        <if test="orderType !=null">
+          and t1.order_type = #{orderType}
+        </if>
+      </otherwise>
+    </choose>
+  </select>
+
+  <select id="selectSaleJoinCount" resultType="java.lang.Integer">
+    select count(*) from fission_sales_order where fission_id=#{fissionId} and order_status=2 and order_type=1 and delete_flag=0
+  </select>
+
+  <select id="selectSaleOrder" resultType="com.tuanche.directselling.dto.FissionSalesOrderDto">
+    SELECT
+        fso.id,
+        fso.order_no,
+        fso.fission_id,
+        fa.periods_id,
+        fa.activity_name,
+        fa.start_time,
+        fa.end_time,
+        fa.on_state,
+        fso.order_status,
+        fs.sale_wx_union_id,
+        fs.sale_wx_open_id,
+        fso.order_amount
+    FROM
+        fission_sales_order fso left join fission_activity fa on fso.fission_id=fa.id
+        left join fission_sale fs on fs.fission_id=fa.id and fs.sale_id=fso.sale_id
+        where fso.sale_id=#{saleId}
+        and fso.delete_flag=0 and fa.delete_flag=0
+    ORDER BY
+        fso.create_dt DESC
+    </select>
+
+  <select id="selectSaleJoinCounts" resultType="com.tuanche.directselling.dto.FissionStatisticIntDto">
+    select fission_id,count(*) as value from fission_sales_order where fission_id = #{fissionId} and order_status=2 and order_type=1 and delete_flag=0
+  </select>
+</mapper>

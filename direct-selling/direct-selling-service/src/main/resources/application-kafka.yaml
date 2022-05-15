@@ -1,0 +1,93 @@
+spring:
+  profiles: local
+kafka:
+  config:
+    servers: 172.16.70.112:9092,172.16.70.113:9092,172.16.70.114:9092
+    batch-size: 4096
+    buffer-memory: 40960
+    zookeeper-connect: 172.16.70.112:2181,172.16.70.113:2181,172.16.70.114:2181/kafka
+    live-program-topic:
+      group-name: live-program-group
+      topic-name: live-program-topic
+      topic-count: 1
+    live-Start-notice:
+      group-name: direct-selling-fission-live-group
+      topic-name: fission-live-start-topic
+      topic-count: 1
+    live-order-notice: #直播间下单通知c端记录
+      group-name: direct-selling-fission-order-group
+      topic-name: broadcast-buy-topic
+      topic-count: 1
+    consumer-thread-count: 1
+
+---
+#test
+spring:
+  profiles: test
+kafka:
+  config:
+    servers: 172.16.60.65:9092
+    batch-size: 4096
+    buffer-memory: 40960
+    zookeeper-connect: zookeeper.tuanche.com:2181,zookeeper.tuanche.com:2182,zookeeper.tuanche.com:2183/kafka
+    live-program-topic:
+      group-name: live-program-group
+      topic-name: live-program-topic
+      topic-count: 1
+    live-Start-notice:
+      group-name: direct-selling-fission-live-group
+      topic-name: fission-live-start-topic
+      topic-count: 1
+    live-order-notice: #直播间下单通知c端记录
+      group-name: direct-selling-fission-order-group
+      topic-name: broadcast-buy-topic
+      topic-count: 1
+    consumer-thread-count: 1
+
+---
+#pre
+spring:
+  profiles: pre
+kafka:
+  config:
+    servers: 172.16.12.92:9092
+    batch-size: 4096
+    buffer-memory: 40960
+    zookeeper-connect: zookeeper.tuanche.com:2181,zookeeper.tuanche.com:2182,zookeeper.tuanche.com:2183/kafka
+    live-program-topic:
+      group-name: live-program-group
+      topic-name: live-program-topic
+      topic-count: 1
+    live-Start-notice:
+      group-name: direct-selling-fission-live-group
+      topic-name: fission-live-start-topic
+      topic-count: 1
+    live-order-notice: #直播间下单通知c端记录
+      group-name: direct-selling-fission-order-group
+      topic-name: broadcast-buy-topic
+      topic-count: 1
+    consumer-thread-count: 1
+
+---
+#prod
+spring:
+  profiles: prod
+kafka:
+  config:
+    servers: kafka104.srv.other:9092,kafka62.srv.other:9092,kafka63.srv.other:9092
+    batch-size: 4096
+    buffer-memory: 40960
+    zookeeper-connect: zk152.tuanche.com:2181,zk105.tuanche.com:2181,zk103.tuanche.com:2181/kafka
+    live-program-topic:
+      group-name: live-program-group
+      topic-name: live-program-topic
+      topic-count: 1
+    live-Start-notice:
+      group-name: direct-selling-fission-live-group
+      topic-name: fission-live-start-topic
+      topic-count: 1
+    live-order-notice: #直播间下单通知c端记录
+      group-name: direct-selling-fission-order-group
+      topic-name: broadcast-buy-topic
+      topic-count: 1
+    consumer-thread-count: 1

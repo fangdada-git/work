@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tuanche.directselling.mapper.read.directselling.AfterSaleRewardRecordReadMapper" >
+    <resultMap id="BaseResultMap" type="com.tuanche.directselling.model.AfterSaleRewardRecord" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="activity_id" property="activityId" jdbcType="INTEGER" />
+        <result column="dealer_id" property="dealerId" jdbcType="INTEGER" />
+        <result column="user_type" property="userType" jdbcType="TINYINT" />
+        <result column="user_wx_union_id" property="userWxUnionId" jdbcType="CHAR" />
+        <result column="reward_type" property="rewardType" jdbcType="INTEGER" />
+        <result column="quantity" property="quantity" jdbcType="DECIMAL" />
+        <result column="order_code" property="orderCode" jdbcType="VARCHAR" />
+        <result column="partner_trade_no" property="partnerTradeNo" jdbcType="VARCHAR" />
+        <result column="pay_status" property="payStatus" jdbcType="TINYINT" />
+        <result column="failure_reason" property="failureReason" jdbcType="VARCHAR" />
+        <result column="err_code" property="errCode" jdbcType="VARCHAR" />
+        <result column="wx_trade_no" property="wxTradeNo" jdbcType="VARCHAR" />
+        <result column="wx_trade_time" property="wxTradeTime" jdbcType="TIMESTAMP" />
+        <result column="wx_pay_time" property="wxPayTime" jdbcType="TIMESTAMP" />
+        <result column="wx_nonce_str" property="wxNonceStr" jdbcType="CHAR" />
+        <result column="failure_reason" property="failureReason" jdbcType="VARCHAR" />
+        <result column="create_dt" property="createDt" jdbcType="TIMESTAMP" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id, activity_id, user_type, user_wx_union_id, reward_type, quantity, order_code,
+        pay_status, wx_trade_no, wx_trade_time, wx_pay_time, wx_nonce_str, failure_reason,err_code,
+        create_dt
+    </sql>
+    <select id="getFailRewardRecordList" resultType="com.tuanche.directselling.dto.AfterSaleRewardRecordFailDto" >
+        SELECT
+            t1.id,
+            t1.user_type AS userType,
+            t1.wx_trade_no AS wxTradeNo,
+            t1.reward_type AS rewardType,
+            t1.quantity AS quantity,
+            t1.order_code AS orderCode,
+            t1.partner_trade_no AS partnerTradeNo,
+            t1.err_code AS errCode,
+            t2.user_wx_union_id AS userWxUnionId,
+            t2.user_wx_open_id AS userWxOpenId,
+            t3.licence_plate AS licencePlate
+        FROM
+            after_sale_reward_record t1
+        LEFT JOIN after_sale_user t2 ON t2.activity_id=t1.activity_id AND t2.user_wx_union_id = t1.user_wx_union_id
+        LEFT JOIN after_sale_order_record t3 ON t3.order_code = t1.order_code
+        WHERE
+            t1.pay_status = 2
+        <if test="activityId != null">
+            AND t1.activity_id = #{activityId}
+        </if>
+    </select>
+    <!-- 获取正在进行中的且是已开启状态的活动已发放的奖励 -->
+    <select id="amountAlarm" resultType="com.tuanche.directselling.dto.AfterSaleRewardRecordAmountAlarmDto">
+        SELECT
+            t1.activity_id AS activityId,
+            SUM(t1.quantity) AS amountUsed,
+            t2.activity_name AS activityName,
+            t2.budget,
+            t2.amount_alarm AS amountAlarm,
+            t2.sale_end_time AS saleEndTime,
+            t2.alarm_phone AS alarmPhone,
+            t2.alarm_email AS alarmEmail,
+            t2.sale_end_time AS alarmEmail
+        FROM
+            after_sale_reward_record t1
+                LEFT JOIN after_sale_activity t2 ON t2.id = t1.activity_id
+        WHERE
+            t1.reward_type IN (1,2,4)
+          AND t1.pay_status = 1
+          AND t2.on_state = 1
+          AND NOW() BETWEEN sale_start_time AND sale_end_time
+        GROUP BY t1.activity_id
+    </select>
+
+    <select id="getamountAlarmByTime" resultType="com.tuanche.directselling.dto.AfterSaleRewardRecordAmountAlarmDto">
+        SELECT SUM(quantity) amountUsed FROM after_sale_reward_record
+        WHERE reward_type IN (1,2,4) AND pay_status=1
+        <if test="startTime!=null">
+            AND create_dt &gt; #{startTime}
+        </if>
+        <if test="endTime!=null">
+            AND create_dt &lt;= #{endTime}
+        </if>
+    </select>
+    
+    <!-- 用户奖励统计 -->
+    <select id="userRewardStatistics" resultType="com.tuanche.directselling.model.AfterSaleUserRewardStatistics">
+        SELECT
+            t.activity_id AS activityId,
+            t3.dealer_id AS dealerId,
+            t.user_wx_union_id AS userWxUnionId,
+            SUM(IF(t.reward_type=1,quantity,0)) AS shareReward,
+            SUM(IF(t.reward_type=2,quantity,0)) AS purchaseReward,
+            SUM(IF(t.reward_type=3,1,0)) AS writeOffGiftCertificatesTotal,
+            SUM(IF(t.reward_type=4,quantity,0)) AS extraReward,
+            SUM(IF(t.reward_type IN (1,2,4) and t.pay_status IN (1,3),quantity,0)) AS paymentSuccessfulAmount,
+            SUM(IF(t.reward_type IN (1,2,4) and t.pay_status IN (0,2),quantity,0)) AS paymentFailureAmount,
+            t1.user_type AS userType
+        FROM
+            after_sale_reward_record t
+        LEFT JOIN after_sale_agent t2 ON t2.activity_id=t.activity_id AND t2.agent_wx_union_id=t.user_wx_union_id AND t2.delete_flag=0
+        LEFT JOIN after_sale_order_record t1 ON t1.activity_id=t.activity_id AND t1.user_wx_union_id=t.user_wx_union_id AND t1.order_type=1 AND t1.order_status>2
+        LEFT JOIN after_sale_activity t3 ON t3.id =t.activity_id
+        WHERE
+          t.activity_id IN
+            <foreach collection="activityIds" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        AND t.pay_status IN (0,1,2,3)
+        GROUP BY
+            t.activity_id,
+            t.user_wx_union_id
+    </select>
+    <!-- 按活动统计礼品券发放总数 -->
+    <select id="giftCertificatesIssuedMap" resultType="com.tuanche.directselling.dto.ResultMapDto">
+        SELECT
+            activity_id as mapKey,
+            COUNT(1) AS mapValue
+        FROM
+            after_sale_reward_record
+        WHERE
+            activity_id IN
+            <foreach collection="activityIds" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+          AND reward_type = 3
+          AND pay_status=1
+        GROUP BY
+            activity_id
+    </select>
+    <!-- 获取奖励总额 -->
+    <select id="getRewardTotalMap" resultType="com.tuanche.directselling.dto.ResultMapDto">
+        SELECT
+            activity_id as mapKey,
+            SUM(quantity) AS mapValue
+        FROM
+            after_sale_reward_record
+        WHERE
+            activity_id IN
+            <foreach collection="activityIds" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+          AND reward_type IN (1,2,4)
+          AND pay_status = 1
+        GROUP BY
+            activity_id
+    </select>
+    <!-- 获取获得奖励的分享数 -->
+    <select id="getShareTotalMap" resultType="com.tuanche.directselling.dto.ResultMapDto">
+        SELECT
+            CONCAT(activity_id,'_',user_wx_union_id) as mapKey,
+            COUNT(1) AS mapValue
+        FROM
+          after_sale_reward_record
+        WHERE
+          (activity_id,user_wx_union_id) IN
+            <foreach collection="list" item="item" open="(" separator="," close=")">
+                (#{item.activityId},#{item.userWxUnionId})
+            </foreach>
+          AND reward_type = 1
+        GROUP BY
+          activity_id,user_wx_union_id
+    </select>
+    <!-- 获取用户的奖励明细 -->
+    <select id="getUserRewardDetailList" resultType="com.tuanche.directselling.dto.AfterSaleUserRewardStatisticsDetailDto">
+        SELECT
+            t.userWxUnionId,
+            t.invitationReward,
+            t.extraReward,
+            t3.licence_plate AS licencePlate,
+            t3.user_phone AS userPhone,
+            t3.pay_time AS payTime,
+            t3.keep_on_record_user AS keepOnRecordUser,
+            t3.user_type AS userType,
+            t4.nick_name AS nickName
+        FROM (
+                 SELECT
+                     t2.user_wx_union_id AS userWxUnionId,
+                     SUM(IF(t1.reward_type=1,t1.quantity,0)) AS invitationReward,
+                     SUM(IF(t1.reward_type=4,t1.quantity,0)) AS extraReward
+                 FROM
+                     after_sale_reward_record t1,after_sale_order_record t2
+                 WHERE t1.user_wx_union_id = #{userWxUnionId}
+                   AND t1.activity_id=#{activityId}
+                   AND t1.reward_type IN (1,4)
+                   AND t2.order_code=t1.order_code
+                 GROUP BY userWxUnionId
+             ) t
+     LEFT JOIN after_sale_order_record t3 ON t3.activity_id=#{activityId} AND t3.user_wx_union_id = t.userWxUnionId AND t3.order_type=1 AND t3.order_status > 2
+     LEFT JOIN after_sale_user t4 ON t4.activity_id=#{activityId} AND t4.user_wx_union_id = t.userWxUnionId
+    </select>
+
+    <select id="selectSlideshowReward" resultType="com.tuanche.directselling.dto.AfterSaleRewardSlideshowDto" >
+        SELECT
+            t1.id,
+            t1.user_type AS userType,
+            t1.reward_type AS rewardType,
+            t1.quantity AS quantity,
+            t2.user_wx_union_id AS userWxUnionId,
+            t2.nick_name AS nickName,
+            t2.user_wx_head AS userWxHead
+        FROM
+          after_sale_reward_record t1
+        LEFT JOIN after_sale_user t2 ON t2.activity_id=t1.activity_id AND t2.user_wx_union_id = t1.user_wx_union_id
+        WHERE
+          t1.id >= (SELECT floor(RAND() * (SELECT MAX(r1.id) FROM  after_sale_reward_record r1 where r1.pay_status = 1 and r1.activity_id = #{activityId} )))
+          and t1.activity_id = #{activityId}
+		  and  t1.pay_status = 1
+        ORDER BY  t1.id
+        LIMIT 50
+    </select>
+</mapper>

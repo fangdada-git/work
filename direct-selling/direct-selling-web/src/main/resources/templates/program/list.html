@@ -1,0 +1,127 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<meta charset="utf-8">
+    <title>节目列表</title>
+    <link rel="stylesheet" href="/common/css/layui.css"  media="all">
+    <link rel="stylesheet" href="/layuiadmin/layui/css/layui.css" media="all">
+	<link rel="stylesheet" href="https://g.alicdn.com/de/prismplayer/2.8.7/skins/default/aliplayer-min.css" />
+	<script type="text/javascript" charset="utf-8" src="https://g.alicdn.com/de/prismplayer/2.8.7/aliplayer-min.js"></script>
+	<script src="/common/js/jquery-1.12.4.min.js" charset="utf-8"></script>
+	<script src="/layuiadmin/layui/layui.js" charset="utf-8"></script>
+	<script src="/common/js/table.js" charset="utf-8"></script>
+	<script src="/common/js/date.js" charset="utf-8"></script>
+	<script src="/common/js/qrcode.min.js" charset="utf-8"></script>
+</head>
+<style>
+.layui-table-cell{
+height:auto !important;
+}
+</style>
+<body>
+<div class="layui-fluid">
+ 	<div class="layui-card">
+ 		<form class="layui-form" lay-filter="select-plan-form" action="">
+			<div class="layui-card-body layui-row layui-col-space8">
+				<div class="layui-col-md4">
+					<div class="layui-inline">
+					    <a class="layui-btn layui-btn-radius add_btn" id="program-add" href="javascript:;"><i class="layui-icon layui-icon-release"></i>添加节目</a>
+					</div>
+                    <div class="layui-inline">
+                        <a class="layui-btn layui-btn-radius add_btn" id="posters-create" href="javascript:;"><i class="layui-icon layui-icon-release"></i>批量生成海报</a>
+                    </div>
+				</div>
+			</div>
+		</form>
+		<table class="layui-hide" id="program-list-page" lay-filter="programbar"></table>
+    </div>
+</div>
+<script type="text/javascript" src="http://static.tuanche.com/layuiadmin/button.js"></script>
+<script src="/program/list.js?v=44" charset="utf-8"></script>
+<script type="text/html" id="programbar">
+  	  {{# if(new Date().getTime() - new Date(d.beginTime).getTime() < 0){}}
+      <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+      <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+	  {{# }}}
+</script>
+<script id="addtmp" type="text/html">
+<form class="layui-form" action="">
+  <input type="hidden" name="sceneId"/>
+  <input type="hidden" name="id"/>
+    <div class="layui-form-item">
+        <label class="layui-form-label">节目类型</label>
+        <div class="layui-input-block">
+            <input type="radio" name="programType" value="1"  title="预热直播" checked/>
+            <input type="radio" name="programType" value="2"  title="正式直播"/>
+        </div>
+    </div>
+  <div class="layui-form-item">
+    <div class="layui-inline">
+      <label class="layui-form-label">开始时间</label>
+      <div class="layui-input-inline">
+        <input type="text" name="beginTime" readonly lay-verify="required" id="beginTime" lay-verify="date" placeholder="yyyy-MM-dd HH:mm" placeholder="开始时间" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+	<div class="layui-inline">
+      <label class="layui-form-label">结束时间</label>
+      <div class="layui-input-inline">
+        <input type="text" name="endTime" readonly lay-verify="required" id="endTime" lay-verify="date" placeholder="yyyy-MM-dd HH:mm" placeholder="结束时间" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+  </div>
+ <div class="layui-form-item">
+    <label class="layui-form-label">节目名称</label>
+    <div class="layui-input-block">
+      <input type="text" name="programTitle" maxlength="100" lay-verify="required" lay-reqtext="节目名称不能为空！"  placeholder="节目名称（直播名称）" autocomplete="off" class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button type="submit" class="layui-btn layui-btn-normal" lay-submit="" lay-filter="addProgram"><i class="layui-icon layui-icon-ok-circle"></i>提交</button>
+    </div>
+  </div>
+</form>
+</script>
+<script id="liveAddresstmp" type="text/html">
+<form class="layui-form" action="">
+ <input type="hidden" name="sceneId"/>
+ <input type="hidden" name="id"/>
+ <div class="layui-form-item">
+    <label class="layui-form-label">直播链接</label>
+    <div class="layui-input-block">
+      <input type="text" name="liveAddress" maxlength="200" lay-verify="required" lay-reqtext="直播链接不能为空！"  autocomplete="off" class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button type="submit" class="layui-btn layui-btn-normal" lay-submit="" lay-filter="addLiveAddress"><i class="layui-icon layui-icon-ok-circle"></i>提交</button>
+    </div>
+  </div>
+</form>
+</script>
+<script id="programDealertmp" type="text/html">
+<form class="layui-form" action="" lay-filter="select-dealerBrand-form" id="dealerBrands">
+ <input type="hidden" name="sceneId"/>
+ <input type="hidden" name="id"/>
+<blockquote class="layui-elem-quote layui-text" id="programTime"></blockquote>
+<blockquote class="layui-elem-quote layui-text" id="programTitle"></blockquote>
+<div class="layui-inline">
+	<a class="layui-btn layui-btn-radius add_btn" id="addProgramDealer" href="javascript:;"><i class="layui-icon layui-icon-release"></i>添加</a>
+</div>
+<table class="layui-table">
+<tr>
+	<th>参展品牌</th>
+	<th>参展经销商</th>
+    <th></th>
+</tr>
+<tr id="castTr"></tr>
+</table>								
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button type="submit" class="layui-btn layui-btn-normal" lay-submit="" lay-filter="updateProgramDealer"><i class="layui-icon layui-icon-ok-circle"></i>提交</button>
+    </div>
+  </div>
+</form>
+</script>
+</body>
+</html>

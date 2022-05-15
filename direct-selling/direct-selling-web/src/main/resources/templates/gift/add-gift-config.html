@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>团车直卖-场次油卡配置表单</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <script src="http://static.tuanche.com/layuiadmin/layui/layui.js"></script>
+    <script src="/layui/js/formSelects-v4.js"></script>
+    <script src="/common/js/tools.js"></script>
+    <link rel="stylesheet" href="http://static.tuanche.com/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/layui/css/formSelects-v4.css" media="all">
+    <style>
+        .label-close-icon {
+            vertical-align: bottom;
+            margin-left: -8px;
+            font-size: 18px;
+            position: absolute;
+            top: -8px;
+            cursor: pointer;
+            z-index: 100;
+        }
+        .layui-input {
+            width: 300px;
+        }
+        .layui-form-select {
+            width: 300px;
+        }
+        .xm-form-select {
+            min-width: 300px;
+        }
+        .layui-form-label {
+            width: 100px;
+        }
+        .layui-input-block {
+            margin-left: 138px;
+        }
+    </style>
+</head>
+<body class="childrenBody">
+<form class="layui-form" style="background-color:#ffffff">
+    <input type="hidden" id="beginTime"/>
+    <input type="hidden" id="endTime"/>
+    <input type="hidden" id="periodsName"/>
+    <div class="layui-form-item" style="width: 437px;">
+        <label class="layui-form-label">直播场次</label>
+        <div class="layui-input-block">
+            <select name="periodsSelect" xm-select="periodsSelect" xm-select-search="" xm-select-search-type="dl"  xm-select-radio="" th:disabled="${giftRefuelingCardPeriodsDto.id!=null}">
+                <option value="">请选择场次</option>
+                <option th:each="period : ${periodList}" th:value="${period.id}" th:text="${period.name}" th:selected="${period.id==giftRefuelingCardPeriodsDto.periodsId}"></option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item" style="width: 437px;">
+        <label class="layui-form-label">日期范围</label>
+        <div class="layui-input-block">
+            <input type="text" disabled="disabled" class="layui-input" id="periodsTime" placeholder="日期时间范围">
+        </div>
+    </div>
+    <div class="layui-form-item" style="width: 437px;">
+        <label class="layui-form-label">适用商品</label>
+        <div class="layui-input-block" style="width: 500px;">
+            <input type="checkbox" th:each="commodity : ${commodityList}" class="commodity-checkbox"
+                   name="commodity" th:title="${commodity.text}" th:value="${commodity.value}"/>
+        </div>
+    </div>
+    <div class="layui-form-item" style="width: 100%;" id="rule-div">
+        <label class="layui-form-label">油卡规则</label>
+        <div class="layui-input-block rule-info" style="float: left;"
+             th:each="rule,ruleStat : ${giftRefuelingCardPeriodsDto.fuelCardRuleList}" th:styleappend="${ruleStat.index == 0} ? 'margin-left: 8px' : ''">
+            <span style="float: left;line-height: 40px">商品金额</span>
+            <input type="number" id="commodityPrice" lay-verify="required" th:value="${rule.commodityPrice}"
+                   maxlength="10" class="layui-input" style="width: 100px;float:left">
+            <span style="float:left;line-height: 40px">元对应</span>
+            <input type="number" id="giftNum" lay-verify="required|number" th:value="${rule.giftNum}" maxlength="10"
+                   class="layui-input" style="width: 100px;float:left" onKeyUp="this.value=this.value.replace(/[^\.\d]/g,'');this.value=this.value.replace('.','');">
+            <span style="float:left;line-height: 40px">张油卡</span>
+            <a th:if="${ruleStat.index != 0}" class="layui-btn layui-btn-danger layui-btn-xs" style="margin-top: 8px;margin-left: 10px;"
+               onclick="removeRule(this)">
+                <i class="layui-icon layui-icon-delete">删除</i>
+            </a>
+            <a th:if="${ruleStat.index} eq 0" class="layui-btn layui-btn-warm layui-btn-xs" style="margin-top: 8px;margin-left: 10px;"
+               onclick="addRule(this)">
+                <i class="layui-icon layui-icon-add-1">添加</i>
+            </a>
+        </div>
+    </div>
+    <div class="layui-form-item" style="margin-bottom: 25px;">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" id="submitBtn" lay-submit lay-filter="submitBtn">
+                <i class="layui-icon layui-icon-ok-circle"></i>立即提交
+            </button>
+            <button class="layui-btn layui-btn-normal" id="backBtn"><i class="layui-icon layui-icon-close-fill"></i>返回</button>
+        </div>
+    </div>
+</form>
+
+<!-- layui 初始化 -->
+<script type="text/javascript" th:inline="javascript">
+    layui.use(['form','layer','table','upload','laydate','element'],function(){
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            laydate = layui.laydate,
+            util = layui.util,
+            formSelects = layui.formSelects,
+            saveUrl,
+            element = layui.element;
+
+            element.init();
+
+        // 选择场次事件
+        var periodList = [[${periodList}]];
+        formSelects.on('periodsSelect', function(id, vals, val, isAdd, isDisabled){
+            setPeriodsTime();
+        },true);
+        //回显选中的场次时间
+        function setPeriodsTime(){
+            var periodsId = layui.formSelects.value('periodsSelect', 'valStr');
+            for (var i = 0; i < periodList.length; i++) {
+                if(periodList[i].id == periodsId){
+                    var beginTimeStr = layui.util.toDateString(periodList[i].beginTime, 'yyyy-MM-dd HH:mm:ss');
+                    var endTimeStr = layui.util.toDateString(periodList[i].endTime, 'yyyy-MM-dd HH:mm:ss');
+                    $("#beginTime").val(beginTimeStr);
+                    $("#endTime").val(endTimeStr);
+                    $("#periodsName").val(periodList[i].name);
+                    // 场次活动时间范围
+                    laydate.render({
+                        elem: '#periodsTime'
+                        , type: 'datetime'
+                        , range: true
+                        , value: beginTimeStr + ' - ' + endTimeStr
+                    });
+                }
+            }
+        }
+        setPeriodsTime();
+        // 设置下拉框 只保留清空按钮
+        formSelects.btns('periodsSelect', ['remove']);
+
+        // 获取场次油卡配置详细信息
+        var id = [[${giftRefuelingCardPeriodsDto.id}]];
+        if(id){
+            saveUrl = '/gift/updateGiftConfig';
+            var commodityList = [[${giftRefuelingCardPeriodsDto.commodityList}]];
+            //设置使用商品checkbox选中
+            for (var i = 0; i < commodityList.length; i++) {
+                $("input:checkbox[value='" + commodityList[i].commodityType + "']").attr("checked", "checked");
+            }
+            form.render("checkbox");
+        }else{
+            saveUrl = '/gift/addGiftConfig';
+        }
+
+
+        // 监听提交
+        form.on('submit(submitBtn)', function(data){
+
+            var periodsId = layui.formSelects.value("periodsSelect","val");
+            var periodsName = $("#periodsName").val();
+            var beginTime = $("#beginTime").val();
+            var endTime = $("#endTime").val();
+            // 获取选择的商品类型
+            var commodityList = [];
+            $('input[name="commodity"]:checked').each(function(){
+                var commodityType = $(this).val();
+                var commodityName = $(this).attr("title");
+                var commodityMap = {"commodityType":commodityType, "commodityName":commodityName};
+                commodityList.push(commodityMap);
+            });
+            // 获取规则
+            var ruleList = [];
+            var verRule = false;
+            $('.rule-info').each(function (index, item) {
+                var commodityPrice = $(item).find("#commodityPrice").val();
+                if(commodityPrice <=0){
+                    layer.msg("订单金额必须大于0", {icon: 5});
+                    verRule = true;
+                    return false;
+                }
+                var giftNum = $(item).find("#giftNum").val();
+                if(giftNum <=0){
+                    layer.msg("赠送油卡数必须大于0", {icon: 5});
+                    verRule = true;
+                    return false;
+                }
+                var ruleMap = {"commodityPrice": commodityPrice, "giftNum": giftNum};
+                ruleList.push(ruleMap);
+            });
+            if(verRule){
+                return false;
+            }
+
+            if(periodsId == null || periodsId == ""){
+                layer.msg("请选择直播场次！", {icon: 5});
+                return false;
+            }
+            if(commodityList == null || commodityList.length <= 0){
+                layer.msg("请选择适用商品！", {icon: 5});
+                return false;
+            }
+            if(ruleList == null || ruleList.length <= 0){
+                layer.msg("请添加油卡规则！", {icon: 5});
+                return false;
+            }
+
+            $('#submitBtn').attr('disabled','disabled');
+            var loadIndex = layer.load(1,{
+                shade: [0.5,'#000']
+            })
+            $.ajax({
+                type: 'POST',
+                url: saveUrl,
+                contentType: "application/json",
+                data: JSON.stringify({
+                    "id":id,
+                    "periodsId": parseInt(periodsId),
+                    "periodsName": periodsName,
+                    "beginTime": beginTime,
+                    "endTime": endTime,
+                    "commodityList": JSON.stringify(commodityList),
+                    "ruleMapList": JSON.stringify(ruleList)
+                }),
+                success :function(data){
+                    if (data.code == 200) {
+                        layer.msg("保存成功", {
+                            icon: 6, time: 2000, end: function () {
+                                parent.location.href = "/gift/toGiftConfigPage"
+                            }
+                        });
+                    } else {
+                        layer.alert(data.msg == null ? "有一丝丝问题，请联系管理员" : data.msg, {icon: 5});
+                        $('#submitBtn').removeAttr('disabled');
+                    }
+                    layer.close(loadIndex);
+                },
+                error :function(e){
+                    console.log(e);
+                    layer.close(loadIndex);
+                    layer.msg("有一丝丝问题，请联系管理员", {icon: 5});
+                    $('#submitBtn').removeAttr('disabled');
+                    return false;
+                }
+            });
+            return false;
+        });
+
+        $("#backBtn").on("click",function () {
+            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+            parent.layer.close(index);//关闭弹出的子页面窗口
+        })
+
+        // 添加油卡规则
+        window.addRule = function(obj){
+            var ruleNum = $(".rule-info").length;
+            if(ruleNum >= 5){
+                layer.msg("油卡规则最多可添加5个", {icon: 5});
+                return false;
+            }
+            var ruleHtml = '<br/>\n' +
+                '        <div class="layui-input-block rule-info" style="float: left;">\n' +
+                '            <span style="float:left;line-height: 40px">商品金额</span>\n' +
+                '            <input type="number" id="commodityPrice" lay-verify="required" maxlength="10" class="layui-input" style="width: 100px;float:left">\n' +
+                '            <span style="float:left;line-height: 40px">元对应</span>\n' +
+                '            <input type="number" id="giftNum" lay-verify="required|number" maxlength="10" class="layui-input" style="width: 100px;float:left" onKeyUp="this.value=this.value.replace(/[^\\.\\d]/g,\'\');this.value=this.value.replace(\'.\',\'\');">\n' +
+                '            <span style="float:left;line-height: 40px">张油卡</span>\n' +
+                '            <a class="layui-btn layui-btn-danger layui-btn-xs" style="margin-top: 8px;margin-left: 10px;" onclick="removeRule(this)">\n' +
+                '                <i class="layui-icon layui-icon-delete">删除</i>\n' +
+                '            </a>\n' +
+                '        </div>';
+            $("#rule-div").append(ruleHtml);
+        }
+
+        // 删除油卡规则
+        window.removeRule = function(obj){
+            //$(obj).parent().prev().remove();
+            $(obj).parent().remove();
+        }
+    });
+
+</script>
+</body>
+</html>
