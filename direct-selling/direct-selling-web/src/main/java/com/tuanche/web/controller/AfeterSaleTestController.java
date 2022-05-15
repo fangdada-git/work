@@ -67,6 +67,15 @@ public class AfeterSaleTestController extends BaseController {
         return resultDto;
     }
 
+	
+	//订单收到发放奖励
+    @RequestMapping("/test")
+    @ResponseBody
+    public ResultDto test(Integer id) {
+        ResultDto resultDto = new ResultDto();
+        resultDto.setCode(200);
+        return resultDto;
+    }
 
 
 }

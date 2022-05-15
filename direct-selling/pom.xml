@@ -19,6 +19,7 @@
         <module>direct-selling-service</module>
         <module>direct-selling-web</module>
     </modules>
+	
 
     <properties>
         <java.version>1.8</java.version>
