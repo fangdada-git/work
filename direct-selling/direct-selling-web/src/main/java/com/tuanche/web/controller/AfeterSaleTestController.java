@@ -69,9 +69,9 @@ public class AfeterSaleTestController extends BaseController {
 
 	
 	//订单收到发放奖励
-    @RequestMapping("/test")
+    @RequestMapping("/test2")
     @ResponseBody
-    public ResultDto test(Integer id) {
+    public ResultDto test2(Integer id) {
         ResultDto resultDto = new ResultDto();
         resultDto.setCode(200);
         return resultDto;
